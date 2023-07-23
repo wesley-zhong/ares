@@ -166,626 +166,6 @@ public final class ProtoInner {
     // @@protoc_insertion_point(enum_scope:InnerProtoCode)
   }
 
-  public interface InnerHeadOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:InnerHead)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <code>int64 id = 1;</code>
-     */
-    long getId();
-
-    /**
-     * <code>int32 sendType = 2;</code>
-     */
-    int getSendType();
-
-    /**
-     * <code>int32 protoCode = 3;</code>
-     */
-    int getProtoCode();
-
-    /**
-     * <code>int64 callbackId = 4;</code>
-     */
-    long getCallbackId();
-  }
-  /**
-   * Protobuf type {@code InnerHead}
-   */
-  public  static final class InnerHead extends
-      com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:InnerHead)
-      InnerHeadOrBuilder {
-    // Use InnerHead.newBuilder() to construct.
-    private InnerHead(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
-      super(builder);
-    }
-    private InnerHead() {
-      id_ = 0L;
-      sendType_ = 0;
-      protoCode_ = 0;
-      callbackId_ = 0L;
-    }
-
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
-    }
-    private InnerHead(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      int mutable_bitField0_ = 0;
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            default: {
-              if (!input.skipField(tag)) {
-                done = true;
-              }
-              break;
-            }
-            case 8: {
-
-              id_ = input.readInt64();
-              break;
-            }
-            case 16: {
-
-              sendType_ = input.readInt32();
-              break;
-            }
-            case 24: {
-
-              protoCode_ = input.readInt32();
-              break;
-            }
-            case 32: {
-
-              callbackId_ = input.readInt64();
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        makeExtensionsImmutable();
-      }
-    }
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return com.game.proto.ProtoInner.internal_static_InnerHead_descriptor;
-    }
-
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return com.game.proto.ProtoInner.internal_static_InnerHead_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              com.game.proto.ProtoInner.InnerHead.class, com.game.proto.ProtoInner.InnerHead.Builder.class);
-    }
-
-    public static final int ID_FIELD_NUMBER = 1;
-    private long id_;
-    /**
-     * <code>int64 id = 1;</code>
-     */
-    public long getId() {
-      return id_;
-    }
-
-    public static final int SENDTYPE_FIELD_NUMBER = 2;
-    private int sendType_;
-    /**
-     * <code>int32 sendType = 2;</code>
-     */
-    public int getSendType() {
-      return sendType_;
-    }
-
-    public static final int PROTOCODE_FIELD_NUMBER = 3;
-    private int protoCode_;
-    /**
-     * <code>int32 protoCode = 3;</code>
-     */
-    public int getProtoCode() {
-      return protoCode_;
-    }
-
-    public static final int CALLBACKID_FIELD_NUMBER = 4;
-    private long callbackId_;
-    /**
-     * <code>int64 callbackId = 4;</code>
-     */
-    public long getCallbackId() {
-      return callbackId_;
-    }
-
-    private byte memoizedIsInitialized = -1;
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      if (id_ != 0L) {
-        output.writeInt64(1, id_);
-      }
-      if (sendType_ != 0) {
-        output.writeInt32(2, sendType_);
-      }
-      if (protoCode_ != 0) {
-        output.writeInt32(3, protoCode_);
-      }
-      if (callbackId_ != 0L) {
-        output.writeInt64(4, callbackId_);
-      }
-    }
-
-    public int getSerializedSize() {
-      int size = memoizedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (id_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(1, id_);
-      }
-      if (sendType_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(2, sendType_);
-      }
-      if (protoCode_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(3, protoCode_);
-      }
-      if (callbackId_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(4, callbackId_);
-      }
-      memoizedSize = size;
-      return size;
-    }
-
-    private static final long serialVersionUID = 0L;
-    @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof com.game.proto.ProtoInner.InnerHead)) {
-        return super.equals(obj);
-      }
-      com.game.proto.ProtoInner.InnerHead other = (com.game.proto.ProtoInner.InnerHead) obj;
-
-      boolean result = true;
-      result = result && (getId()
-          == other.getId());
-      result = result && (getSendType()
-          == other.getSendType());
-      result = result && (getProtoCode()
-          == other.getProtoCode());
-      result = result && (getCallbackId()
-          == other.getCallbackId());
-      return result;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + ID_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getId());
-      hash = (37 * hash) + SENDTYPE_FIELD_NUMBER;
-      hash = (53 * hash) + getSendType();
-      hash = (37 * hash) + PROTOCODE_FIELD_NUMBER;
-      hash = (53 * hash) + getProtoCode();
-      hash = (37 * hash) + CALLBACKID_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getCallbackId());
-      hash = (29 * hash) + unknownFields.hashCode();
-      memoizedHashCode = hash;
-      return hash;
-    }
-
-    public static com.game.proto.ProtoInner.InnerHead parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static com.game.proto.ProtoInner.InnerHead parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static com.game.proto.ProtoInner.InnerHead parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static com.game.proto.ProtoInner.InnerHead parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static com.game.proto.ProtoInner.InnerHead parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static com.game.proto.ProtoInner.InnerHead parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static com.game.proto.ProtoInner.InnerHead parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input);
-    }
-    public static com.game.proto.ProtoInner.InnerHead parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static com.game.proto.ProtoInner.InnerHead parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static com.game.proto.ProtoInner.InnerHead parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
-    public static Builder newBuilder(com.game.proto.ProtoInner.InnerHead prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-    }
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    /**
-     * Protobuf type {@code InnerHead}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:InnerHead)
-        com.game.proto.ProtoInner.InnerHeadOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return com.game.proto.ProtoInner.internal_static_InnerHead_descriptor;
-      }
-
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return com.game.proto.ProtoInner.internal_static_InnerHead_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                com.game.proto.ProtoInner.InnerHead.class, com.game.proto.ProtoInner.InnerHead.Builder.class);
-      }
-
-      // Construct using com.game.proto.ProtoInner.InnerHead.newBuilder()
-      private Builder() {
-        maybeForceBuilderInitialization();
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-        super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
-      }
-      public Builder clear() {
-        super.clear();
-        id_ = 0L;
-
-        sendType_ = 0;
-
-        protoCode_ = 0;
-
-        callbackId_ = 0L;
-
-        return this;
-      }
-
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return com.game.proto.ProtoInner.internal_static_InnerHead_descriptor;
-      }
-
-      public com.game.proto.ProtoInner.InnerHead getDefaultInstanceForType() {
-        return com.game.proto.ProtoInner.InnerHead.getDefaultInstance();
-      }
-
-      public com.game.proto.ProtoInner.InnerHead build() {
-        com.game.proto.ProtoInner.InnerHead result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      public com.game.proto.ProtoInner.InnerHead buildPartial() {
-        com.game.proto.ProtoInner.InnerHead result = new com.game.proto.ProtoInner.InnerHead(this);
-        result.id_ = id_;
-        result.sendType_ = sendType_;
-        result.protoCode_ = protoCode_;
-        result.callbackId_ = callbackId_;
-        onBuilt();
-        return result;
-      }
-
-      public Builder clone() {
-        return (Builder) super.clone();
-      }
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
-        return (Builder) super.setField(field, value);
-      }
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return (Builder) super.clearField(field);
-      }
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return (Builder) super.clearOneof(oneof);
-      }
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, Object value) {
-        return (Builder) super.setRepeatedField(field, index, value);
-      }
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
-        return (Builder) super.addRepeatedField(field, value);
-      }
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof com.game.proto.ProtoInner.InnerHead) {
-          return mergeFrom((com.game.proto.ProtoInner.InnerHead)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(com.game.proto.ProtoInner.InnerHead other) {
-        if (other == com.game.proto.ProtoInner.InnerHead.getDefaultInstance()) return this;
-        if (other.getId() != 0L) {
-          setId(other.getId());
-        }
-        if (other.getSendType() != 0) {
-          setSendType(other.getSendType());
-        }
-        if (other.getProtoCode() != 0) {
-          setProtoCode(other.getProtoCode());
-        }
-        if (other.getCallbackId() != 0L) {
-          setCallbackId(other.getCallbackId());
-        }
-        onChanged();
-        return this;
-      }
-
-      public final boolean isInitialized() {
-        return true;
-      }
-
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        com.game.proto.ProtoInner.InnerHead parsedMessage = null;
-        try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.game.proto.ProtoInner.InnerHead) e.getUnfinishedMessage();
-          throw e.unwrapIOException();
-        } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
-        return this;
-      }
-
-      private long id_ ;
-      /**
-       * <code>int64 id = 1;</code>
-       */
-      public long getId() {
-        return id_;
-      }
-      /**
-       * <code>int64 id = 1;</code>
-       */
-      public Builder setId(long value) {
-        
-        id_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>int64 id = 1;</code>
-       */
-      public Builder clearId() {
-        
-        id_ = 0L;
-        onChanged();
-        return this;
-      }
-
-      private int sendType_ ;
-      /**
-       * <code>int32 sendType = 2;</code>
-       */
-      public int getSendType() {
-        return sendType_;
-      }
-      /**
-       * <code>int32 sendType = 2;</code>
-       */
-      public Builder setSendType(int value) {
-        
-        sendType_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>int32 sendType = 2;</code>
-       */
-      public Builder clearSendType() {
-        
-        sendType_ = 0;
-        onChanged();
-        return this;
-      }
-
-      private int protoCode_ ;
-      /**
-       * <code>int32 protoCode = 3;</code>
-       */
-      public int getProtoCode() {
-        return protoCode_;
-      }
-      /**
-       * <code>int32 protoCode = 3;</code>
-       */
-      public Builder setProtoCode(int value) {
-        
-        protoCode_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>int32 protoCode = 3;</code>
-       */
-      public Builder clearProtoCode() {
-        
-        protoCode_ = 0;
-        onChanged();
-        return this;
-      }
-
-      private long callbackId_ ;
-      /**
-       * <code>int64 callbackId = 4;</code>
-       */
-      public long getCallbackId() {
-        return callbackId_;
-      }
-      /**
-       * <code>int64 callbackId = 4;</code>
-       */
-      public Builder setCallbackId(long value) {
-        
-        callbackId_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>int64 callbackId = 4;</code>
-       */
-      public Builder clearCallbackId() {
-        
-        callbackId_ = 0L;
-        onChanged();
-        return this;
-      }
-      public final Builder setUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return this;
-      }
-
-      public final Builder mergeUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return this;
-      }
-
-
-      // @@protoc_insertion_point(builder_scope:InnerHead)
-    }
-
-    // @@protoc_insertion_point(class_scope:InnerHead)
-    private static final com.game.proto.ProtoInner.InnerHead DEFAULT_INSTANCE;
-    static {
-      DEFAULT_INSTANCE = new com.game.proto.ProtoInner.InnerHead();
-    }
-
-    public static com.game.proto.ProtoInner.InnerHead getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static final com.google.protobuf.Parser<InnerHead>
-        PARSER = new com.google.protobuf.AbstractParser<InnerHead>() {
-      public InnerHead parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-          return new InnerHead(input, extensionRegistry);
-      }
-    };
-
-    public static com.google.protobuf.Parser<InnerHead> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<InnerHead> getParserForType() {
-      return PARSER;
-    }
-
-    public com.game.proto.ProtoInner.InnerHead getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
-  }
-
   public interface InnerHeartBeatRequestOrBuilder extends
       // @@protoc_insertion_point(interface_extends:InnerHeartBeatRequest)
       com.google.protobuf.MessageOrBuilder {
@@ -7208,11 +6588,6 @@ public final class ProtoInner {
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_InnerHead_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_InnerHead_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_InnerHeartBeatRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -7286,35 +6661,33 @@ public final class ProtoInner {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\020ProtoInner.proto\"P\n\tInnerHead\022\n\n\002id\030\001 " +
-      "\001(\003\022\020\n\010sendType\030\002 \001(\005\022\021\n\tprotoCode\030\003 \001(\005" +
-      "\022\022\n\ncallbackId\030\004 \001(\003\"\027\n\025InnerHeartBeatRe" +
-      "quest\"\030\n\026InnerHeartBeatResponse\"0\n\021Inner" +
-      "LoginRequest\022\013\n\003sid\030\001 \001(\003\022\016\n\006roleId\030\002 \001(" +
-      "\003\"1\n\022InnerLoginResponse\022\013\n\003sid\030\001 \001(\003\022\016\n\006" +
-      "roleId\030\002 \001(\003\";\n\034InnerPlayerDisconnectReq" +
-      "uest\022\013\n\003sid\030\001 \001(\003\022\016\n\006roleId\030\002 \001(\003\"<\n\035Inn" +
-      "erPlayerDisconnectResponse\022\013\n\003sid\030\001 \001(\003\022" +
-      "\016\n\006roleId\030\002 \001(\003\"z\n\026InnerLoginWorldReques",
-      "t\022\016\n\006roleId\030\001 \001(\003\022\030\n\020gatewayServerUid\030\002 " +
-      "\001(\003\022\025\n\rgameServerUid\030\003 \001(\003\022\014\n\004name\030\004 \001(\t" +
-      "\022\021\n\tsessionId\030\005 \001(\003\"<\n\027InnerLoginWorldRe" +
-      "sponse\022\021\n\terrorCode\030\001 \001(\005\022\016\n\006unitId\030\002 \001(" +
-      "\003\"6\n\021InnerLogoutNotify\022\016\n\006roleId\030\001 \001(\003\022\021" +
-      "\n\tsessionId\030\002 \001(\003\"&\n\024InnerLoginInitNotif" +
-      "y\022\016\n\006roleId\030\001 \001(\003\"D\n\024InnerServerHandShak" +
-      "e\022\024\n\014fromServerId\030\001 \001(\003\022\026\n\016fromServerTyp" +
-      "e\030\002 \001(\005\"=\n\016KickOutRequest\022\016\n\006roleId\030\001 \001(" +
-      "\003\022\013\n\003sid\030\002 \001(\003\022\016\n\006reason\030\003 \001(\005\"!\n\017KickOu",
-      "tResponse\022\016\n\006reason\030\001 \001(\005*\237\002\n\016InnerProto" +
-      "Code\022\021\n\rINNER_INVALID\020\000\022$\n\027INNER_SERVER_" +
-      "HAND_SHAKE\020\377\377\377\377\377\377\377\377\377\001\022!\n\024INNER_HEART_BEA" +
-      "T_REQ\020\376\377\377\377\377\377\377\377\377\001\022!\n\024INNER_HEART_BEAT_RES" +
-      "\020\375\377\377\377\377\377\377\377\377\001\022\034\n\017INNER_LOGIN_REQ\020\374\377\377\377\377\377\377\377\377" +
-      "\001\022\034\n\017INNER_LOGIN_RES\020\373\377\377\377\377\377\377\377\377\001\022(\n\033INNER" +
-      "_PLAYER_DISCONNECT_REQ\020\372\377\377\377\377\377\377\377\377\001\022(\n\033INN" +
-      "ER_PLAYER_DISCONNECT_RES\020\371\377\377\377\377\377\377\377\377\001B\033\n\016c" +
-      "om.game.protoZ\t/protoGenb\006proto3"
+      "\n\020ProtoInner.proto\"\027\n\025InnerHeartBeatRequ" +
+      "est\"\030\n\026InnerHeartBeatResponse\"0\n\021InnerLo" +
+      "ginRequest\022\013\n\003sid\030\001 \001(\003\022\016\n\006roleId\030\002 \001(\003\"" +
+      "1\n\022InnerLoginResponse\022\013\n\003sid\030\001 \001(\003\022\016\n\006ro" +
+      "leId\030\002 \001(\003\";\n\034InnerPlayerDisconnectReque" +
+      "st\022\013\n\003sid\030\001 \001(\003\022\016\n\006roleId\030\002 \001(\003\"<\n\035Inner" +
+      "PlayerDisconnectResponse\022\013\n\003sid\030\001 \001(\003\022\016\n" +
+      "\006roleId\030\002 \001(\003\"z\n\026InnerLoginWorldRequest\022" +
+      "\016\n\006roleId\030\001 \001(\003\022\030\n\020gatewayServerUid\030\002 \001(" +
+      "\003\022\025\n\rgameServerUid\030\003 \001(\003\022\014\n\004name\030\004 \001(\t\022\021",
+      "\n\tsessionId\030\005 \001(\003\"<\n\027InnerLoginWorldResp" +
+      "onse\022\021\n\terrorCode\030\001 \001(\005\022\016\n\006unitId\030\002 \001(\003\"" +
+      "6\n\021InnerLogoutNotify\022\016\n\006roleId\030\001 \001(\003\022\021\n\t" +
+      "sessionId\030\002 \001(\003\"&\n\024InnerLoginInitNotify\022" +
+      "\016\n\006roleId\030\001 \001(\003\"D\n\024InnerServerHandShake\022" +
+      "\024\n\014fromServerId\030\001 \001(\003\022\026\n\016fromServerType\030" +
+      "\002 \001(\005\"=\n\016KickOutRequest\022\016\n\006roleId\030\001 \001(\003\022" +
+      "\013\n\003sid\030\002 \001(\003\022\016\n\006reason\030\003 \001(\005\"!\n\017KickOutR" +
+      "esponse\022\016\n\006reason\030\001 \001(\005*\237\002\n\016InnerProtoCo" +
+      "de\022\021\n\rINNER_INVALID\020\000\022$\n\027INNER_SERVER_HA",
+      "ND_SHAKE\020\377\377\377\377\377\377\377\377\377\001\022!\n\024INNER_HEART_BEAT_" +
+      "REQ\020\376\377\377\377\377\377\377\377\377\001\022!\n\024INNER_HEART_BEAT_RES\020\375" +
+      "\377\377\377\377\377\377\377\377\001\022\034\n\017INNER_LOGIN_REQ\020\374\377\377\377\377\377\377\377\377\001\022" +
+      "\034\n\017INNER_LOGIN_RES\020\373\377\377\377\377\377\377\377\377\001\022(\n\033INNER_P" +
+      "LAYER_DISCONNECT_REQ\020\372\377\377\377\377\377\377\377\377\001\022(\n\033INNER" +
+      "_PLAYER_DISCONNECT_RES\020\371\377\377\377\377\377\377\377\377\001B\033\n\016com" +
+      ".game.protoZ\t/protoGenb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -7328,86 +6701,80 @@ public final class ProtoInner {
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         }, assigner);
-    internal_static_InnerHead_descriptor =
-      getDescriptor().getMessageTypes().get(0);
-    internal_static_InnerHead_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_InnerHead_descriptor,
-        new java.lang.String[] { "Id", "SendType", "ProtoCode", "CallbackId", });
     internal_static_InnerHeartBeatRequest_descriptor =
-      getDescriptor().getMessageTypes().get(1);
+      getDescriptor().getMessageTypes().get(0);
     internal_static_InnerHeartBeatRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_InnerHeartBeatRequest_descriptor,
         new java.lang.String[] { });
     internal_static_InnerHeartBeatResponse_descriptor =
-      getDescriptor().getMessageTypes().get(2);
+      getDescriptor().getMessageTypes().get(1);
     internal_static_InnerHeartBeatResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_InnerHeartBeatResponse_descriptor,
         new java.lang.String[] { });
     internal_static_InnerLoginRequest_descriptor =
-      getDescriptor().getMessageTypes().get(3);
+      getDescriptor().getMessageTypes().get(2);
     internal_static_InnerLoginRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_InnerLoginRequest_descriptor,
         new java.lang.String[] { "Sid", "RoleId", });
     internal_static_InnerLoginResponse_descriptor =
-      getDescriptor().getMessageTypes().get(4);
+      getDescriptor().getMessageTypes().get(3);
     internal_static_InnerLoginResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_InnerLoginResponse_descriptor,
         new java.lang.String[] { "Sid", "RoleId", });
     internal_static_InnerPlayerDisconnectRequest_descriptor =
-      getDescriptor().getMessageTypes().get(5);
+      getDescriptor().getMessageTypes().get(4);
     internal_static_InnerPlayerDisconnectRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_InnerPlayerDisconnectRequest_descriptor,
         new java.lang.String[] { "Sid", "RoleId", });
     internal_static_InnerPlayerDisconnectResponse_descriptor =
-      getDescriptor().getMessageTypes().get(6);
+      getDescriptor().getMessageTypes().get(5);
     internal_static_InnerPlayerDisconnectResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_InnerPlayerDisconnectResponse_descriptor,
         new java.lang.String[] { "Sid", "RoleId", });
     internal_static_InnerLoginWorldRequest_descriptor =
-      getDescriptor().getMessageTypes().get(7);
+      getDescriptor().getMessageTypes().get(6);
     internal_static_InnerLoginWorldRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_InnerLoginWorldRequest_descriptor,
         new java.lang.String[] { "RoleId", "GatewayServerUid", "GameServerUid", "Name", "SessionId", });
     internal_static_InnerLoginWorldResponse_descriptor =
-      getDescriptor().getMessageTypes().get(8);
+      getDescriptor().getMessageTypes().get(7);
     internal_static_InnerLoginWorldResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_InnerLoginWorldResponse_descriptor,
         new java.lang.String[] { "ErrorCode", "UnitId", });
     internal_static_InnerLogoutNotify_descriptor =
-      getDescriptor().getMessageTypes().get(9);
+      getDescriptor().getMessageTypes().get(8);
     internal_static_InnerLogoutNotify_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_InnerLogoutNotify_descriptor,
         new java.lang.String[] { "RoleId", "SessionId", });
     internal_static_InnerLoginInitNotify_descriptor =
-      getDescriptor().getMessageTypes().get(10);
+      getDescriptor().getMessageTypes().get(9);
     internal_static_InnerLoginInitNotify_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_InnerLoginInitNotify_descriptor,
         new java.lang.String[] { "RoleId", });
     internal_static_InnerServerHandShake_descriptor =
-      getDescriptor().getMessageTypes().get(11);
+      getDescriptor().getMessageTypes().get(10);
     internal_static_InnerServerHandShake_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_InnerServerHandShake_descriptor,
         new java.lang.String[] { "FromServerId", "FromServerType", });
     internal_static_KickOutRequest_descriptor =
-      getDescriptor().getMessageTypes().get(12);
+      getDescriptor().getMessageTypes().get(11);
     internal_static_KickOutRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_KickOutRequest_descriptor,
         new java.lang.String[] { "RoleId", "Sid", "Reason", });
     internal_static_KickOutResponse_descriptor =
-      getDescriptor().getMessageTypes().get(13);
+      getDescriptor().getMessageTypes().get(12);
     internal_static_KickOutResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_KickOutResponse_descriptor,
