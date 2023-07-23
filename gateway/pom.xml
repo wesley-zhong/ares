@@ -71,7 +71,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.ares.gateway.AresApplication</mainClass>
+                    <mainClass>com.ares.gateway.GatewayApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>
