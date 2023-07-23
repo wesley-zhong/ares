@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ComponentScan("com.ares")
 public class GatewayConfiguration {
-
     @Bean
     public AresTcpClient aresTcpClient(@Autowired  AresTcpHandler  aresTcpHandler){
         AresTcpClient aresTcpClient = new AresTcpClient();

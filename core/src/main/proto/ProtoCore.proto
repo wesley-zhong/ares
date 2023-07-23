@@ -1,0 +1,11 @@
+
+syntax = "proto3";
+option java_package = "com.ares.protoGen";
+option go_package = "/protoGen";
+
+message InnerHead {
+  int64 id = 1;
+  int32 sendType = 2;
+  int32 protoCode = 3;
+}
+

@@ -16,12 +16,7 @@ enum  InnerProtoCode{
   INNER_PLAYER_DISCONNECT_RES = -7;
 }
 
-message InnerHead {
-  int64 id = 1;
-  int32 sendType = 2;
-  int32 protoCode = 3;
-  int64 callbackId = 4;
-}
+
 
 message  InnerHeartBeatRequest{
 
