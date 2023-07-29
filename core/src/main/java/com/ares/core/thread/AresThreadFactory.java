@@ -1,4 +1,4 @@
-package com.ares.transport.thread;
+package com.ares.core.thread;
 
 import io.netty.util.concurrent.FastThreadLocalThread;
 

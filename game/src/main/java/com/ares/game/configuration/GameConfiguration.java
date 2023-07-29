@@ -1,4 +1,4 @@
-package com.ares.gateway.configuration;
+package com.ares.game.configuration;
 
 import com.ares.core.tcp.AresTcpHandler;
 import com.ares.transport.client.AresTcpClient;
@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ComponentScan("com.ares")
-public class GatewayConfiguration {
+public class GameConfiguration {
     @Bean
     public AresTcpClientConn aresTcpClientConn(@Autowired  AresTcpHandler  aresTcpHandler){
         AresTcpClientConn aresTcpClientConn = new AresTcpClientConn();
@@ -19,7 +19,7 @@ public class GatewayConfiguration {
         return aresTcpClientConn;
     }
     @Bean
-    public AresTcpClient  aresTcpClient(@Autowired GameServerInfoList  serverInfoList, @Autowired AresTcpClientConn conn){
+    public AresTcpClient  aresTcpClient(@Autowired WorldServerInfoList serverInfoList, @Autowired AresTcpClientConn conn){
         AresTcpClient aresTcpClient = new AresTcpClientImpl(serverInfoList.getServers(), conn);
         aresTcpClient.init();
         return aresTcpClient;

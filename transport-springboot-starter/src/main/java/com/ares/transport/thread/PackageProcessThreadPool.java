@@ -1,6 +1,7 @@
 package com.ares.transport.thread;
 
 import com.ares.core.tcp.AresTcpHandler;
+import com.ares.core.thread.AresThreadFactory;
 import com.ares.transport.context.AresTcpContextEx;
 import lombok.extern.slf4j.Slf4j;
 

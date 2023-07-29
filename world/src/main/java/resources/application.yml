@@ -7,11 +7,8 @@ spring:
     allow-bean-definition-overriding: true
     allow-circular-references: true
 
-game-server:
-  servers:
-    - id: 100
-      ip: 127.0.0.1
-      port: 8081
 server:
-  port: 7080
+  port: 9080
+
+
 
