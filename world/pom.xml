@@ -27,10 +27,16 @@
             <groupId>com.ares</groupId>
             <artifactId>transport-springboot-starter</artifactId>
         </dependency>
+        <!--config 配置中心的客户端依赖-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
-        <finalName>game</finalName>
+        <finalName>world</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
