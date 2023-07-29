@@ -12,7 +12,7 @@ import org.springframework.stereotype.Controller;
 public class CommController implements AresController {
     @CalledMsgId(ProtoCommon.ProtoCode.LOGIN_RESPONSE_VALUE)
     public void userLoginResponse(ProtoTask.LoginResponse response){
-        log.info("login response ={}", response);
+        log.info("------login response ={}", response);
 
     }
 }
