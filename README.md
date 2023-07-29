@@ -10,3 +10,8 @@
       game  : game  logic server
       world :  world map resource manage
       client : work as game client
+
+## build
+1. clone the code project
+2. cd  ares/   ; mvn clean ; mvn package
+3. java -jar game.jar  java -jar gateway.jar  java -jar world.jar
