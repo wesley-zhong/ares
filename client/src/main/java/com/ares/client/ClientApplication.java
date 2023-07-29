@@ -8,8 +8,11 @@ import java.util.concurrent.CountDownLatch;
 @SpringBootApplication
 public class ClientApplication {
     public static void main(String[] args) throws InterruptedException {
-        CountDownLatch  countDownLatch = new CountDownLatch(1);
+      // CountDownLatch  countDownLatch = new CountDownLatch(1);
        SpringApplication.run(ClientApplication.class, args);
-       countDownLatch.await();
+
+
+
+       //countDownLatch.await();
     }
 }

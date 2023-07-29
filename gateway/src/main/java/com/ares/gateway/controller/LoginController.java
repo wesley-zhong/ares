@@ -7,14 +7,17 @@ import com.ares.core.utils.AresContextThreadLocal;
 
 import com.game.protoGen.ProtoCommon;
 import com.game.protoGen.ProtoTask;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class LoginController implements AresController {
 
     @CalledMsgId(ProtoCommon.ProtoCode.LOGIN_REQUEST_VALUE)
     public void loginRequest(ProtoTask.LoginRequest loginRequest){
         AresTKcpContext aresTKcpContext = AresContextThreadLocal.get();
+        log.info("-------receive  msg ={}", loginRequest);
 
 
     }

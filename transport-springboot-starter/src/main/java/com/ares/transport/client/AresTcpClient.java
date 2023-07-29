@@ -12,7 +12,13 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.IdleStateHandler;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
+import lombok.extern.slf4j.Slf4j;
 
+import java.util.concurrent.CountDownLatch;
+
+@Slf4j
 public class AresTcpClient {
     private Bootstrap bs;
 
@@ -41,7 +47,19 @@ public class AresTcpClient {
     }
 
     public  Channel connect(String ip, int port){
+        CountDownLatch countDownLatch = new CountDownLatch(1);
         ChannelFuture connect = bs.connect(ip, port);
+        connect.addListener(new GenericFutureListener<Future<? super Void>>() {
+            @Override
+            public void operationComplete(Future<? super Void> future) throws Exception {
+                countDownLatch.countDown();
+            }
+        });
+        try {
+            countDownLatch.await();
+        }catch (Exception e){
+          log.error("---error",e);
+        }
         return connect.channel();
     }
 }
