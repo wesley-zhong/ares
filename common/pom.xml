@@ -7,10 +7,10 @@
         <version>2023.7.8</version>
     </parent>
 
-    <artifactId>client</artifactId>
+    <artifactId>common</artifactId>
     <packaging>jar</packaging>
 
-    <name>client</name>
+    <name>common</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -21,17 +21,13 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <version>3.8.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.ares</groupId>
-            <artifactId>transport-springboot-starter</artifactId>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.ares</groupId>
-            <artifactId>common</artifactId>
-        </dependency>
-
     </dependencies>
 
     <build>
@@ -73,13 +69,6 @@
                     <source>17</source>
                     <target>17</target>
                     <encoding>utf8</encoding>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>com.ares.client.ClientApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>
