@@ -5,4 +5,12 @@ spring:
   main:
     web-application-type: none
     allow-bean-definition-overriding: true
+    allow-circular-references: true
+
+game-server:
+  servers:
+    - id: 100
+      ip: 127.0.0.1
+      port: 8081
+
 

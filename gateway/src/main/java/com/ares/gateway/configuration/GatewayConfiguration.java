@@ -16,5 +16,4 @@ public class GatewayConfiguration {
         aresTcpClient.init(aresTcpHandler);
         return aresTcpClient;
     }
-
 }

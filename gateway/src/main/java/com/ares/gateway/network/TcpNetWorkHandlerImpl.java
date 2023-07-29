@@ -3,14 +3,21 @@ package com.ares.gateway.network;
 import com.ares.core.bean.AresPacket;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.tcp.TcpNetWorkHandler;
+import com.ares.gateway.client.TcpClient;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * Note: TcpNetWorkHandlerImpl  worked on IO thread
+ */
 
 @Component
 @Slf4j
 public class TcpNetWorkHandlerImpl implements TcpNetWorkHandler {
+    @Autowired
+    private TcpClient aresTcpClient;
     @Override
     public void handleMsgRcv(AresPacket aresPacket) {
 
