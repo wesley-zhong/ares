@@ -6,7 +6,7 @@
     <property name="FILE_NAME" value="world"/>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <Pattern>%date [%thread] %-5level %logger{36} - %msg%n</Pattern>
+            <Pattern>%yellow(%date{yyyy-MM-dd HH:mm:ss SSS}) |%highlight(%-5level) |%blue(%thread) |%blue(%file:%line)|%msg%n</Pattern>
         </encoder>
     </appender>
     <!--<appender name="AsynFILE" class="net.logstash.logback.appender.LoggingEventAsyncDisruptorAppender">-->
@@ -37,7 +37,7 @@
 
     <root level="INFO">
         <appender-ref ref="FILE"/>
-        <!--<appender-ref ref="STDOUT"/>-->
+        <appender-ref ref="STDOUT"/>
     </root>
 
 </configuration>

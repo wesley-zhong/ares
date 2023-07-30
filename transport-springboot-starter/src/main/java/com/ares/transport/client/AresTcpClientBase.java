@@ -34,7 +34,7 @@ public abstract class AresTcpClientBase implements AresTcpClient {
                 try {
                     while (true) {
                         connectCheck();
-                        Thread.sleep(3000);
+                        Thread.sleep(5000);
                     }
                 } catch (Exception e) {
                     log.error("-----conn error", e);
@@ -50,16 +50,19 @@ public abstract class AresTcpClientBase implements AresTcpClient {
                 tcpConnServerInfo = new TcpConnServerInfo();
                 tcpConnServerInfo.setServerInfo(serverInfo);
                 Channel channel = connect(serverInfo);
+                if(channel == null){
+                    continue;
+                }
                 tcpConnServerInfo.setChannel(channel);
                 tcpConnServerInfoMap.put(serverInfo.getId(), tcpConnServerInfo);
-                log.info("----reday to connect ={}", serverInfo);
+                log.info("----connect ={} finish", serverInfo);
                 continue;
             }
             if (tcpConnServerInfo.getChannel().isActive()) {
                 continue;
             }
             Channel channel = connect(serverInfo);
-            log.info("----reday to connect ={}", serverInfo);
+            log.info("----connect1 ={}  finished", serverInfo);
             tcpConnServerInfo.setChannel(channel);
             tcpConnServerInfoMap.put(serverInfo.getId(), tcpConnServerInfo);
         }

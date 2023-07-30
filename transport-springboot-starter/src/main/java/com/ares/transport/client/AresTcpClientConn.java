@@ -22,7 +22,7 @@ import java.util.concurrent.CountDownLatch;
 public class AresTcpClientConn {
     private Bootstrap bs;
 
-    public void  init(AresTcpHandler aresTcpHandler) {
+    public void init(AresTcpHandler aresTcpHandler) {
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         bs = new Bootstrap();
         bs.group(bossGroup)
@@ -46,20 +46,13 @@ public class AresTcpClientConn {
                 });
     }
 
-    public  Channel connect(String ip, int port){
-        CountDownLatch countDownLatch = new CountDownLatch(1);
-        ChannelFuture connect = bs.connect(ip, port);
-        connect.addListener(new GenericFutureListener<Future<? super Void>>() {
-            @Override
-            public void operationComplete(Future<? super Void> future) throws Exception {
-                countDownLatch.countDown();
-            }
-        });
+    public Channel connect(String ip, int port) {
         try {
-            countDownLatch.await();
-        }catch (Exception e){
-          log.error("---error",e);
+            ChannelFuture connect = bs.connect(ip, port).sync();
+            return connect.channel();
+        } catch (Exception e) {
+            log.error("---conn error msg={}", e.getMessage());
         }
-        return connect.channel();
+        return  null;
     }
 }
