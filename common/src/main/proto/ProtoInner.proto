@@ -9,13 +9,21 @@ enum  InnerProtoCode{
   INNER_HEART_BEAT_REQ = -2;
   INNER_HEART_BEAT_RES = -3;
 
-  INNER_LOGIN_REQ = -4;
-  INNER_LOGIN_RES = -5;
+  INNER_TO_GAME_LOGIN_REQ = -4;
+  INNER_TO_GAME_LOGIN_RES = -5;
 
-  INNER_PLAYER_DISCONNECT_REQ = -6;
-  INNER_PLAYER_DISCONNECT_RES = -7;
+  INNER_TO_WORLD_LOGIN_REQ = -6;
+  INNER_TO_WORLD_LOGIN_RES = -7;
+
+  INNER_PLAYER_DISCONNECT_REQ = -8;
+  INNER_PLAYER_DISCONNECT_RES = -9;
 }
 
+message InnerReqHeader{
+  int64 sid = 1;
+  int64 roleId = 2;
+  int64 toServerId = 3;//proxy to server
+}
 
 
 message  InnerHeartBeatRequest{
@@ -26,14 +34,22 @@ message  InnerHeartBeatResponse{
 
 }
 
-message InnerLoginRequest {
+message InnerGameLoginRequest {
   int64 sid = 1; //sessionId
   int64 roleId = 2;
 }
 
-message InnerLoginResponse {
+message InnerGameLoginResponse {
   int64 sid = 1; //sessionId
   int64 roleId = 2;
+}
+
+message InnerWorldLoginRequest{
+
+}
+
+message InnerWorldLoginResponse{
+
 }
 
 message  InnerPlayerDisconnectRequest{

@@ -43,10 +43,8 @@ public class ServerPacketHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object in) {
         ByteBuf body = (ByteBuf) in;
-        int  msgId = body.readUnsignedShort() ;//body.getUnsignedShort(MSG_ID_OFFSET);
-        AresTcpContextEx aresTcpContextEx;
-
-        aresTcpContextEx = AresPacketUtils.parseAresPacket(ctx, body, msgId);
+        int msgId = body.readUnsignedShort();
+        AresTcpContextEx aresTcpContextEx = AresPacketUtils.parseAresPacket(ctx, body, msgId);
         processAresPacket(aresTcpContextEx, ctx);
     }
 
@@ -62,7 +60,6 @@ public class ServerPacketHandler extends ChannelInboundHandlerAdapter {
             sendPing(ctx);
             return;
         }
-        AresContextThreadLocal.cache(aresMsgEx);
         serverRpcProcessThreadPool.execute(aresMsgEx);
     }
 

@@ -3,6 +3,7 @@ package com.ares.transport.thread;
 
 import com.ares.core.bean.AresPacket;
 import com.ares.core.tcp.AresTcpHandler;
+import com.ares.core.utils.AresContextThreadLocal;
 import com.ares.transport.context.AresTcpContextEx;
 import com.lmax.disruptor.EventHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -46,6 +47,7 @@ public class AresEventHandler implements EventHandler<AresPacketEvent> {
             log.error("XXXXXXXX channel ={} is not validate ", context.channel().remoteAddress());
             return;
         }
+        AresContextThreadLocal.cache(aresPacketEx);
         aresTpcHandler.handleMsgRcv(aresPacket);
     }
 

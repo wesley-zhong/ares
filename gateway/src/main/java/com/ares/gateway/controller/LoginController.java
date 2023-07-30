@@ -7,6 +7,7 @@ import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.utils.AresContextThreadLocal;
 
 import com.game.protoGen.ProtoCommon;
+import com.game.protoGen.ProtoInner;
 import com.game.protoGen.ProtoTask;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,11 @@ public class LoginController implements AresController {
                 .setRoleId(123)
                 .setServerTime(System.currentTimeMillis());
         aresTKcpContext.send(AresPacket.create(ProtoCommon.ProtoCode.LOGIN_RESPONSE_VALUE, response.build()));
+
+    }
+
+    @CalledMsgId(ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_REQ_VALUE)
+    public void onGameLoginRes(){
 
     }
 
