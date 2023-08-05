@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class GameController implements AresController {
     @CalledMsgId(ProtoCommon.ProtoCode.LOGIN_REQUEST_VALUE)
-    public void loginRequest(ProtoInner.InnerLoginRequest innerLoginRequest) {
+    public void loginRequest(ProtoInner.InnerGameLoginRequest innerLoginRequest) {
 
     }
 }
