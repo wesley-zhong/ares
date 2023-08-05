@@ -1,4 +1,4 @@
-# ares  is a high performance ,light game server framework based on tcp net protocol, use Netty as network.It can be used not only for game servers but others any logic server based tcp net protocol.
+ ares  is a high performance ,light game server framework based on tcp net protocol, use Netty as network.It can be used not only for game servers but others any logic server based tcp net protocol.
 
 ## include 3 modules
       Common : protocol files and other game configs resoures, 
@@ -12,6 +12,6 @@
       client : work as game client
 
 ## build
-1. clone the code project
-2. cd  ares/   ; mvn clean ; mvn package
-3. java -jar game.jar  java -jar gateway.jar  java -jar world.jar
+    1. clone the code project
+    2. cd  ares/   ; mvn clean ; mvn package
+    3. java -jar game.jar  java -jar gateway.jar  java -jar world.jar
