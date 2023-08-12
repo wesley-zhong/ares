@@ -2,7 +2,6 @@
 <configuration>
     <property name="LOG_TEMP" value="./logs/temp"/>
     <property name="LOG_HOME" value="./logs"/>
-    <include resource="org/springframework/boot/logging/logback/base.xml"/>
     <property name="FILE_NAME" value="gateway"/>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -29,15 +28,15 @@
         <!--</encoder>-->
 
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
             <charset>UTF-8</charset>
         </encoder>
     </appender>
     <!--</appender>-->
 
     <root level="INFO">
-        <appender-ref ref="FILE"/>
         <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
     </root>
 
 </configuration>

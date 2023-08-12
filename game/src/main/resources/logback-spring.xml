@@ -2,7 +2,6 @@
 <configuration>
     <property name="LOG_TEMP" value="./logs/temp"/>
     <property name="LOG_HOME" value="./logs"/>
-    <include resource="org/springframework/boot/logging/logback/base.xml"/>
     <property name="FILE_NAME" value="game"/>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>

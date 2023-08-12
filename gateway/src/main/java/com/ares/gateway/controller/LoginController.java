@@ -30,7 +30,7 @@ public class LoginController implements AresController {
     }
 
     @CalledMsgId(ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_REQ_VALUE)
-    public void onGameLoginRes(){
+    public void onGameLoginRes(ProtoTask.LoginResponse  loginResponse){
 
     }
 
