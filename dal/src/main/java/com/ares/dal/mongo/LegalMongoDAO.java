@@ -21,7 +21,7 @@ public class LegalMongoDAO<T> implements InitializingBean {
     private MongoDatabase database;
     protected MongoCollection<T> collection;
 
-    private static ReplaceOptions UPINSERT_OPTIONS = new ReplaceOptions().upsert(true);
+    private final static ReplaceOptions UPINSERT_OPTIONS = new ReplaceOptions().upsert(true);
 
     public LegalMongoDAO(Class<T> doClass) {
         this.doClass = doClass;

@@ -46,5 +46,6 @@ public class ServiceMgr implements IMsgCall, InitializingBean {
     public AresRpcMethod getCalledMethod(int msgId) {
         return serviceMethods.get(msgId);
     }
+
     private final Map<Integer, AresRpcMethod> serviceMethods = new HashMap<>();
 }

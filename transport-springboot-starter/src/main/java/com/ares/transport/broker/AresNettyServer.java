@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +52,7 @@ public class AresNettyServer implements InitializingBean {
     @Value(("${tcp.server.heartBeat.time:22000}"))
     private long tcpServerHeartBeatTime;
     @Value("${first.total.ignore.read.idle.count:0}")
-    private int firstTotalIgnoreReadIdlelCount;
+    private int firstTotalIgnoreReadIdleCount;
 
     private EventLoopGroup bossGroup;// = new NioEventLoopGroup(1);
     private EventLoopGroup workerGroup;// = new NioEventLoopGroup();
@@ -85,7 +84,7 @@ public class AresNettyServer implements InitializingBean {
                                 .addLast(new ChannelTrafficShapingHandler(0, packetLimit))
                                 .addLast(new AresBasedFrameDecoder())
                                 .addLast(new AresPacketMsgEncoder())
-                                .addLast(new ServerPacketHandler(aresRpcHandler, processThreadPoolGroup, firstTotalIgnoreReadIdlelCount));
+                                .addLast(new ServerPacketHandler(aresRpcHandler, processThreadPoolGroup, firstTotalIgnoreReadIdleCount));
                     }
 
                     @Override
