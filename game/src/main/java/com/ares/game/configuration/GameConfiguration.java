@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 @Configuration
 @ComponentScan("com.ares")
@@ -19,7 +20,8 @@ public class GameConfiguration {
         return aresTcpClientConn;
     }
     @Bean
-    public AresTcpClient  aresTcpClient(@Autowired WorldServerInfoList serverInfoList, @Autowired AresTcpClientConn conn){
+    @Lazy
+    public AresTcpClient  aresTcpClient(@Autowired WorldServerInfoList serverInfoList, @Autowired @Lazy AresTcpClientConn conn){
         AresTcpClient aresTcpClient = new AresTcpClientImpl(serverInfoList.getServers(), conn);
         aresTcpClient.init();
         return aresTcpClient;
