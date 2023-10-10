@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ClientMsgHandler extends ChannelInboundHandlerAdapter {
-
     private final AresTcpHandler aresTcpHandler;
 
     public ClientMsgHandler(AresTcpHandler aresTcpHandler) {

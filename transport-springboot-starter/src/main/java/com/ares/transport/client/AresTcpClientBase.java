@@ -64,6 +64,7 @@ public abstract class AresTcpClientBase implements AresTcpClient {
             Channel channel = connect(serverInfo);
             log.info("----connect1 ={}  finished", serverInfo);
             tcpConnServerInfo.setChannel(channel);
+            //this should send handshake msg then the server will build the channel info
             tcpConnServerInfoMap.put(serverInfo.getId(), tcpConnServerInfo);
         }
     }
