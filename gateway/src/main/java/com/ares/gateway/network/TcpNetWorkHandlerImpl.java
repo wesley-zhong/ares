@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class TcpNetWorkHandlerImpl implements TcpNetWorkHandler {
     @Autowired
-    @Lazy
     private AresTcpClient aresTcpClient;
     @Override
     public void handleMsgRcv(AresPacket aresPacket) {
