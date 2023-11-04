@@ -18,5 +18,4 @@ ADD ./target/${MS_NAME}*.jar .
 VOLUME ["/opt/data/${MS_NAME}/logs"]
 
 #配置容器启动后执行的命令
-ENTRYPOINT java ${JAVA_OPTS} -Duser.timezone=GMT+8 -Dlog4j2.formatMsgNoLookups=true -XX:MetaspaceSize=256m   -XX:MaxMetaspaceSize=256m -XX:+DisableExplicitGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled  -XX:+UseFastAccessorMethods -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=70 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=dump/${MS_NAME}.dump -jar  ${MS_NAME}*.jar
-
+ENTRYPOINT java ${JAVA_OPTS} -Duser.timezone=GMT+8 -Dlog4j2.formatMsgNoLookups=true -XX:MetaspaceSize=1286m   -XX:MaxMetaspaceSize=128m  -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=dump/${MS_NAME}.dump -jar  ${MS_NAME}*.jar
