@@ -2,7 +2,6 @@ package com.ares.core.bean;
 
 import com.google.protobuf.Message;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.PooledByteBufAllocator;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +17,10 @@ public class AresPacket {
     private int msgId; //unsigned short
     @Getter
     @Setter
-    private Message senderObj;
+    private Message sendBody;
+    @Getter
+    @Setter
+    private Message sendHeader;
     @Getter
     @Setter
     private ByteBuf recvByteBuf;
@@ -26,15 +28,20 @@ public class AresPacket {
     @Setter
     private long checkSum;
 
-    private byte[] sendBody;
-
 
     public static AresPacket create(int msgId, Message body) {
         // AresPacket aresPacket = RECYCLER.get();
         // log.info("create object msg ={}", msgId);
         AresPacket aresPacket = new AresPacket();
         aresPacket.msgId  = msgId;
-        aresPacket.senderObj = body;
+        aresPacket.sendBody = body;
+        return aresPacket;
+    }
+    public static AresPacket create(int msgId, Message header, Message body){
+        AresPacket aresPacket = new AresPacket();
+        aresPacket.msgId  = msgId;
+        aresPacket.sendBody = body;
+        aresPacket.sendHeader = header;
         return aresPacket;
     }
 
@@ -51,10 +58,17 @@ public class AresPacket {
      * @return
      */
     public byte[] bodyEncode() {
-        if (senderObj == null) {
+        if (sendBody == null) {
             return null;
         }
-       return senderObj.toByteArray();
+       return sendBody.toByteArray();
+    }
+
+    public byte[] headerEncode(){
+        if(sendHeader == null){
+            return  null;
+        }
+        return  sendHeader.toByteArray();
     }
 
     private void clear() {
