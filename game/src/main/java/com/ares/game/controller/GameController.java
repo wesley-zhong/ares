@@ -17,6 +17,5 @@ public class GameController implements AresController {
     @CalledMsgId(ProtoCommon.ProtoCode.LOGIN_REQUEST_VALUE)
     public void loginRequest(ProtoInner.InnerGameLoginRequest innerLoginRequest) {
         log.info("======== gameLoginRequest  ={}", innerLoginRequest);
-
     }
 }
