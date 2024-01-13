@@ -1,6 +1,4 @@
 package com.ares.core.json.transcoder;
-
-;
 import com.ares.core.utils.JsonUtil;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -24,7 +22,6 @@ public class JsonObjectMapper {
     public static final ObjectMapper objectMapper = JsonObjectMapper.createInstance();
 
     private static ObjectMapper createInstance() {
-
         return new ObjectMapper().
                 configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).
                 configure(DeserializationFeature.WRAP_EXCEPTIONS, true).
