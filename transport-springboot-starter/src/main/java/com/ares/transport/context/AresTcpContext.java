@@ -101,8 +101,7 @@ public class AresTcpContext implements AresTKcpContext {
         if (this == target) {
             return true;
         }
-        if (target instanceof AresTKcpContext) {
-            AresTKcpContext ptarget = (AresTKcpContext) target;
+        if (target instanceof AresTKcpContext ptarget) {
             if (ptarget.hashCode() != this.hashCode()) {
                 return false;
             }
