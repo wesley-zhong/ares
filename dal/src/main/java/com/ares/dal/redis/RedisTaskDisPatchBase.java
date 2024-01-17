@@ -93,7 +93,7 @@ public abstract class RedisTaskDisPatchBase<T> {
         String keys[] = new String[1];
         keys[0] = taskWaitName;
 
-        String values[] = new String[5];
+        String[] values = new String[5];
         values[0] = "0";
         values[1] = String.valueOf(nowTime);
         values[2] = "0";

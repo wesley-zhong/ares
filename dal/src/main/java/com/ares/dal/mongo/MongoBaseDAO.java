@@ -30,14 +30,12 @@ import static com.mongodb.client.model.Updates.set;
 public class MongoBaseDAO<T extends BaseDO> implements InitializingBean {
     private final static String _ID = "_id";
     private final static String _VER = "ver";
-    private Class<T> doClass;
-    private String dbName;
+    private final Class<T> doClass;
     @Autowired
     private AresMonogClient aresMonogClient;
-    private MongoDatabase database;
     protected MongoCollection<T> collection;
 
-    private static ReplaceOptions UPINSERT_OPTIONS = new ReplaceOptions().upsert(true);
+    private  final static ReplaceOptions UPINSERT_OPTIONS = new ReplaceOptions().upsert(true);
 
     public MongoBaseDAO(Class<T> doClass) {
         this.doClass = doClass;
@@ -51,8 +49,7 @@ public class MongoBaseDAO<T extends BaseDO> implements InitializingBean {
 
     public boolean upInsert(T obj) {
         try {
-            if (obj instanceof CASDO) {
-                CASDO casObj = (CASDO) obj;
+            if (obj instanceof CASDO casObj) {
                 long verEQ = casObj.getVer();
                 casObj.setVer(casObj.getVer() + 1);
                 UpdateResult updateResult = collection.replaceOne(and(eq(_ID, obj.getId()), eq(_VER, verEQ)), obj, UPINSERT_OPTIONS);
@@ -117,8 +114,7 @@ public class MongoBaseDAO<T extends BaseDO> implements InitializingBean {
         else{
             id = obj.getId();
         }
-        if (obj instanceof CASDO) {
-            CASDO casObj = (CASDO) obj;
+        if (obj instanceof CASDO casObj) {
             long verEQ = casObj.getVer();
             casObj.setVer(casObj.getVer() + 1);
             UpdateResult updateResult = collection.replaceOne(and(eq(_ID, id), eq(_VER, verEQ)), obj);
@@ -134,14 +130,13 @@ public class MongoBaseDAO<T extends BaseDO> implements InitializingBean {
 
     public long delete(T obj) {
         Serializable id = null;
-        if(obj instanceof IGenericsID){
-            id = ((IGenericsID)obj).getGenericsId();
+        if(obj instanceof IGenericsID iGenericsID){
+            id = iGenericsID.getGenericsId();
         }
         else{
             id = obj.getId();
         }
-        if (obj instanceof CASDO) {
-            CASDO casObj = (CASDO) obj;
+        if (obj instanceof CASDO casObj) {
             long verEQ = casObj.getVer();
             DeleteResult deleteResult = collection.deleteOne(and(eq(_ID, id), eq(_VER, verEQ)));
             return deleteResult.getDeletedCount();
@@ -169,13 +164,14 @@ public class MongoBaseDAO<T extends BaseDO> implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         MdbName mdbName = this.doClass.getAnnotation(MdbName.class);
+        String dbName;
         if (mdbName == null) {
             String tmpdbName = this.doClass.getSimpleName();
             dbName = tmpdbName.substring(0, tmpdbName.length() - 2);
         } else {
             dbName = mdbName.value();
         }
-        database = aresMonogClient.getMongoClient().getDatabase(dbName);
+        MongoDatabase database = aresMonogClient.getMongoClient().getDatabase(dbName);
         CollectionName collectionName = this.doClass.getAnnotation(CollectionName.class);
         String tableName;
         if (collectionName == null) {

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@Repository
+//@Repository
 public class RedisClusterDAO implements IRedisDAO {
     @Autowired
     private JedisClusterFactory redisCluster;
@@ -119,10 +119,6 @@ public class RedisClusterDAO implements IRedisDAO {
         return redisCluster.hexists(htable, key);
     }
 
-//    @Override
-//    public <T> Map<String, T> hgetAll(final String htable, Class<T> type) {
-//        return redisCluster.hgetAll(htable, type);
-//    }
 
     @Override
     public <K, T> Map<K, T> hgetAll(final String htable, Class<K> kType, Class<T> type) {
