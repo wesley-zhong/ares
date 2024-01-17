@@ -1,6 +1,4 @@
-package com.ares.dal.mysql;
-
-import java.io.Serializable;
+package com.ares.dal.DO;
 
 public class CASDO extends BaseDO {
     private long ver;

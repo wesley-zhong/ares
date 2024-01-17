@@ -1,4 +1,4 @@
-package com.ares.dal.mysql;
+package com.ares.dal.DO;
 
 import java.io.Serializable;
 /**

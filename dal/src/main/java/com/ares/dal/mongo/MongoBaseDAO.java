@@ -2,9 +2,9 @@ package com.ares.dal.mongo;
 
 import com.ares.dal.mongo.annotation.CollectionName;
 import com.ares.dal.mongo.annotation.MdbName;
-import com.ares.dal.mysql.BaseDO;
-import com.ares.dal.mysql.CASDO;
-import com.ares.dal.mysql.IGenericsID;
+import com.ares.dal.DO.BaseDO;
+import com.ares.dal.DO.CASDO;
+import com.ares.dal.DO.IGenericsID;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;

@@ -1,6 +1,4 @@
-package com.ares.dal.mysql;
-
-import java.io.Serializable;
+package com.ares.dal.DO;
 
 /**
  * note: if we use common dao to save DO we should use  DO extends BaseDO
@@ -30,21 +28,9 @@ public class BaseDO {
         if (this == target) {
             return true;
         }
-        if (target instanceof BaseDO) {
-            BaseDO baseDO = (BaseDO) target;
+        if (target instanceof BaseDO baseDO) {
             return this.getId() == baseDO.getId();
         }
         return false;
     }
-
-    /**
-     * note: this is the default table sharding method use  'id'
-     * if your sharding table no use override this method  return null;
-     * otherwise  you shoud in your own DO object rewrite this method
-     *
-     */
-//	@JsonIgnore
-//	public String getTableName(){
-//		 return DoSqlUtil.getTableName(this.getClass(), id);
-//	}
 }
