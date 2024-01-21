@@ -1,13 +1,15 @@
 package com.ares.transport.client;
 
-import com.ares.common.bean.ServerInfo;
+import com.ares.transport.bean.ServerNodeInfo;
 import com.ares.core.bean.AresPacket;
 import com.ares.transport.bean.TcpConnServerInfo;
 import com.ares.core.thread.AresThreadFactory;
 import com.google.protobuf.Message;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.CollectionUtils;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,11 +20,11 @@ import java.util.concurrent.ThreadFactory;
 @Slf4j
 public abstract class AresTcpClientBase implements AresTcpClient {
     private final ThreadFactory threadFactory = new AresThreadFactory("a-c-t");
-    private final List<ServerInfo> serverInfos = new CopyOnWriteArrayList<>();
-    protected final Map<Integer, TcpConnServerInfo> tcpConnServerInfoMap = new ConcurrentHashMap<>();
+    protected final List<ServerNodeInfo> serverNodeInfos = new CopyOnWriteArrayList<>();
+    protected final Map<Integer, Map<String,List<TcpConnServerInfo>>> tcpConnServerInfoMap = new ConcurrentHashMap<>();
 
-    public AresTcpClientBase(List<ServerInfo> serverInfos) {
-        this.serverInfos.addAll(serverInfos);
+    public AresTcpClientBase(List<ServerNodeInfo> serverNodeInfos) {
+        this.serverNodeInfos.addAll(serverNodeInfos);
     }
 
     @Override
@@ -44,38 +46,48 @@ public abstract class AresTcpClientBase implements AresTcpClient {
     }
 
     private void connectCheck() {
-        for (ServerInfo serverInfo : serverInfos) {
-            TcpConnServerInfo tcpConnServerInfo = tcpConnServerInfoMap.get(serverInfo.getId());
-            if (tcpConnServerInfo == null) {
-                tcpConnServerInfo = new TcpConnServerInfo();
-                tcpConnServerInfo.setServerInfo(serverInfo);
-                Channel channel = connect(serverInfo);
-                if(channel == null){
-                    continue;
+        for (ServerNodeInfo serverNodeInfo : serverNodeInfos) {
+            Map<String,List<TcpConnServerInfo>> tcpConnServerMap = tcpConnServerInfoMap.get(serverNodeInfo.getAreaId());
+            if(CollectionUtils.isEmpty(tcpConnServerMap)){
+                connect(serverNodeInfo);
+                continue;
+            }
+
+            List<TcpConnServerInfo> tcpConnServerInfos = tcpConnServerMap.get(serverNodeInfo.getServiceName());
+            if(CollectionUtils.isEmpty(tcpConnServerInfos)){
+                connect(serverNodeInfo);
+            }
+
+            boolean bfound = false;
+            for(TcpConnServerInfo tcpConnServerInfo : tcpConnServerInfos){
+                if(tcpConnServerInfo.getServerNodeInfo().getServiceId().equals(serverNodeInfo.getServiceId())){
+                    if(tcpConnServerInfo.getChannel() != null && tcpConnServerInfo.getChannel().isActive()){
+                        continue;
+                    }
+                    connect(serverNodeInfo);
+                    bfound = true;
                 }
-                tcpConnServerInfo.setChannel(channel);
-                tcpConnServerInfoMap.put(serverInfo.getId(), tcpConnServerInfo);
-                log.info("----connect ={} finish", serverInfo);
-                continue;
             }
-            if (tcpConnServerInfo.getChannel().isActive()) {
-                continue;
+
+            if(!bfound){
+                connect(serverNodeInfo);
             }
-            Channel channel = connect(serverInfo);
-            log.info("----connect1 ={}  finished", serverInfo);
-            tcpConnServerInfo.setChannel(channel);
-            //this should send handshake msg then the server will build the channel info
-            tcpConnServerInfoMap.put(serverInfo.getId(), tcpConnServerInfo);
         }
     }
 
 
-    public void addServerInfo(ServerInfo serverInfo) {
-        serverInfos.add(serverInfo);
+
+
+    public void addServerInfo(ServerNodeInfo serverNodeInfo) {
+        serverNodeInfos.add(serverNodeInfo);
     }
 
-    public void delServerInfo(ServerInfo serverInfo) {
-        serverInfos.remove(serverInfo);
+    public void delServerInfo(ServerNodeInfo serverNodeInfo) {
+        serverNodeInfos.remove(serverNodeInfo);
+    }
+
+   public  void send(TcpConnServerInfo serverInfo, int msgId, Message body){
+        send(serverInfo.getChannel(), msgId, body);
     }
 
 
@@ -94,7 +106,5 @@ public abstract class AresTcpClientBase implements AresTcpClient {
         }
         channel.flush();
     }
-
-    protected abstract Channel connect(ServerInfo serverInfo);
 
 }

@@ -2,6 +2,7 @@ package com.ares.gateway.service;
 
 import com.ares.core.bean.AresPacket;
 import com.ares.core.tcp.AresTKcpContext;
+import com.ares.gateway.network.GameServerClientTransfer;
 import com.ares.transport.client.AresTcpClient;
 import com.game.protoGen.ProtoCommon;
 import com.game.protoGen.ProtoInner;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Component;
 public class SessionServiceImp implements  SessionService {
     @Autowired
     private AresTcpClient aresTcpClient;
+    @Autowired
+    private GameServerClientTransfer gameServerClientTransfer;
     public void loginRequest(AresTKcpContext aresTKcpContext ,ProtoTask.LoginRequest loginRequest){
         log.info("==============loginRequest");
         /****
@@ -25,7 +28,7 @@ public class SessionServiceImp implements  SessionService {
                 .setRoleId(loginRequest.getRoleId())
                 .setSid(1000).build();
 
-        aresTcpClient.send(ProtoCommon.ProtoCode.LOGIN_REQUEST_VALUE, 100,innerLoginRequest);
+     //   aresTcpClient.send(ProtoCommon.ProtoCode.LOGIN_REQUEST_VALUE, 100,innerLoginRequest);
 
         ProtoTask.LoginResponse.Builder response = ProtoTask.LoginResponse.newBuilder()
                 .setErrorCode(0)

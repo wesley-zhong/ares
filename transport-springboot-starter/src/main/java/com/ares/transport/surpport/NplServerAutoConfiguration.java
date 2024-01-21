@@ -16,6 +16,9 @@ import org.springframework.context.annotation.Scope;
 @Configuration
 @ConditionalOnClass(ConfigServiceBootstrapConfiguration.class)
 public class NplServerAutoConfiguration {
+    public NplServerAutoConfiguration(){
+        System.out.println("VVVVVVVVVVVVVVVVV");
+    }
 
     @Bean
     @ConditionalOnMissingBean

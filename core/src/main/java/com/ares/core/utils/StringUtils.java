@@ -8,7 +8,7 @@ import com.google.common.base.CaseFormat;
 public class StringUtils {
 
 	public static boolean isNullOrWhitespace( String string ) {
-		return string == null|| string.length() ==0  || string.trim().length() == 0;
+		return string == null|| string.isEmpty()  || string.trim().isEmpty();
 	}
 
 

@@ -22,4 +22,13 @@ public class JsonUtil {
         return JsonObjectMapper.getInstance().constructType(type);
     }
 
+    public static String toJsonString(Object object){
+        try {
+            return JsonObjectMapper.getInstance().writeValueAsString(object);
+        }catch (Exception e){
+
+        }
+        return null;
+    }
+
 }

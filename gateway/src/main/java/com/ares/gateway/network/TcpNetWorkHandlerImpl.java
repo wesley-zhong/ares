@@ -4,6 +4,8 @@ import com.ares.core.bean.AresPacket;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.tcp.TcpNetWorkHandler;
 import com.ares.transport.client.AresTcpClient;
+import com.game.protoGen.ProtoCommon;
+import com.game.protoGen.ProtoInner;
 import com.game.protoGen.ProtoTask;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +21,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class TcpNetWorkHandlerImpl implements TcpNetWorkHandler {
     @Autowired
-    private AresTcpClient aresTcpClient;
+    private GameServerClientTransfer  gameServerClientTransfer;
     @Override
     public void handleMsgRcv(AresPacket aresPacket) {
 
@@ -33,7 +35,8 @@ public class TcpNetWorkHandlerImpl implements TcpNetWorkHandler {
     @Override
     public void onClientConnected(AresTKcpContext aresTKcpContext) {
      log.info("---onClientConnected ={} ", aresTKcpContext);
-     aresTcpClient.send(100,35, ProtoTask.LoginResponse.newBuilder().build());
+          gameServerClientTransfer.sendMsg(100, ProtoCommon.ProtoCode.LOGIN_REQUEST_VALUE,  ProtoInner.InnerGameLoginRequest.newBuilder().setRoleId(1111).build());
+    // aresTcpClient.send(100,35, ProtoTask.LoginResponse.newBuilder().build());
     }
 
     @Override

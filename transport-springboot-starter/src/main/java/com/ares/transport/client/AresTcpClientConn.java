@@ -49,6 +49,7 @@ public class AresTcpClientConn {
     public Channel connect(String ip, int port) {
         try {
             ChannelFuture connect = bs.connect(ip, port).sync();
+            log.info("----- conn ip ={} port ={} success", ip, port);
             return connect.channel();
         } catch (Exception e) {
             log.error("---conn error msg={}", e.getMessage());

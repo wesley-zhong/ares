@@ -23,6 +23,7 @@
         <module>dal</module>
         <module>client</module>
         <module>common</module>
+        <module>discovery</module>
     </modules>
     <properties>
         <java.version>21</java.version>
@@ -58,10 +59,15 @@
                 <artifactId>transport-springboot-starter</artifactId>
                 <version>${ares.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.ares</groupId>
                 <artifactId>dal</artifactId>
+                <version>${ares.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.ares</groupId>
+                <artifactId>discovery</artifactId>
                 <version>${ares.version}</version>
             </dependency>
 
@@ -154,7 +160,11 @@
                 <artifactId>commons-codec</artifactId>
                 <version>1.16.0</version>
             </dependency>
-
+            <dependency>
+                <groupId>io.etcd</groupId>
+                <artifactId>jetcd-core</artifactId>
+                <version>0.7.7</version>
+            </dependency>
 
             <dependency>
                 <groupId>junit</groupId>

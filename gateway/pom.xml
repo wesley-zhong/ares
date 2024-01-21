@@ -16,6 +16,10 @@
             <groupId>com.ares</groupId>
             <artifactId>transport-springboot-starter</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.ares</groupId>
+            <artifactId>discovery</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>junit</groupId>

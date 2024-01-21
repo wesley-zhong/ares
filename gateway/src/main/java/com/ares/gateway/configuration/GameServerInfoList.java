@@ -1,6 +1,6 @@
 package com.ares.gateway.configuration;
 
-import com.ares.common.bean.ServerInfo;
+import com.ares.transport.bean.ServerNodeInfo;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -13,5 +13,5 @@ import java.util.List;
 @Getter
 @Setter
 public class GameServerInfoList {
-    private List<ServerInfo> servers;
+    private List<ServerNodeInfo> servers;
 }
