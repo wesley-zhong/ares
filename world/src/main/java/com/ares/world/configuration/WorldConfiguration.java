@@ -1,4 +1,4 @@
-package com.ares.game.configuration;
+package com.ares.world.configuration;
 
 import com.ares.core.tcp.AresTcpHandler;
 import com.ares.discovery.DiscoveryService;
@@ -20,7 +20,7 @@ import java.util.List;
 
 @Configuration
 @ComponentScan("com.ares")
-public class GameConfiguration {
+public class WorldConfiguration {
 
     @Value("${spring.application.name}")
     private String appName;
@@ -31,29 +31,29 @@ public class GameConfiguration {
     @Value("${area.id:100}")
     private int areaId;
 
-    private AresTcpClient aresTcpClient;
-    @Bean
-    public AresTcpClientConn aresTcpClientConn(@Autowired  AresTcpHandler  aresTcpHandler){
-        AresTcpClientConn aresTcpClientConn = new AresTcpClientConn();
-        aresTcpClientConn.init(aresTcpHandler);
-        return aresTcpClientConn;
-    }
+//    private AresTcpClient aresTcpClient;
+//    @Bean
+//    public AresTcpClientConn aresTcpClientConn(@Autowired  AresTcpHandler  aresTcpHandler){
+//        AresTcpClientConn aresTcpClientConn = new AresTcpClientConn();
+//        aresTcpClientConn.init(aresTcpHandler);
+//        return aresTcpClientConn;
+//    }
+////    @Bean
+////    @Lazy
+////    public AresTcpClient  aresTcpClient(@Autowired WorldServerInfoList serverInfoList, @Autowired @Lazy AresTcpClientConn conn){
+////        AresTcpClient aresTcpClient = new AresTcpClientImpl(serverInfoList.getServers(), conn);
+////        aresTcpClient.init();
+////        return aresTcpClient;
+////    }
+//
+//
 //    @Bean
 //    @Lazy
-//    public AresTcpClient  aresTcpClient(@Autowired WorldServerInfoList serverInfoList, @Autowired @Lazy AresTcpClientConn conn){
-//        AresTcpClient aresTcpClient = new AresTcpClientImpl(serverInfoList.getServers(), conn);
+//    public AresTcpClient aresTcpClient(@Autowired @Lazy AresTcpClientConn conn) {
+//        aresTcpClient = new AresTcpClientImpl(conn);
 //        aresTcpClient.init();
 //        return aresTcpClient;
 //    }
-
-
-    @Bean
-    @Lazy
-    public AresTcpClient aresTcpClient(@Autowired @Lazy AresTcpClientConn conn) {
-        aresTcpClient = new AresTcpClientImpl(conn);
-        aresTcpClient.init();
-        return aresTcpClient;
-    }
 
 
 
@@ -63,16 +63,18 @@ public class GameConfiguration {
         DiscoveryServiceImpl etcdService = new DiscoveryServiceImpl();
         DiscoveryEndPoints.WatchInfo[] watchServers = discoveryEndPoints.getWatchServers();
         List<String> watchPreFixes = new ArrayList<>();
-        for (DiscoveryEndPoints.WatchInfo watchInfo : watchServers) {
-            List<String>watchList = watchInfo.getWatchPrefix();
-            watchPreFixes.addAll(watchList);
+        if(watchServers != null) {
+            for (DiscoveryEndPoints.WatchInfo watchInfo : watchServers) {
+                List<String> watchList = watchInfo.getWatchPrefix();
+                watchPreFixes.addAll(watchList);
+            }
         }
         etcdService.init(discoveryEndPoints.getEndpoints(), appName, serverPort,areaId, watchPreFixes, this::onWatchServiceChange);
         return etcdService;
     }
 
     public Void onWatchServiceChange(WatchEvent.EventType eventType, ServerNodeInfo serverNodeInfo) {
-        aresTcpClient.connect(serverNodeInfo);
+     //   aresTcpClient.connect(serverNodeInfo);
         return null;
     }
 }

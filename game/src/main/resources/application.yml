@@ -1,4 +1,8 @@
+server:
+  port: 8080
 spring:
+  application:
+    name: game.V1
   cloud:
     config:
       enabled:  false
@@ -7,8 +11,6 @@ spring:
     allow-bean-definition-overriding: true
     allow-circular-references: true
 
-server:
-  port: 8080
 
 world-server:
   servers:
@@ -16,4 +18,12 @@ world-server:
       ip: 127.0.0.1
       port: 9081
 
-
+discovery:
+  endpoints:
+    - http://localhost:2379
+    - http://localhost:2379
+  watch-servers:
+    - service-name-prefix: world.V1
+      areas:
+        - area-id: 100
+          connect: true

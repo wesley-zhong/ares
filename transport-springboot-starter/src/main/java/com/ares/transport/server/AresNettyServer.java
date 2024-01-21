@@ -35,7 +35,7 @@ public class AresNettyServer implements InitializingBean {
     @Value("${server.port:8080}")
     private int port;
 
-    @Value("${tcp.offset:1}")
+    @Value("${tcp.offset:0}")
     private int tcpOffset;
 
     @Value("${packet.limit:524288}")//512K

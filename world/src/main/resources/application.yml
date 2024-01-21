@@ -1,4 +1,9 @@
+server:
+  port: 9080
+
 spring:
+  application:
+    name: world.V1
   cloud:
     config:
       enabled:  false
@@ -7,8 +12,11 @@ spring:
     allow-bean-definition-overriding: true
     allow-circular-references: true
 
-server:
-  port: 9080
 
+
+discovery:
+  endpoints:
+    - http://localhost:2379
+    - http://localhost:2379
 
 

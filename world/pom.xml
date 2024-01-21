@@ -25,7 +25,7 @@
         </dependency>
         <dependency>
             <groupId>com.ares</groupId>
-            <artifactId>transport-springboot-starter</artifactId>
+            <artifactId>discovery</artifactId>
         </dependency>
 
     </dependencies>

@@ -100,7 +100,7 @@ public class EtcdRegister {
                              */
                             @Override
                             public void onNext(LeaseKeepAliveResponse value) {
-                                System.out.println("续租完成");
+                               // System.out.println("续租完成");
                             }
 
                             @Override

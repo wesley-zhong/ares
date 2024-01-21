@@ -39,7 +39,7 @@ public class AresTransferFactoryBean implements FactoryBean<Object>, Initializin
     Object getTarget() {
         aresTcpClient = this.applicationContext.getBean(AresTcpClient.class);
         InvocationHandler handler = (proxy, method, args) -> {
-            log.info("-----------  call service ={} method ={}", targetServiceName, method.getName());
+           // log.info("-----------  call service ={} method ={}", targetServiceName, method.getName());
             if (args.length == 2) {
                 aresTcpClient.send(areaId, targetServiceName, (int)args[0], (Message) args[1]);
                 return  null;
