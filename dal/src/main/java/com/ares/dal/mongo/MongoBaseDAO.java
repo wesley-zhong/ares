@@ -5,6 +5,7 @@ import com.ares.dal.mongo.annotation.MdbName;
 import com.ares.dal.DO.BaseDO;
 import com.ares.dal.DO.CASDO;
 import com.ares.dal.DO.IGenericsID;
+import com.google.common.base.Strings;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -32,7 +33,7 @@ public class MongoBaseDAO<T extends BaseDO> implements InitializingBean {
     private final static String _VER = "ver";
     private final Class<T> doClass;
     @Autowired
-    private AresMonogClient aresMonogClient;
+    private AresMongoClient aresMongoClient;
     protected MongoCollection<T> collection;
 
     private  final static ReplaceOptions UPINSERT_OPTIONS = new ReplaceOptions().upsert(true);
@@ -162,7 +163,7 @@ public class MongoBaseDAO<T extends BaseDO> implements InitializingBean {
     /////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet()  {
         MdbName mdbName = this.doClass.getAnnotation(MdbName.class);
         String dbName;
         if (mdbName == null) {
@@ -171,7 +172,7 @@ public class MongoBaseDAO<T extends BaseDO> implements InitializingBean {
         } else {
             dbName = mdbName.value();
         }
-        MongoDatabase database = aresMonogClient.getMongoClient().getDatabase(dbName);
+        MongoDatabase database = aresMongoClient.getMongoClient().getDatabase(dbName);
         CollectionName collectionName = this.doClass.getAnnotation(CollectionName.class);
         String tableName;
         if (collectionName == null) {
@@ -180,6 +181,7 @@ public class MongoBaseDAO<T extends BaseDO> implements InitializingBean {
         } else {
             tableName = collectionName.value();
         }
+        tableName = tableName.toLowerCase();
         collection = database.getCollection(tableName, this.doClass);
     }
 }

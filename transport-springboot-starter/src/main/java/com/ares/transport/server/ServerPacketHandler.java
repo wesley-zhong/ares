@@ -42,7 +42,7 @@ public class ServerPacketHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object in) {
         ByteBuf body = (ByteBuf) in;
-        int msgId = body.readUnsignedShort();
+        int msgId = body.readShort();
         AresTKcpContextEx aresTcpContextEx = AresPacketUtils.parseAresPacket(ctx, body, msgId);
         processAresPacket(aresTcpContextEx, ctx);
     }

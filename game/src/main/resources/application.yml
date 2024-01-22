@@ -12,12 +12,12 @@ spring:
     allow-circular-references: true
 
 
-world-server:
-  servers:
-    - id: 100
-      ip: 127.0.0.1
-      port: 9081
-
+#world-server:
+#  servers:
+#    - id: 100
+#      ip: 127.0.0.1
+#      port: 9081
+#-------------------discovery ----------
 discovery:
   endpoints:
     - http://localhost:2379
@@ -27,3 +27,8 @@ discovery:
       areas:
         - area-id: 100
           connect: true
+
+mongo:
+  addrs: localhost:27017;localhost:27017
+  userName: admin
+  password: admin

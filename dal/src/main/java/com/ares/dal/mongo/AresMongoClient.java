@@ -5,8 +5,9 @@ import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import lombok.Data;
-import org.bson.codecs.configuration.CodecRegistries;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 
@@ -16,16 +17,20 @@ import java.util.List;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
-@Data
-public class AresMonogClient {
+@Getter
+@Setter
+
+public class AresMongoClient {
     private String mongoAddrs;
     private String mongoUserName;
     private String mongoPassword;
 
     private MongoClient mongoClient;
 
-    public MongoClient getMongoClient() {
-        return mongoClient;
+    public AresMongoClient(String addrs, String userName, String password){
+        this.mongoAddrs = addrs;
+        this.mongoUserName = userName;
+        this.mongoPassword = password;
     }
 
     public void init() {

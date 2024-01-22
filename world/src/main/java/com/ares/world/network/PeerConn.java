@@ -1,4 +1,4 @@
-package com.ares.game.network;
+package com.ares.world.network;
 
 
 import com.ares.core.tcp.AresTKcpContext;

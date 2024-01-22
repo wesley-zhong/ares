@@ -1,22 +1,16 @@
 package com.ares.game.configuration;
 
 import com.ares.core.tcp.AresTcpHandler;
-import com.ares.discovery.DiscoveryService;
-import com.ares.discovery.DiscoveryServiceImpl;
-import com.ares.transport.bean.ServerNodeInfo;
+import com.ares.dal.mongo.AresMongoClient;
 import com.ares.transport.client.AresTcpClient;
 import com.ares.transport.client.AresTcpClientConn;
 import com.ares.transport.client.AresTcpClientImpl;
-import io.etcd.jetcd.watch.WatchEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Configuration
 @ComponentScan("com.ares")
@@ -52,5 +46,12 @@ public class GameConfiguration {
         AresTcpClient aresTcpClient = new AresTcpClientImpl(conn);
         aresTcpClient.init();
         return aresTcpClient;
+    }
+
+    @Bean
+    public AresMongoClient aresMongoClient(@Autowired MongoConfig mongoConfig) {
+        AresMongoClient mongoClient = new AresMongoClient(mongoConfig.getAddrs(), mongoConfig.getUserName(), mongoConfig.getPassword());
+        mongoClient.init();
+        return mongoClient;
     }
 }
