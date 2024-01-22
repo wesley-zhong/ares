@@ -31,8 +31,6 @@ public class GatewayConfiguration {
     @Value("${area.id:100}")
     private int areaId;
 
-    private AresTcpClient aresTcpClient;
-
     @Bean
     public AresTcpClientConn aresTcpClientConn(@Autowired AresTcpHandler aresTcpHandler) {
         AresTcpClientConn aresTcpClientConn = new AresTcpClientConn();
@@ -51,27 +49,8 @@ public class GatewayConfiguration {
     @Bean
     @Lazy
     public AresTcpClient aresTcpClient(@Autowired @Lazy AresTcpClientConn conn) {
-        aresTcpClient = new AresTcpClientImpl(conn);
+        AresTcpClient aresTcpClient = new AresTcpClientImpl(conn);
         aresTcpClient.init();
         return aresTcpClient;
     }
-
-
-//    @Bean
-//    public DiscoveryService discoveryService(@Autowired DiscoveryEndPoints discoveryEndPoints, @Autowired OnWatchServiceChange onWatchServiceChange) {
-//        DiscoveryServiceImpl etcdService = new DiscoveryServiceImpl();
-//        DiscoveryEndPoints.WatchInfo[] watchServers = discoveryEndPoints.getWatchServers();
-//        List<String> watchPreFixes = new ArrayList<>();
-//        for (DiscoveryEndPoints.WatchInfo watchInfo : watchServers) {
-//            List<String>watchList = watchInfo.getWatchPrefix();
-//            watchPreFixes.addAll(watchList);
-//        }
-//        etcdService.init(discoveryEndPoints.getEndpoints(), appName, serverPort,areaId, watchPreFixes, onWatchServiceChange::onWatchServiceChange);
-//        return etcdService;
-//    }
-
-//    public Void onWatchServiceChange(WatchEvent.EventType eventType, ServerNodeInfo serverNodeInfo) {
-//        aresTcpClient.connect(serverNodeInfo);
-//        return null;
-//    }
 }

@@ -31,9 +31,8 @@ public class GameConfiguration {
     @Value("${area.id:100}")
     private int areaId;
 
-    private AresTcpClient aresTcpClient;
     @Bean
-    public AresTcpClientConn aresTcpClientConn(@Autowired  AresTcpHandler  aresTcpHandler){
+    public AresTcpClientConn aresTcpClientConn(@Autowired AresTcpHandler aresTcpHandler) {
         AresTcpClientConn aresTcpClientConn = new AresTcpClientConn();
         aresTcpClientConn.init(aresTcpHandler);
         return aresTcpClientConn;
@@ -50,29 +49,8 @@ public class GameConfiguration {
     @Bean
     @Lazy
     public AresTcpClient aresTcpClient(@Autowired @Lazy AresTcpClientConn conn) {
-        aresTcpClient = new AresTcpClientImpl(conn);
+        AresTcpClient aresTcpClient = new AresTcpClientImpl(conn);
         aresTcpClient.init();
         return aresTcpClient;
     }
-
-
-
-
-//    @Bean
-//    public DiscoveryService discoveryService(@Autowired DiscoveryEndPoints discoveryEndPoints) {
-//        DiscoveryServiceImpl etcdService = new DiscoveryServiceImpl();
-//        DiscoveryEndPoints.WatchInfo[] watchServers = discoveryEndPoints.getWatchServers();
-//        List<String> watchPreFixes = new ArrayList<>();
-//        for (DiscoveryEndPoints.WatchInfo watchInfo : watchServers) {
-//            List<String>watchList = watchInfo.getWatchPrefix();
-//            watchPreFixes.addAll(watchList);
-//        }
-//        etcdService.init(discoveryEndPoints.getEndpoints(), appName, serverPort,areaId, watchPreFixes, this::onWatchServiceChange);
-//        return etcdService;
-//    }
-//
-//    public Void onWatchServiceChange(WatchEvent.EventType eventType, ServerNodeInfo serverNodeInfo) {
-//        aresTcpClient.connect(serverNodeInfo);
-//        return null;
-//    }
 }

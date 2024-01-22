@@ -1,4 +1,4 @@
-package com.ares.game.discovery;
+package com.ares.world.discovery;
 
 import com.ares.discovery.DiscoveryService;
 import com.ares.discovery.transfer.OnWatchServiceChange;
@@ -17,7 +17,7 @@ public class OnDiscoveryWatch implements OnWatchServiceChange {
 
     @Override
     public Void onWatchServiceChange(WatchEvent.EventType eventType, ServerNodeInfo serverNodeInfo) {
-        aresTcpClient.connect(serverNodeInfo);
+      //  aresTcpClient.connect(serverNodeInfo);
         return null;
     }
 }

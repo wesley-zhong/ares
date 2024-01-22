@@ -28,11 +28,13 @@ public class AresDiscoveryConfigure {
         DiscoveryServiceImpl etcdService = new DiscoveryServiceImpl();
         DiscoveryEndPoints.WatchInfo[] watchServers = discoveryEndPoints.getWatchServers();
         List<String> watchPreFixes = new ArrayList<>();
-        for (DiscoveryEndPoints.WatchInfo watchInfo : watchServers) {
-            List<String>watchList = watchInfo.getWatchPrefix();
-            watchPreFixes.addAll(watchList);
+        if (watchServers != null) {
+            for (DiscoveryEndPoints.WatchInfo watchInfo : watchServers) {
+                List<String> watchList = watchInfo.getWatchPrefix();
+                watchPreFixes.addAll(watchList);
+            }
         }
-        etcdService.init(discoveryEndPoints.getEndpoints(), appName, serverPort,areaId, watchPreFixes, onWatchServiceChange::onWatchServiceChange);
+        etcdService.init(discoveryEndPoints.getEndpoints(), appName, serverPort, areaId, watchPreFixes, onWatchServiceChange::onWatchServiceChange);
         return etcdService;
     }
 }
