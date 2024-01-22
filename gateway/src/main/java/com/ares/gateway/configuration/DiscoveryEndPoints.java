@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
-@ConfigurationProperties(prefix = "discovery")
-@Getter
-@Setter
+//@Component
+//@ConfigurationProperties(prefix = "discovery")
+//@Getter
+//@Setter
 public class DiscoveryEndPoints {
     private String[] endpoints;
     private WatchInfo[] watchServers;

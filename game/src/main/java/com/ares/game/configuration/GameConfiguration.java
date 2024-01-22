@@ -58,21 +58,21 @@ public class GameConfiguration {
 
 
 
-    @Bean
-    public DiscoveryService discoveryService(@Autowired DiscoveryEndPoints discoveryEndPoints) {
-        DiscoveryServiceImpl etcdService = new DiscoveryServiceImpl();
-        DiscoveryEndPoints.WatchInfo[] watchServers = discoveryEndPoints.getWatchServers();
-        List<String> watchPreFixes = new ArrayList<>();
-        for (DiscoveryEndPoints.WatchInfo watchInfo : watchServers) {
-            List<String>watchList = watchInfo.getWatchPrefix();
-            watchPreFixes.addAll(watchList);
-        }
-        etcdService.init(discoveryEndPoints.getEndpoints(), appName, serverPort,areaId, watchPreFixes, this::onWatchServiceChange);
-        return etcdService;
-    }
-
-    public Void onWatchServiceChange(WatchEvent.EventType eventType, ServerNodeInfo serverNodeInfo) {
-        aresTcpClient.connect(serverNodeInfo);
-        return null;
-    }
+//    @Bean
+//    public DiscoveryService discoveryService(@Autowired DiscoveryEndPoints discoveryEndPoints) {
+//        DiscoveryServiceImpl etcdService = new DiscoveryServiceImpl();
+//        DiscoveryEndPoints.WatchInfo[] watchServers = discoveryEndPoints.getWatchServers();
+//        List<String> watchPreFixes = new ArrayList<>();
+//        for (DiscoveryEndPoints.WatchInfo watchInfo : watchServers) {
+//            List<String>watchList = watchInfo.getWatchPrefix();
+//            watchPreFixes.addAll(watchList);
+//        }
+//        etcdService.init(discoveryEndPoints.getEndpoints(), appName, serverPort,areaId, watchPreFixes, this::onWatchServiceChange);
+//        return etcdService;
+//    }
+//
+//    public Void onWatchServiceChange(WatchEvent.EventType eventType, ServerNodeInfo serverNodeInfo) {
+//        aresTcpClient.connect(serverNodeInfo);
+//        return null;
+//    }
 }

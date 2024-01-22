@@ -2,6 +2,7 @@ package com.ares.gateway.configuration;
 
 import com.ares.discovery.DiscoveryService;
 import com.ares.discovery.DiscoveryServiceImpl;
+import com.ares.discovery.transfer.OnWatchServiceChange;
 import com.ares.transport.bean.ServerNodeInfo;
 import com.ares.core.tcp.AresTcpHandler;
 import com.ares.transport.client.AresTcpClient;
@@ -56,21 +57,21 @@ public class GatewayConfiguration {
     }
 
 
-    @Bean
-    public DiscoveryService discoveryService(@Autowired DiscoveryEndPoints discoveryEndPoints) {
-        DiscoveryServiceImpl etcdService = new DiscoveryServiceImpl();
-        DiscoveryEndPoints.WatchInfo[] watchServers = discoveryEndPoints.getWatchServers();
-        List<String> watchPreFixes = new ArrayList<>();
-        for (DiscoveryEndPoints.WatchInfo watchInfo : watchServers) {
-            List<String>watchList = watchInfo.getWatchPrefix();
-            watchPreFixes.addAll(watchList);
-        }
-        etcdService.init(discoveryEndPoints.getEndpoints(), appName, serverPort,areaId, watchPreFixes, this::onWatchServiceChange);
-        return etcdService;
-    }
+//    @Bean
+//    public DiscoveryService discoveryService(@Autowired DiscoveryEndPoints discoveryEndPoints, @Autowired OnWatchServiceChange onWatchServiceChange) {
+//        DiscoveryServiceImpl etcdService = new DiscoveryServiceImpl();
+//        DiscoveryEndPoints.WatchInfo[] watchServers = discoveryEndPoints.getWatchServers();
+//        List<String> watchPreFixes = new ArrayList<>();
+//        for (DiscoveryEndPoints.WatchInfo watchInfo : watchServers) {
+//            List<String>watchList = watchInfo.getWatchPrefix();
+//            watchPreFixes.addAll(watchList);
+//        }
+//        etcdService.init(discoveryEndPoints.getEndpoints(), appName, serverPort,areaId, watchPreFixes, onWatchServiceChange::onWatchServiceChange);
+//        return etcdService;
+//    }
 
-    public Void onWatchServiceChange(WatchEvent.EventType eventType, ServerNodeInfo serverNodeInfo) {
-        aresTcpClient.connect(serverNodeInfo);
-        return null;
-    }
+//    public Void onWatchServiceChange(WatchEvent.EventType eventType, ServerNodeInfo serverNodeInfo) {
+//        aresTcpClient.connect(serverNodeInfo);
+//        return null;
+//    }
 }

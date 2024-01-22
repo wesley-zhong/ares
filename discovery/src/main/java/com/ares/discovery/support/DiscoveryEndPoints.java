@@ -1,4 +1,4 @@
-package com.ares.game.configuration;
+package com.ares.discovery.support;
 
 
 import lombok.Getter;
@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-//@Component
-//@ConfigurationProperties(prefix = "discovery")
-//@Getter
-//@Setter
+@Component
+@ConfigurationProperties(prefix = "discovery")
+@Getter
+@Setter
 public class DiscoveryEndPoints {
     private String[] endpoints;
     private WatchInfo[] watchServers;
