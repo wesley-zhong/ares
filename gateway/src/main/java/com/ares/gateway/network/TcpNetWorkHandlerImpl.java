@@ -10,6 +10,7 @@ import com.game.protoGen.ProtoTask;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +21,14 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class TcpNetWorkHandlerImpl implements TcpNetWorkHandler {
+
+    @Value("${spring.application.name}")
+    private String appName;
+
+
+    @Value("${area.id:100}")
+    private int areaId;
+
     @Autowired
     private GameServerClientTransfer  gameServerClientTransfer;
     @Override
@@ -29,7 +38,13 @@ public class TcpNetWorkHandlerImpl implements TcpNetWorkHandler {
 
     @Override
     public void onServerConnected(Channel aresTKcpContext) {
+        ProtoInner.InnerServerHandShake handleShake = ProtoInner.InnerServerHandShake.newBuilder()
+                .setAreaId(areaId)
+                .setServiceName(appName).build();
 
+        AresPacket  aresPacket = AresPacket.create(ProtoInner.InnerProtoCode.INNER_SERVER_HAND_SHAKE_VALUE, handleShake);
+        aresTKcpContext.writeAndFlush(aresPacket);
+        log.info("###### send to {} handshake msg: {}",aresTKcpContext, handleShake);
     }
 
     @Override

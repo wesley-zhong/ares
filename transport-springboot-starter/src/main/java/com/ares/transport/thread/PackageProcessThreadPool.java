@@ -2,7 +2,7 @@ package com.ares.transport.thread;
 
 import com.ares.core.tcp.AresTcpHandler;
 import com.ares.core.thread.AresThreadFactory;
-import com.ares.transport.context.AresTcpContextEx;
+import com.ares.transport.context.AresTKcpContextEx;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -42,7 +42,7 @@ public class PackageProcessThreadPool {
         }
     }
 
-    public void execute(AresTcpContextEx aresPacket) {
+    public void execute(AresTKcpContextEx aresPacket) {
         if (processThreadCount == 0) { // do not asyn call
             aresEventHandler.onPacket(aresPacket);
             return;
@@ -65,7 +65,7 @@ public class PackageProcessThreadPool {
         }
     }
 
-    private IMessageExecutor getChannelIMessageExecutor(AresTcpContextEx aresPacket) {
+    private IMessageExecutor getChannelIMessageExecutor(AresTKcpContextEx aresPacket) {
         return iMessageExecutors[(processThreadCount - 1) & hash(aresPacket.getCtx().channel())];
     }
 

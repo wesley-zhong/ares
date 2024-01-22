@@ -88,8 +88,8 @@ message InnerLoginInitNotify {
 
 
 message InnerServerHandShake{
-  int64 fromServerId = 1;
-  int32  fromServerType = 2;
+  string  serviceName =1;
+  int32  areaId =2;
 }
 
 message KickOutRequest {

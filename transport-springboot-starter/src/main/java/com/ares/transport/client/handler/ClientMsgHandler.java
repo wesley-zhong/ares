@@ -4,7 +4,7 @@ import com.ares.core.bean.AresPacket;
 import com.ares.core.tcp.AresTcpHandler;
 import com.ares.core.utils.AresContextThreadLocal;
 import com.ares.transport.consts.FMsgId;
-import com.ares.transport.context.AresTcpContextEx;
+import com.ares.transport.context.AresTKcpContextEx;
 import com.ares.transport.utils.AresPacketUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -25,11 +25,11 @@ public class ClientMsgHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         ByteBuf body = (ByteBuf) msg;
         short msgId = body.readShort();
-        AresTcpContextEx aresTcpContextEx = AresPacketUtils.parseAresPacket(ctx, body, msgId);
+        AresTKcpContextEx aresTcpContextEx = AresPacketUtils.parseAresPacket(ctx, body, msgId);
         processAresPacket(aresTcpContextEx);
     }
 
-    private void processAresPacket(AresTcpContextEx aresPacketEx) {
+    private void processAresPacket(AresTKcpContextEx aresPacketEx) {
         AresPacket arePacket = aresPacketEx.getRcvPackage();
         if (arePacket != null) {
             if (arePacket.getMsgId() == FMsgId.PING) {
@@ -43,7 +43,7 @@ public class ClientMsgHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        log.info("ip ={} connected  sucess！！", ctx.channel().remoteAddress());
+        log.info("ip ={} connected  success！!！", ctx.channel().remoteAddress());
         aresTcpHandler.onServerConnected(ctx.channel());
     }
 

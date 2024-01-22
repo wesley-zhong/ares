@@ -4,7 +4,7 @@ package com.ares.transport.server;
 import com.ares.core.tcp.AresTcpHandler;
 import com.ares.transport.consts.FMsgId;
 import com.ares.core.bean.AresPacket;
-import com.ares.transport.context.AresTcpContextEx;
+import com.ares.transport.context.AresTKcpContextEx;
 import com.ares.transport.thread.PackageProcessThreadPool;
 import com.ares.transport.thread.PackageProcessThreadPoolGroup;
 import com.ares.transport.utils.AresPacketUtils;
@@ -43,11 +43,11 @@ public class ServerPacketHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object in) {
         ByteBuf body = (ByteBuf) in;
         int msgId = body.readUnsignedShort();
-        AresTcpContextEx aresTcpContextEx = AresPacketUtils.parseAresPacket(ctx, body, msgId);
+        AresTKcpContextEx aresTcpContextEx = AresPacketUtils.parseAresPacket(ctx, body, msgId);
         processAresPacket(aresTcpContextEx, ctx);
     }
 
-    private void processAresPacket(AresTcpContextEx aresMsgEx, ChannelHandlerContext ctx) {
+    private void processAresPacket(AresTKcpContextEx aresMsgEx, ChannelHandlerContext ctx) {
         AresPacket aresPacket = aresMsgEx.getRcvPackage();
         boolean ret = checkValid(aresMsgEx, aresPacket.getMsgId());
         if (!ret) {
@@ -64,7 +64,7 @@ public class ServerPacketHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) {
-        AresTcpContextEx aresTcpContextEx = new AresTcpContextEx(ctx);
+        AresTKcpContextEx aresTcpContextEx = new AresTKcpContextEx(ctx);
         aresRpcHandler.onClientConnected(aresTcpContextEx);
     }
 
@@ -111,7 +111,7 @@ public class ServerPacketHandler extends ChannelInboundHandlerAdapter {
         ctx.writeAndFlush(ping);
     }
 
-    private boolean checkValid(AresTcpContextEx aresMsgEx, int msgId) {
+    private boolean checkValid(AresTKcpContextEx aresMsgEx, int msgId) {
         if (msgId == FMsgId.PONG) {
             if (hearBeatCount < MAX_NO_CHECK_COUNT) {
                 hearBeatCount++;

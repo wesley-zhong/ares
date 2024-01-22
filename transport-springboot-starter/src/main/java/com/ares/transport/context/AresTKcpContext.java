@@ -2,7 +2,6 @@ package com.ares.transport.context;
 
 import com.ares.core.bean.AresPacket;
 import com.ares.core.exception.AresBaseException;
-import com.ares.core.tcp.AresTKcpContext;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -12,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.InetSocketAddress;
 
 @Slf4j
-public class AresTcpContext implements AresTKcpContext {
+public class AresTKcpContext implements com.ares.core.tcp.AresTKcpContext {
     private static final String CACHE_KEY = "X_C_K";
     private static final AttributeKey<Object> ATTRIBUTE_KEY = AttributeKey.valueOf(CACHE_KEY);
     private final ChannelHandlerContext ctx;
@@ -28,7 +27,7 @@ public class AresTcpContext implements AresTKcpContext {
         return ctx;
     }
 
-    protected AresTcpContext(ChannelHandlerContext ctx) {
+    protected AresTKcpContext(ChannelHandlerContext ctx) {
         this.ctx = ctx;
     }
 
@@ -101,7 +100,7 @@ public class AresTcpContext implements AresTKcpContext {
         if (this == target) {
             return true;
         }
-        if (target instanceof AresTKcpContext ptarget) {
+        if (target instanceof com.ares.core.tcp.AresTKcpContext ptarget) {
             if (ptarget.hashCode() != this.hashCode()) {
                 return false;
             }

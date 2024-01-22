@@ -5,14 +5,14 @@ import com.ares.core.bean.AresPacket;
 import io.netty.channel.ChannelHandlerContext;
 
 
-public class AresTcpContextEx extends AresTcpContext {
-    public AresTcpContextEx(ChannelHandlerContext channelHandlerContext, AresPacket aresPacket) {
+public class AresTKcpContextEx extends AresTKcpContext {
+    public AresTKcpContextEx(ChannelHandlerContext channelHandlerContext, AresPacket aresPacket) {
         super(channelHandlerContext);
         this.aresPacket = aresPacket;
     }
 
 
-    public AresTcpContextEx(ChannelHandlerContext channelHandlerContext) {
+    public AresTKcpContextEx(ChannelHandlerContext channelHandlerContext) {
         super(channelHandlerContext);
     }
     @Override

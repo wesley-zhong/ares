@@ -1,7 +1,7 @@
 package com.ares.transport.thread;
 
 
-import com.ares.transport.context.AresTcpContextEx;
+import com.ares.transport.context.AresTKcpContextEx;
 
 /**
  * 消息处理器
@@ -32,5 +32,5 @@ public interface IMessageExecutor {
      *
      * @param iTask
      */
-    void execute(AresTcpContextEx iTask);
+    void execute(AresTKcpContextEx iTask);
 }
