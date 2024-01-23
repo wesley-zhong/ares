@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AresPacket {
     @Getter
     @Setter
-    private int msgId; //unsigned short
+    private int msgId;
     @Getter
     @Setter
     private Message sendBody;

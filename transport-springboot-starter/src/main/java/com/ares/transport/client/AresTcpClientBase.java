@@ -75,9 +75,6 @@ public abstract class AresTcpClientBase implements AresTcpClient {
         }
     }
 
-
-
-
     public void addServerInfo(ServerNodeInfo serverNodeInfo) {
         serverNodeInfos.add(serverNodeInfo);
     }
