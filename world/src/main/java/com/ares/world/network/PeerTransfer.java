@@ -1,4 +1,4 @@
-package com.ares.game.network;
+package com.ares.world.network;
 
 import com.ares.core.bean.AresPacket;
 import com.google.protobuf.Message;
@@ -23,6 +23,7 @@ public  class PeerTransfer {
     public void close(){
         if(this.context != null){
             this.context.close();
+            this.context = null;
         }
     }
 

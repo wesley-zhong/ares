@@ -1,10 +1,13 @@
 package com.ares.game.configuration;
 
+import com.ares.common.bean.ServerType;
 import com.ares.core.tcp.AresTcpHandler;
+import com.ares.core.utils.SnowFlake;
 import com.ares.dal.mongo.AresMongoClient;
 import com.ares.transport.client.AresTcpClient;
 import com.ares.transport.client.AresTcpClientConn;
 import com.ares.transport.client.AresTcpClientImpl;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +17,7 @@ import org.springframework.context.annotation.Lazy;
 
 @Configuration
 @ComponentScan("com.ares")
-public class GameConfiguration {
+public class GameConfiguration  implements InitializingBean {
 
     @Value("${spring.application.name}")
     private String appName;
@@ -53,5 +56,10 @@ public class GameConfiguration {
         AresMongoClient mongoClient = new AresMongoClient(mongoConfig.getAddrs(), mongoConfig.getUserName(), mongoConfig.getPassword());
         mongoClient.init();
         return mongoClient;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        SnowFlake.init(areaId, ServerType.GAME.getValue());
     }
 }
