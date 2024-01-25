@@ -31,9 +31,11 @@ public class PlayerRoleService {
         GamePlayer gamePlayer = new GamePlayer(channelHandlerContext, pid);
         RoleDO roleDO = new RoleDO();
         roleDO.setPid(pid);
+        roleDO.setId(pid);
         roleDO.setName(name);
         playerDAO.insert(roleDO);
         gamePlayer.setRoleDO(roleDO);
         return gamePlayer;
     }
+
 }

@@ -13,10 +13,6 @@ public class DiscoveryServiceImpl implements DiscoveryService {
     private EtcdDiscovery etcdDiscovery;
     private BiFunction< WatchEvent.EventType, ServerNodeInfo, Void> onNodeChangeFun;
 
-
-    public void start(){
-
-    }
     public void init(String[] endpoints, String appName, int port,int areaId, List<String>watchServicePrefix, BiFunction< WatchEvent.EventType, ServerNodeInfo, Void> onNodeChangeFun) {
         etcdClient = Client.builder().endpoints(endpoints).build();
         etcdRegister = new EtcdRegister(etcdClient, appName, port, areaId);

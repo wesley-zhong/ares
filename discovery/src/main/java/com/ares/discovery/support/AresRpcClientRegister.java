@@ -96,7 +96,7 @@ public class AresRpcClientRegister implements ImportBeanDefinitionRegistrar,
                     Assert.isTrue(annotationMetadata.isInterface(),
                             "@AresRpc can only be specified on an interface");
                     Map<String, Object> attributes = annotationMetadata.getAnnotationAttributes(AresAsynTransport.class.getCanonicalName());
-                   // Map<String, Object> servicePathAttributes = annotationMetadata.getAnnotationAttributes(ServiceName.class.getCanonicalName());
+                    // Map<String, Object> servicePathAttributes = annotationMetadata.getAnnotationAttributes(ServiceName.class.getCanonicalName());
 
 //                    if (servicePathAttributes != null && !servicePathAttributes.isEmpty()) {
 //                        attributes.put("serviceName", servicePathAttributes.get("value"));
@@ -119,6 +119,10 @@ public class AresRpcClientRegister implements ImportBeanDefinitionRegistrar,
         definition.addPropertyValue("name", className);
         definition.addPropertyValue("type", className);
         definition.addPropertyValue("targetServiceName", targetServiceName);
+        String areaId = this.environment.getProperty("area.id");
+        if (areaId != null) {
+            definition.addPropertyValue("areaId", areaId);
+        }
 
         definition.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
 
@@ -152,7 +156,7 @@ public class AresRpcClientRegister implements ImportBeanDefinitionRegistrar,
     }
 
     String getTargetServiceName(Map<String, Object> attributes) {
-        String  name = (String) attributes.get("name");
+        String name = (String) attributes.get("name");
         if (!StringUtils.hasText(name)) {
             name = (String) attributes.get("value");
         }

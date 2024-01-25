@@ -17,7 +17,7 @@ public class Client  implements InitializingBean {
     private  LoginService  loginService;
     @Override
     public void afterPropertiesSet() throws Exception {
-       channel= aresTcpClientConn.connect("127.0.0.1", 7081);
+       channel= aresTcpClientConn.connect("127.0.0.1", 7080);
        loginService.loginRequest(channel);
     }
 }

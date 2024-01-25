@@ -3,10 +3,12 @@ package com.ares.world.configuration;
 import com.ares.core.tcp.AresTcpHandler;
 import com.ares.discovery.DiscoveryService;
 import com.ares.discovery.DiscoveryServiceImpl;
+import com.ares.discovery.transfer.OnWatchServiceChange;
 import com.ares.transport.bean.ServerNodeInfo;
 import com.ares.transport.client.AresTcpClient;
 import com.ares.transport.client.AresTcpClientConn;
 import com.ares.transport.client.AresTcpClientImpl;
+import com.ares.world.discovery.OnDiscoveryWatch;
 import io.etcd.jetcd.watch.WatchEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,4 +56,9 @@ public class WorldConfiguration {
         aresTcpClient.init();
         return aresTcpClient;
     }
+//    @Bean
+//    public OnWatchServiceChange  onWatchServiceChange(){
+//        return new OnDiscoveryWatch();
+//    }
+
 }

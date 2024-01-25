@@ -26,9 +26,13 @@ public class LoginController implements AresController {
         sessionService.loginRequest(aresTKcpContext, loginRequest);
     }
 
-    @CalledMsgId(ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_REQ_VALUE)
-    public void onGameLoginRes(ProtoTask.LoginResponse loginResponse) {
-
+    @CalledMsgId(ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_RES_VALUE)
+    public void onGameLoginRes(ProtoInner.InnerGameLoginResponse loginResponse) {
+        log.info(" INNER_TO_GAME_LOGIN_RES_VALUE :{} ",loginResponse);
+        ProtoTask.LoginResponse response = ProtoTask.LoginResponse.newBuilder()
+                .setErrorCode(0)
+                .setRoleId(loginResponse.getRoleId())
+                .setServerTime(System.currentTimeMillis()).build();
+        sessionService.sendPlayerMsg(loginResponse.getRoleId(),ProtoCommon.ProtoCode.LOGIN_RESPONSE_VALUE, response );
     }
-
 }

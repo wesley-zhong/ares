@@ -21,6 +21,7 @@ public class AresTransferFactoryBean implements FactoryBean<Object>, Initializin
     private Class<?> type;
     private String name;
     private String targetServiceName;
+
     private int areaId;
     private ApplicationContext applicationContext;
 
@@ -98,6 +99,14 @@ public class AresTransferFactoryBean implements FactoryBean<Object>, Initializin
 
     public void setTargetServiceName(String targetServiceName) {
         this.targetServiceName = targetServiceName;
+    }
+
+    public int getAreaId() {
+        return areaId;
+    }
+
+    public void setAreaId(int areaId) {
+        this.areaId = areaId;
     }
 
 }

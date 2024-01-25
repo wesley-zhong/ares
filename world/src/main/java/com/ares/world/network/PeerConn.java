@@ -52,9 +52,10 @@ public class PeerConn {
 
     public void send(ServerType serverType, int msgId, Message body){
         ChannelHandlerContext aresTcpContext = getAresTcpContext(areaId, serverType);
-        if(aresTcpContext == null){
+        if(aresTcpContext != null){
             AresPacket aresPacket = AresPacket.create(msgId, body);
             aresTcpContext.writeAndFlush(aresPacket);
+            return;
         }
         log.error("========= areaId = {} servetType={} not connected", areaId,serverType);
     }
