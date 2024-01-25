@@ -34,11 +34,11 @@ public class TcpNetWorkHandlerImpl implements TcpNetWorkHandler {
 
     @Override
     public void onServerConnected(Channel aresTKcpContext) {
-        ProtoInner.InnerServerHandShake handleShake = ProtoInner.InnerServerHandShake.newBuilder()
+        ProtoInner.InnerServerHandShakeReq handleShake = ProtoInner.InnerServerHandShakeReq.newBuilder()
                 .setAreaId(areaId)
                 .setServiceName(appName).build();
 
-        AresPacket  aresPacket = AresPacket.create(ProtoInner.InnerProtoCode.INNER_SERVER_HAND_SHAKE_VALUE, handleShake);
+        AresPacket  aresPacket = AresPacket.create(ProtoInner.InnerProtoCode.INNER_SERVER_HAND_SHAKE_REQ_VALUE, handleShake);
         aresTKcpContext.writeAndFlush(aresPacket);
         log.info("###### send to {} handshake msg: {}",aresTKcpContext, handleShake);
     }

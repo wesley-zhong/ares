@@ -18,7 +18,7 @@ import java.util.Map;
 @Component
 @Slf4j
 public class PeerConn {
-    @Value("${area.id:100}")
+    @Value("${area.id}")
     private int areaId;
     private final Map<Integer, Map<Integer, ChannelHandlerContext>> peerConns = new HashMap<>();
 
@@ -39,11 +39,11 @@ public class PeerConn {
     }
 
 
-    public ChannelHandlerContext getAresTcpContext(ServerType serverType) {
+    public synchronized ChannelHandlerContext getAresTcpContext(ServerType serverType) {
         return getAresTcpContext(areaId, serverType);
     }
 
-    public ChannelHandlerContext getAresTcpContext(int areaId, ServerType serverType) {
+    public synchronized ChannelHandlerContext getAresTcpContext(int areaId, ServerType serverType) {
         Map<Integer, ChannelHandlerContext> stringAresTcpContextMap = peerConns.get(areaId);
         if (CollectionUtils.isEmpty(stringAresTcpContextMap)) {
             return null;
@@ -51,7 +51,7 @@ public class PeerConn {
         return stringAresTcpContextMap.get(serverType.getValue());
     }
 
-    public  void send(int areaId, ServerType serverType, int msgId, Message body){
+    public   void send(int areaId, ServerType serverType, int msgId, Message body){
         ChannelHandlerContext  channelHandlerContext = getAresTcpContext(areaId,serverType);
         if(channelHandlerContext == null){
             log.error("areaId ={} sererType ={}  not found to send msgId ={}", areaId, serverType, msgId);

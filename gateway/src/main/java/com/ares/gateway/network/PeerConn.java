@@ -1,4 +1,4 @@
-package com.ares.world.network;
+package com.ares.gateway.network;
 
 
 import com.ares.common.bean.ServerType;
@@ -7,7 +7,6 @@ import com.ares.core.tcp.AresTKcpContext;
 import com.google.protobuf.Message;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -39,11 +38,12 @@ public class PeerConn {
         stringAresTcpContextMap.put(serverType.getValue(), aresTKcpContext.getCtx());
     }
 
-    public ChannelHandlerContext getAresTcpContext(ServerType serverType) {
+
+    public synchronized ChannelHandlerContext getAresTcpContext(ServerType serverType) {
         return getAresTcpContext(areaId, serverType);
     }
 
-    public ChannelHandlerContext getAresTcpContext(int areaId, ServerType serverType) {
+    public synchronized ChannelHandlerContext getAresTcpContext(int areaId, ServerType serverType) {
         Map<Integer, ChannelHandlerContext> stringAresTcpContextMap = peerConns.get(areaId);
         if (CollectionUtils.isEmpty(stringAresTcpContextMap)) {
             return null;
@@ -51,13 +51,17 @@ public class PeerConn {
         return stringAresTcpContextMap.get(serverType.getValue());
     }
 
-    public void send(ServerType serverType, int msgId, Message body){
-        ChannelHandlerContext aresTcpContext = getAresTcpContext(areaId, serverType);
-        if(aresTcpContext != null){
-            AresPacket aresPacket = AresPacket.create(msgId, body);
-            aresTcpContext.writeAndFlush(aresPacket);
+    public   void send(int areaId, ServerType serverType, int msgId, Message body){
+        ChannelHandlerContext  channelHandlerContext = getAresTcpContext(areaId,serverType);
+        if(channelHandlerContext == null){
+            log.error("areaId ={} sererType ={}  not found to send msgId ={}", areaId, serverType, msgId);
             return;
         }
-        log.error("========= areaId = {} servetType={} not connected", areaId,serverType);
+        AresPacket aresPacket = AresPacket.create(msgId, body);
+        channelHandlerContext.writeAndFlush(aresPacket);
+    }
+
+    public  void send(ServerType serverType, int msgId, Message body){
+        send(areaId, serverType, msgId, body);
     }
 }

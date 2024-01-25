@@ -3,6 +3,7 @@ package com.ares.gateway.network;
 import com.ares.core.bean.AresPacket;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.tcp.TcpNetWorkHandler;
+import com.ares.core.utils.AresContextThreadLocal;
 import com.ares.transport.client.AresTcpClient;
 import com.game.protoGen.ProtoCommon;
 import com.game.protoGen.ProtoInner;
@@ -21,37 +22,37 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class TcpNetWorkHandlerImpl implements TcpNetWorkHandler {
-
     @Value("${spring.application.name}")
     private String appName;
-
 
     @Value("${area.id:100}")
     private int areaId;
 
     @Autowired
-    private GameServerClientTransfer  gameServerClientTransfer;
+    private GameServerClientTransfer gameServerClientTransfer;
+
     @Override
     public void handleMsgRcv(AresPacket aresPacket) {
-        gameServerClientTransfer.sendMsg(areaId,aresPacket);
+        AresTKcpContext aresTKcpContext = AresContextThreadLocal.get();
+        aresTKcpContext.getCacheObj();
+
+        gameServerClientTransfer.sendMsg(areaId, aresPacket);
     }
 
     @Override
     public void onServerConnected(Channel aresTKcpContext) {
-        ProtoInner.InnerServerHandShake handleShake = ProtoInner.InnerServerHandShake.newBuilder()
+        ProtoInner.InnerServerHandShakeReq handleShake = ProtoInner.InnerServerHandShakeReq.newBuilder()
                 .setAreaId(areaId)
                 .setServiceName(appName).build();
 
-        AresPacket  aresPacket = AresPacket.create(ProtoInner.InnerProtoCode.INNER_SERVER_HAND_SHAKE_VALUE, handleShake);
+        AresPacket aresPacket = AresPacket.create(ProtoInner.InnerProtoCode.INNER_SERVER_HAND_SHAKE_REQ_VALUE, handleShake);
         aresTKcpContext.writeAndFlush(aresPacket);
-        log.info("###### send to {} handshake msg: {}",aresTKcpContext, handleShake);
+        log.info("###### send to {} handshake msg: {}", aresTKcpContext, handleShake);
     }
 
     @Override
     public void onClientConnected(AresTKcpContext aresTKcpContext) {
-//     log.info("---onClientConnected ={} ", aresTKcpContext);
-//          gameServerClientTransfer.sendMsg(100, ProtoCommon.ProtoCode.LOGIN_REQUEST_VALUE,  ProtoInner.InnerGameLoginRequest.newBuilder().setRoleId(1111).build());
-    // aresTcpClient.send(100,35, ProtoTask.LoginResponse.newBuilder().build());
+        log.info("---onClientConnected ={} ", aresTKcpContext);
     }
 
     @Override
