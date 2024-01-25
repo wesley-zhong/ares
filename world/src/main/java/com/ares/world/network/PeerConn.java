@@ -2,7 +2,9 @@ package com.ares.world.network;
 
 
 import com.ares.common.bean.ServerType;
+import com.ares.core.bean.AresPacket;
 import com.ares.core.tcp.AresTKcpContext;
+import com.google.protobuf.Message;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,5 +48,14 @@ public class PeerConn {
             return null;
         }
         return stringAresTcpContextMap.get(serverType.getValue());
+    }
+
+    public void send(ServerType serverType, int msgId, Message body){
+        ChannelHandlerContext aresTcpContext = getAresTcpContext(areaId, serverType);
+        if(aresTcpContext == null){
+            AresPacket aresPacket = AresPacket.create(msgId, body);
+            aresTcpContext.writeAndFlush(aresPacket);
+        }
+        log.error("========= areaId = {} servetType={} not connected", areaId,serverType);
     }
 }

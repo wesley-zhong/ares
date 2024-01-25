@@ -1,17 +1,22 @@
 package com.ares.world.service;
 
+import com.ares.common.bean.ServerType;
+import com.ares.world.network.PeerConn;
 import com.game.protoGen.ProtoInner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PlayerService  {
+public class PlayerService {
     @Autowired
-    private WorldPlayerMgr  worldPlayerMgr;
+    private WorldPlayerMgr worldPlayerMgr;
     @Autowired
-    private
+    private PeerConn peerConn;
 
-    public  void  playerLogin(ProtoInner.InnerLoginWorldRequest  longinReq){
-
+    public void playerLogin(ProtoInner.InnerLoginWorldRequest longinReq) {
+        ProtoInner.InnerWorldLoginResponse.Builder builder = ProtoInner.InnerWorldLoginResponse.newBuilder();
+        builder.setRoleId(longinReq.getRoleId());
+        ProtoInner.InnerWorldLoginResponse response = builder.build();
+        peerConn.send(ServerType.GAME, ProtoInner.InnerProtoCode.INNER_TO_WORLD_LOGIN_RES_VALUE, response);
     }
 }

@@ -17,18 +17,10 @@ import org.springframework.stereotype.Component;
 public class ClientConnHandler implements AresController {
     @Autowired
     private PeerConn  peerConn;
-    //only for test
-//    @Autowired
-//    private PlayerRoleService playerRoleService;
     @CalledMsgId(ProtoInner.InnerProtoCode.INNER_SERVER_HAND_SHAKE_VALUE)
     public void innerHandShake(ProtoInner.InnerServerHandShake innerLoginRequest) {
         AresTKcpContext aresTKcpContext = AresContextThreadLocal.get();
         peerConn.addContext(innerLoginRequest.getAreaId(), innerLoginRequest.getServiceName(), aresTKcpContext);
         log.info("####  from: {} innerHandShake :{}  finish", aresTKcpContext, innerLoginRequest);
-
-        //only for test
-//     AccountDO accountDO = playerRoleService.getRoleDo(347439353168355328L);
-//        log.info("####  from: {} innerHandShake :{}  finish", aresTKcpContext, innerLoginRequest);
-
     }
 }

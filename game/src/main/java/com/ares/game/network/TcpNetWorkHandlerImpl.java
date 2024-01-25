@@ -30,7 +30,6 @@ public class TcpNetWorkHandlerImpl implements TcpNetWorkHandler {
     @Override
     public void handleMsgRcv(AresPacket aresPacket) {
         log.info("XXXXXXXXXXXXXXX  handler msg recv id ={}", aresPacket.getMsgId());
-
     }
 
     @Override

@@ -59,5 +59,4 @@ public class ClientMsgHandler extends ChannelInboundHandlerAdapter {
         log.error("--------------   connect exceptionCaught  ip = {} ", ctx.channel().remoteAddress(), cause);
         ctx.close();
     }
-
 }

@@ -49,6 +49,8 @@ message InnerWorldLoginRequest{
 }
 
 message InnerWorldLoginResponse{
+  int64  roleId = 1;
+  int32 code = 2;
 
 }
 
@@ -88,8 +90,8 @@ message InnerLoginInitNotify {
 
 
 message InnerServerHandShake{
-  string  serviceName =1;
-  int32  areaId =2;
+  string  serviceName = 1;
+  int32  areaId = 2;
 }
 
 message KickOutRequest {

@@ -2,7 +2,7 @@ package com.ares.transport.surpport;
 
 
 import com.ares.core.tcp.AresTcpHandler;
-import com.ares.core.tcp.TcpRequestTcpHandler;
+import com.ares.core.tcp.AresTcpHandlerImpl;
 import com.ares.transport.server.AresNettyServer;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -28,6 +28,6 @@ public class NplServerAutoConfiguration {
     @ConditionalOnMissingBean
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public AresTcpHandler aresTcpHandler() {
-        return new TcpRequestTcpHandler();
+        return new AresTcpHandlerImpl();
     }
 }

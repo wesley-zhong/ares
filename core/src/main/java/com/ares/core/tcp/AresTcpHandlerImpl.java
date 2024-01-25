@@ -4,7 +4,6 @@ import com.ares.core.bean.AresPacket;
 import com.ares.core.bean.AresRpcMethod;
 import com.ares.core.exception.AresBaseException;
 import com.ares.core.service.ServiceMgr;
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 
 @Slf4j
-public class TcpRequestTcpHandler implements AresTcpHandler {
+public class AresTcpHandlerImpl implements AresTcpHandler {
     @Autowired
     private ServiceMgr serviceMgr;
     @Autowired
@@ -32,20 +31,6 @@ public class TcpRequestTcpHandler implements AresTcpHandler {
                 tcpNetWorkHandler.handleMsgRcv(aresPacket);
                 return;
             }
-//            Class<?> paramClass = calledMethod.getParamClass();
-//            //no parameters
-//            if (paramClass == null) {
-//                calledMethod.getAresServiceProxy().callMethod(null, calledMethod);
-//                return;
-//            }
-//            if (paramClass == ByteBuf.class) {
-//                calledMethod.getAresServiceProxy().callMethod(aresPacket.getRecvByteBuf(), calledMethod);
-//                return;
-//            }
-//            if (paramClass == AresPacket.class) {
-//                calledMethod.getAresServiceProxy().callMethod(aresPacket, calledMethod);
-//                return;
-//            }
             length = aresPacket.getRecvByteBuf().readableBytes();
             Object paraObj = calledMethod.getParser().parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), length));
             calledMethod.getAresServiceProxy().callMethod(paraObj, calledMethod);

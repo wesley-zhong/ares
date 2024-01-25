@@ -119,7 +119,6 @@ public class ServerPacketHandler extends ChannelInboundHandlerAdapter {
             }
             curIgnoreReadIdleCount = totalIgnoreReadIdleCount;
         }
-
         return aresRpcHandler.isChannelValidate(aresMsgEx);
     }
 }

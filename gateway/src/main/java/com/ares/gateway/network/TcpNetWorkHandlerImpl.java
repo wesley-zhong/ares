@@ -33,7 +33,7 @@ public class TcpNetWorkHandlerImpl implements TcpNetWorkHandler {
     private GameServerClientTransfer  gameServerClientTransfer;
     @Override
     public void handleMsgRcv(AresPacket aresPacket) {
-
+        gameServerClientTransfer.sendMsg(areaId,aresPacket);
     }
 
     @Override
@@ -49,8 +49,8 @@ public class TcpNetWorkHandlerImpl implements TcpNetWorkHandler {
 
     @Override
     public void onClientConnected(AresTKcpContext aresTKcpContext) {
-     log.info("---onClientConnected ={} ", aresTKcpContext);
-          gameServerClientTransfer.sendMsg(100, ProtoCommon.ProtoCode.LOGIN_REQUEST_VALUE,  ProtoInner.InnerGameLoginRequest.newBuilder().setRoleId(1111).build());
+//     log.info("---onClientConnected ={} ", aresTKcpContext);
+//          gameServerClientTransfer.sendMsg(100, ProtoCommon.ProtoCode.LOGIN_REQUEST_VALUE,  ProtoInner.InnerGameLoginRequest.newBuilder().setRoleId(1111).build());
     // aresTcpClient.send(100,35, ProtoTask.LoginResponse.newBuilder().build());
     }
 

@@ -19,7 +19,6 @@ public class LoginController implements AresController {
     @Autowired
     private SessionService sessionService;
 
-
     @CalledMsgId(ProtoCommon.ProtoCode.LOGIN_REQUEST_VALUE)
     public void loginRequest(ProtoTask.LoginRequest loginRequest) {
         AresTKcpContext aresTKcpContext = AresContextThreadLocal.get();
