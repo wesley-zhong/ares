@@ -38,7 +38,8 @@ public class PeerConnHandler implements AresController {
         log.info("####  from: {} innerHandShake :{}  finish", aresTKcpContext, innerLoginRequest);
         ProtoInner.InnerServerHandShakeRes response = ProtoInner.InnerServerHandShakeRes.newBuilder().setAreaId(areaId)
                 .setServiceName(appName).build();
-        AresPacket aresPacket = AresPacket.create(ProtoInner.InnerProtoCode.INNER_SERVER_HAND_SHAKE_RES_VALUE,response);
+        ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.newBuilder().setRoleId(id).build();
+        AresPacket aresPacket = AresPacket.create(ProtoInner.InnerProtoCode.INNER_SERVER_HAND_SHAKE_RES_VALUE,header,response);
         aresTKcpContext.send(aresPacket);
         ServerNodeInfo serverNodeInfo = new ServerNodeInfo();
         serverNodeInfo.setAreaId(innerLoginRequest.getAreaId());

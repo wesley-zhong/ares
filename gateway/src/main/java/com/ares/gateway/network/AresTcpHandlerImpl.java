@@ -1,4 +1,4 @@
-package com.ares.game.network;
+package com.ares.gateway.network;
 
 import com.ares.core.bean.AresPacket;
 import com.ares.core.bean.AresRpcMethod;
@@ -6,6 +6,9 @@ import com.ares.core.exception.AresBaseException;
 import com.ares.core.service.ServiceMgr;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.tcp.AresTcpHandler;
+import com.ares.core.utils.AresContextThreadLocal;
+import com.ares.transport.bean.ServerNodeInfo;
+import com.ares.transport.bean.TcpConnServerInfo;
 import com.ares.transport.client.AresTcpClient;
 import com.game.protoGen.ProtoInner;
 import io.netty.buffer.ByteBufInputStream;
@@ -16,10 +19,10 @@ import org.springframework.beans.factory.annotation.Value;
 
 
 @Slf4j
-public class InnerAresTcpHandlerImpl implements AresTcpHandler{
-    @Autowired
-    protected ServiceMgr serviceMgr;
+public class AresTcpHandlerImpl implements AresTcpHandler {
 
+    @Autowired
+    private ServiceMgr serviceMgr;
     @Autowired
     private AresTcpClient aresTcpClient;
     @Value("${spring.application.name}")
@@ -28,28 +31,30 @@ public class InnerAresTcpHandlerImpl implements AresTcpHandler{
 
     @Value("${area.id:100}")
     private int areaId;
-
-
-    protected static final String UTF8 = "UTF-8";
     @Override
     public void handleMsgRcv(AresPacket aresPacket) {
         int length = 0;
         try {
+            AresTKcpContext aresTKcpContext = AresContextThreadLocal.get();
             AresRpcMethod calledMethod = serviceMgr.getCalledMethod(aresPacket.getMsgId());
-            if (calledMethod == null) {
-               // tcpNetWorkHandler.handleMsgRcv(aresPacket);
-                return;
-            }
-            int headerLen = aresPacket.getRecvByteBuf().readShort();
-            long pid = 0;
-            if (headerLen > 0) {
-                ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), headerLen));
-                pid = header.getRoleId();
+            //come from peer server node
+            long roleId = 0;
+            if(aresTKcpContext.getCacheObj() instanceof TcpConnServerInfo
+                    || aresPacket.getMsgId() == ProtoInner.InnerProtoCode.INNER_SERVER_HAND_SHAKE_RES_VALUE){
+                int headerLen = aresPacket.getRecvByteBuf().readShort();
+                if (headerLen > 0) {
+                    ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), headerLen));
+                    roleId = header.getRoleId();
+                }
+                if (calledMethod == null) {
+                    directSendToClient(roleId, aresPacket);
+                    return;
+                }
             }
 
             length = aresPacket.getRecvByteBuf().readableBytes();
             Object paraObj = calledMethod.getParser().parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), length));
-            calledMethod.getAresServiceProxy().callMethod(calledMethod, pid, paraObj);
+            calledMethod.getAresServiceProxy().callMethod(calledMethod, roleId, paraObj);
         } catch (AresBaseException e) {
             log.error("===error  length ={} msgId={} ", length, aresPacket.getMsgId(), e);
         } catch (Throwable e) {
@@ -57,6 +62,10 @@ public class InnerAresTcpHandlerImpl implements AresTcpHandler{
         }
     }
 
+
+    private void directSendToClient(long roleId, AresPacket aresPacket){
+
+    }
     @Override
     public void onServerConnected(Channel aresTKcpContext) {
         ProtoInner.InnerServerHandShakeReq handleShake = ProtoInner.InnerServerHandShakeReq.newBuilder()
@@ -87,5 +96,6 @@ public class InnerAresTcpHandlerImpl implements AresTcpHandler{
 
     @Override
     public void onServerClosed(Channel aresTKcpContext) {
+
     }
 }

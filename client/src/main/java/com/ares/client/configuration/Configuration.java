@@ -1,7 +1,7 @@
 package com.ares.client.configuration;
 
+import com.ares.client.network.AresTcpHandlerImpl;
 import com.ares.core.tcp.AresTcpHandler;
-import com.ares.core.tcp.AresTcpHandlerImpl;
 import com.ares.transport.client.AresTcpClientConn;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

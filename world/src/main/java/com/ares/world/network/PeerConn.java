@@ -4,6 +4,7 @@ package com.ares.world.network;
 import com.ares.common.bean.ServerType;
 import com.ares.core.bean.AresPacket;
 import com.ares.core.tcp.AresTKcpContext;
+import com.game.protoGen.ProtoInner;
 import com.google.protobuf.Message;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
@@ -51,13 +52,21 @@ public class PeerConn {
         return stringAresTcpContextMap.get(serverType.getValue());
     }
 
-    public void send(ServerType serverType, int msgId, Message body){
+    public void send(int areaId, ServerType serverType, long roleId, int msgId, Message body) {
         ChannelHandlerContext aresTcpContext = getAresTcpContext(areaId, serverType);
-        if(aresTcpContext != null){
-            AresPacket aresPacket = AresPacket.create(msgId, body);
+        if (aresTcpContext != null) {
+            ProtoInner.InnerMsgHeader innerMsgHeader = ProtoInner.InnerMsgHeader.newBuilder().setRoleId(roleId).build();
+            AresPacket aresPacket = AresPacket.create(msgId, innerMsgHeader, body);
             aresTcpContext.writeAndFlush(aresPacket);
             return;
         }
-        log.error("========= areaId = {} servetType={} not connected", areaId,serverType);
+        log.error("========= areaId = {} servetType={} not connected", areaId, serverType);
+    }
+
+    public void sendToGame(int areaId, long roleId, int msgId, Message body) {
+        send(areaId, ServerType.GAME, roleId,msgId, body);
+    }
+    public void sendToGame(long roleId, int msgId, Message body){
+        send(this.areaId, ServerType.GAME, roleId, msgId,body);
     }
 }

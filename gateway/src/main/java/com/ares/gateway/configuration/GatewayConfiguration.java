@@ -1,24 +1,16 @@
 package com.ares.gateway.configuration;
 
-import com.ares.core.tcp.AresTcpHandlerImpl;
-import com.ares.discovery.DiscoveryService;
-import com.ares.discovery.DiscoveryServiceImpl;
-import com.ares.discovery.transfer.OnWatchServiceChange;
-import com.ares.transport.bean.ServerNodeInfo;
 import com.ares.core.tcp.AresTcpHandler;
+import com.ares.gateway.network.AresTcpHandlerImpl;
 import com.ares.transport.client.AresTcpClient;
 import com.ares.transport.client.AresTcpClientConn;
 import com.ares.transport.client.AresTcpClientImpl;
-import io.etcd.jetcd.watch.WatchEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Configuration
 @ComponentScan("com.ares")

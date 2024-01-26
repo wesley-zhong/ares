@@ -16,7 +16,7 @@ public class WorldController implements AresController {
     @MsgId(ProtoInner.InnerProtoCode.INNER_TO_WORLD_LOGIN_REQ_VALUE)
     public void playerWorldLoginRequest(long pid,ProtoInner.InnerLoginWorldRequest innerLoginRequest) {
         log.info("  loginRequest  = {}", innerLoginRequest);
-        playerService.playerLogin(innerLoginRequest);
+        playerService.playerLogin(pid, innerLoginRequest);
     }
 
     @MsgId(ProtoInner.InnerProtoCode.INNER_PLAYER_DISCONNECT_REQ_VALUE)

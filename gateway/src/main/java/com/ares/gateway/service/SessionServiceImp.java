@@ -40,9 +40,6 @@ public class SessionServiceImp implements SessionService {
                 .setRoleId(loginRequest.getRoleId())
                 .setSid(1000).build();
 
-        //   aresTcpClient.send(ProtoCommon.ProtoCode.LOGIN_REQUEST_VALUE, 100,innerLoginRequest);
-
-        // aresTcpClient.send(loginRequest.getAreaId(), "game.V1", ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_REQ_VALUE, innerLoginRequest);
         peerConn.sendGameMsg(loginRequest.getAreaId(), loginRequest.getRoleId(), ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_REQ_VALUE, innerLoginRequest);
     }
 

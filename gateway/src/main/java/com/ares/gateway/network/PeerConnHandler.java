@@ -22,7 +22,7 @@ public class PeerConnHandler implements AresController {
 
 
     @MsgId(ProtoInner.InnerProtoCode.INNER_SERVER_HAND_SHAKE_RES_VALUE)
-    public void innerHandShakeRes(ProtoInner.InnerServerHandShakeRes innerLoginRequest) {
+    public void innerHandShakeRes(long pid, ProtoInner.InnerServerHandShakeRes innerLoginRequest) {
         AresTKcpContext aresTKcpContext = AresContextThreadLocal.get();
         peerConn.addContext(innerLoginRequest.getAreaId(), innerLoginRequest.getServiceName(), aresTKcpContext);
         log.info("####  from: {} innerHandShake Response :{}  finish", aresTKcpContext, innerLoginRequest);

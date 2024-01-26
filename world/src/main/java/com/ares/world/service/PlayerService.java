@@ -13,10 +13,10 @@ public class PlayerService {
     @Autowired
     private PeerConn peerConn;
 
-    public void playerLogin(ProtoInner.InnerLoginWorldRequest longinReq) {
+    public void playerLogin(long roleId, ProtoInner.InnerLoginWorldRequest longinReq) {
         ProtoInner.InnerWorldLoginResponse.Builder builder = ProtoInner.InnerWorldLoginResponse.newBuilder();
         builder.setRoleId(longinReq.getRoleId());
         ProtoInner.InnerWorldLoginResponse response = builder.build();
-        peerConn.send(ServerType.GAME, ProtoInner.InnerProtoCode.INNER_TO_WORLD_LOGIN_RES_VALUE, response);
+        peerConn.sendToGame(roleId,ProtoInner.InnerProtoCode.INNER_TO_WORLD_LOGIN_RES_VALUE, response);
     }
 }
