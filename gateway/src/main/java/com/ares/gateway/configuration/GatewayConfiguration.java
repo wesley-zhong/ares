@@ -1,5 +1,6 @@
 package com.ares.gateway.configuration;
 
+import com.ares.core.tcp.AresTcpHandlerImpl;
 import com.ares.discovery.DiscoveryService;
 import com.ares.discovery.DiscoveryServiceImpl;
 import com.ares.discovery.transfer.OnWatchServiceChange;
@@ -52,5 +53,10 @@ public class GatewayConfiguration {
         AresTcpClient aresTcpClient = new AresTcpClientImpl(conn);
         aresTcpClient.init();
         return aresTcpClient;
+    }
+
+    @Bean
+    public AresTcpHandler aresTcpHandler() {
+        return new AresTcpHandlerImpl();
     }
 }

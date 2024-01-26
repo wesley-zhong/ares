@@ -54,14 +54,14 @@ public class AresNettyServer implements InitializingBean {
     @Value("${first.total.ignore.read.idle.count:0}")
     private int firstTotalIgnoreReadIdleCount;
 
-    private EventLoopGroup bossGroup;// = new NioEventLoopGroup(1);
-    private EventLoopGroup workerGroup;// = new NioEventLoopGroup();
+    private EventLoopGroup bossGroup;
+    private EventLoopGroup workerGroup;
 
 
     private final List<Channel> bindChannels = new ArrayList<>();
 
     private void runNettyServer() throws Exception {
-        log.info("#####isUseEpoll:{}", isUseLinux);
+        log.info("#####isUseEpoll:{}", useLinux());
         ServerBootstrap b = new ServerBootstrap();
         int cpuNum = Runtime.getRuntime().availableProcessors();
         int eventCount = cpuNum * 2;//2 * cpuNum

@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class Session {
+public class PlayerSession {
     private  long roleId;
     private  int areaId;
 }

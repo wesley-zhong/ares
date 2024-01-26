@@ -2,6 +2,7 @@ package com.ares.core.tcp;
 
 
 import com.ares.core.bean.AresPacket;
+import com.game.protoGen.ProtoInner;
 import io.netty.channel.Channel;
 
 public interface TcpNetWorkHandler {
@@ -10,6 +11,8 @@ public interface TcpNetWorkHandler {
     void onClientClosed(AresTKcpContext aresTKcpContext);
 
     void handleMsgRcv(AresPacket aresPacket);
+
+    void handleMsgRcv(long pid, AresPacket aresPacket);
 
     void onServerConnected(Channel aresTKcpContext);
 

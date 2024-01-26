@@ -17,8 +17,6 @@ import java.util.Map;
 public class ServiceMgr implements IMsgCall, InitializingBean {
     @Autowired
     private List<AresController> aresServices;
-
-
     public void init() {
         for (AresController service : aresServices) {
             if (service instanceof Proxy) {

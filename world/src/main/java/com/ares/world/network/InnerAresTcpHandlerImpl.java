@@ -1,17 +1,16 @@
-package com.ares.core.tcp;
+package com.ares.world.network;
 
 import com.ares.core.bean.AresPacket;
 import com.ares.core.bean.AresRpcMethod;
 import com.ares.core.exception.AresBaseException;
-import com.ares.core.service.ServiceMgr;
+import com.ares.core.tcp.AresTcpHandlerBase;
+import com.game.protoGen.ProtoInner;
 import io.netty.buffer.ByteBufInputStream;
-import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 
 @Slf4j
-public class AresTcpHandlerImpl extends AresTcpHandlerBase {
+public class InnerAresTcpHandlerImpl extends AresTcpHandlerBase {
     @Override
     public void handleMsgRcv(AresPacket aresPacket) {
         int length = 0;
@@ -21,9 +20,17 @@ public class AresTcpHandlerImpl extends AresTcpHandlerBase {
                 tcpNetWorkHandler.handleMsgRcv(aresPacket);
                 return;
             }
+            int headerLen = aresPacket.getRecvByteBuf().readShort();
+
+            long pid = 0;
+            if (headerLen > 0) {
+                ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), headerLen));
+                pid = header.getRoleId();
+            }
+
             length = aresPacket.getRecvByteBuf().readableBytes();
             Object paraObj = calledMethod.getParser().parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), length));
-            calledMethod.getAresServiceProxy().callMethod(calledMethod, paraObj);
+            calledMethod.getAresServiceProxy().callMethod(calledMethod, pid, paraObj);
         } catch (AresBaseException e) {
             log.error("===error  length ={} msgId={} ", length, aresPacket.getMsgId(), e);
         } catch (Throwable e) {

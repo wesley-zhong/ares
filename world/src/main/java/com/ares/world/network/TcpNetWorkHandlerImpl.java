@@ -24,6 +24,11 @@ public class TcpNetWorkHandlerImpl implements TcpNetWorkHandler {
     }
 
     @Override
+    public void handleMsgRcv(long pid, AresPacket aresPacket) {
+
+    }
+
+    @Override
     public void onServerConnected(Channel aresTKcpContext) {
 
     }

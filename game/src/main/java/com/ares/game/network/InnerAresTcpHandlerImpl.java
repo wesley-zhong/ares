@@ -1,23 +1,27 @@
 package com.ares.game.network;
 
 import com.ares.core.bean.AresPacket;
+import com.ares.core.bean.AresRpcMethod;
+import com.ares.core.exception.AresBaseException;
+import com.ares.core.service.ServiceMgr;
 import com.ares.core.tcp.AresTKcpContext;
+import com.ares.core.tcp.AresTcpHandler;
+import com.ares.core.tcp.AresTcpHandlerBase;
 import com.ares.core.tcp.TcpNetWorkHandler;
 import com.ares.transport.client.AresTcpClient;
 import com.game.protoGen.ProtoInner;
+import io.netty.buffer.ByteBufInputStream;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
-/**
- * Note: TcpNetWorkHandlerImpl  worked on IO thread
- */
 
 
 @Slf4j
-public class TcpNetWorkHandlerImpl implements TcpNetWorkHandler {
+public class InnerAresTcpHandlerImpl implements AresTcpHandler{
+    @Autowired
+    protected ServiceMgr serviceMgr;
+
     @Autowired
     private AresTcpClient aresTcpClient;
     @Value("${spring.application.name}")
@@ -27,14 +31,32 @@ public class TcpNetWorkHandlerImpl implements TcpNetWorkHandler {
     @Value("${area.id:100}")
     private int areaId;
 
+
+    protected static final String UTF8 = "UTF-8";
     @Override
     public void handleMsgRcv(AresPacket aresPacket) {
-        log.info("XXXXXXXXXXXXXXX  handler msg recv id ={}", aresPacket.getMsgId());
-    }
+        int length = 0;
+        try {
+            AresRpcMethod calledMethod = serviceMgr.getCalledMethod(aresPacket.getMsgId());
+            if (calledMethod == null) {
+               // tcpNetWorkHandler.handleMsgRcv(aresPacket);
+                return;
+            }
+            int headerLen = aresPacket.getRecvByteBuf().readShort();
+            long pid = 0;
+            if (headerLen > 0) {
+                ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), headerLen));
+                pid = header.getRoleId();
+            }
 
-    @Override
-    public void handleMsgRcv(long pid, AresPacket aresPacket) {
-
+            length = aresPacket.getRecvByteBuf().readableBytes();
+            Object paraObj = calledMethod.getParser().parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), length));
+            calledMethod.getAresServiceProxy().callMethod(calledMethod, pid, paraObj);
+        } catch (AresBaseException e) {
+            log.error("===error  length ={} msgId={} ", length, aresPacket.getMsgId(), e);
+        } catch (Throwable e) {
+            log.error("==error length ={} msgId ={}  ", length, aresPacket.getMsgId(), e);
+        }
     }
 
     @Override
@@ -51,7 +73,7 @@ public class TcpNetWorkHandlerImpl implements TcpNetWorkHandler {
 
     @Override
     public void onClientConnected(AresTKcpContext aresTKcpContext) {
-     log.info("---onClientConnected ={} ", aresTKcpContext);
+        log.info("---onClientConnected ={} ", aresTKcpContext);
     }
 
     @Override
@@ -67,6 +89,5 @@ public class TcpNetWorkHandlerImpl implements TcpNetWorkHandler {
 
     @Override
     public void onServerClosed(Channel aresTKcpContext) {
-
     }
 }

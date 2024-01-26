@@ -21,10 +21,8 @@ enum  InnerProtoCode{
   INNER_PLAYER_DISCONNECT_RES = -15;
 }
 
-message InnerReqHeader{
-  int64 sid = 1;
-  int64 roleId = 2;
-  int64 toServerId = 3;//proxy to server
+message InnerMsgHeader{
+  int64 roleId = 1;
 }
 
 

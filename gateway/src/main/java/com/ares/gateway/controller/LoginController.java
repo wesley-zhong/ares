@@ -1,6 +1,6 @@
 package com.ares.gateway.controller;
 
-import com.ares.core.annotation.CalledMsgId;
+import com.ares.core.annotation.MsgId;
 import com.ares.core.service.AresController;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.utils.AresContextThreadLocal;
@@ -19,14 +19,14 @@ public class LoginController implements AresController {
     @Autowired
     private SessionService sessionService;
 
-    @CalledMsgId(ProtoCommon.ProtoCode.LOGIN_REQUEST_VALUE)
+    @MsgId(ProtoCommon.ProtoCode.LOGIN_REQUEST_VALUE)
     public void loginRequest(ProtoTask.LoginRequest loginRequest) {
         AresTKcpContext aresTKcpContext = AresContextThreadLocal.get();
         log.info("-------receive from ={} msg ={}", aresTKcpContext, loginRequest);
         sessionService.loginRequest(aresTKcpContext, loginRequest);
     }
 
-    @CalledMsgId(ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_RES_VALUE)
+    @MsgId(ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_RES_VALUE)
     public void onGameLoginRes(ProtoInner.InnerGameLoginResponse loginResponse) {
         log.info(" INNER_TO_GAME_LOGIN_RES_VALUE :{} ",loginResponse);
         ProtoTask.LoginResponse response = ProtoTask.LoginResponse.newBuilder()

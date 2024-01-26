@@ -22,7 +22,7 @@ public class FConst {
 	public final static int EROOR_NOT_SURPORT_REQURED = 13;
 	public final static int  ERROR_CODE_ES_FAILED = 14;
 	public final static int  ERROR_CODE_PARMAS_COUNT_MORE_THAN_ONE= 19;
-	public final static int  ERROR_CODE_PARMAS_REQURED= 20;
+	public final static int  ERROR_CODE_FIRST_PARAMETER_MUST_LONG= 20;
 	public final static int  ERROR_CODE_SYSTEM_START_ERROR = 21;
 	public final static int  ERROR_CODE_SYSTEM_START_ERROR_MSGID = 22;
 	public final static int  ERROR_CODE_MSGID_NOT_VALIED = 23;
@@ -40,6 +40,8 @@ public class FConst {
 	public final static  String EROOR_MSG_AUTH_FAILD ="auth failed";
 	public final static  String EROOR_MSG_BEAN_REFLECT_FAILD        = "bean reflect error";
 	public final static  String ERROR_MSG_PARMAS_COUNT_MORE_THAN_ONE= "params count more than one";
+
+	public final static  String ERROR_MSG_FIRST_PARAMETER_MUST_LONG= "first parameter must be Long";
 	public final static  String ERROR_MSG_PARMAS_REQURED="params is requred";
 	public final static String ERROR_MSG_UNKNOWN_ERROR     = "unknown error" ;
 	public final static String ERROR_MSG__SYSTEM_START_ERROR_MSGID     = "msg id is should exist" ;

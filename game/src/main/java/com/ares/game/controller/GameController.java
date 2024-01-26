@@ -1,7 +1,7 @@
 package com.ares.game.controller;
 
 import com.ares.common.bean.ServerType;
-import com.ares.core.annotation.CalledMsgId;
+import com.ares.core.annotation.MsgId;
 import com.ares.core.service.AresController;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.utils.AresContextThreadLocal;
@@ -9,10 +9,7 @@ import com.ares.game.network.PeerConn;
 import com.ares.game.network.WorldServerClientTransfer;
 import com.ares.game.player.GamePlayer;
 import com.ares.game.service.PlayerRoleService;
-import com.ares.transport.client.AresTcpClient;
-import com.game.protoGen.ProtoCommon;
 import com.game.protoGen.ProtoInner;
-import com.game.protoGen.ProtoTask;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,8 +24,8 @@ public class GameController implements AresController {
     @Autowired
     private WorldServerClientTransfer worldServerClientTransfer;
 
-    @CalledMsgId(ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_REQ_VALUE)
-    public void gameInnerLoginRequest(ProtoInner.InnerGameLoginRequest gameInnerLoginRequest) {
+    @MsgId(ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_REQ_VALUE)
+    public void gameInnerLoginRequest(long pid, ProtoInner.InnerGameLoginRequest gameInnerLoginRequest) {
         /**
          * do some check
          */
@@ -45,8 +42,8 @@ public class GameController implements AresController {
         worldServerClientTransfer.sendMsg(ProtoInner.InnerProtoCode.INNER_TO_WORLD_LOGIN_REQ_VALUE,innerRequest);
     }
 
-    @CalledMsgId(ProtoInner.InnerProtoCode.INNER_TO_WORLD_LOGIN_RES_VALUE)
-    public void worldLoginResponse(ProtoInner.InnerWorldLoginResponse worldLoginResponse) {
+    @MsgId(ProtoInner.InnerProtoCode.INNER_TO_WORLD_LOGIN_RES_VALUE)
+    public void worldLoginResponse(long pid, ProtoInner.InnerWorldLoginResponse worldLoginResponse) {
         log.info("======== worldLoginResponse  ={}", worldLoginResponse);
         ProtoInner.InnerGameLoginResponse innerGameLoginRes = ProtoInner.InnerGameLoginResponse.newBuilder()
                 .setRoleId(worldLoginResponse.getRoleId()).build();
@@ -55,8 +52,8 @@ public class GameController implements AresController {
     }
 
 
-    @CalledMsgId(ProtoInner.InnerProtoCode.INNER_PLAYER_DISCONNECT_REQ_VALUE)
-    public void playerDisconnected(ProtoInner.InnerPlayerDisconnectRequest innerLoginRequest) {
+    @MsgId(ProtoInner.InnerProtoCode.INNER_PLAYER_DISCONNECT_REQ_VALUE)
+    public void playerDisconnected(long pid, ProtoInner.InnerPlayerDisconnectRequest innerLoginRequest) {
         log.info("======== gameLoginRequest  ={}", innerLoginRequest);
     }
 }

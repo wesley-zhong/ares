@@ -4,15 +4,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class AresRpcServerConfiguration {
+public class AresInnerTcpServerConfiguration {
 
     @Bean
-    public AresRpcServer aresRpcServer() {
-        return new AresRpcServer();
+    public AresInnerServer aresRpcServer() {
+        return new AresInnerServer();
     }
 
 
-    public static class AresRpcServer {
+    public static class AresInnerServer {
 
     }
 }

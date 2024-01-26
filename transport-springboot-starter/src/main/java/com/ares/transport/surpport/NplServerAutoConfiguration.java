@@ -18,16 +18,23 @@ import org.springframework.context.annotation.Scope;
 public class NplServerAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnBean(AresRpcServerConfiguration.AresRpcServer.class)
+    @ConditionalOnBean(AresTcpServerConfiguration.AresTcpServer.class)
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public AresNettyServer aresNettyServer() {
         return new AresNettyServer();
     }
 
-    @Bean
-    @ConditionalOnMissingBean
-    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-    public AresTcpHandler aresTcpHandler() {
-        return new AresTcpHandlerImpl();
-    }
+//    @Bean
+//    @ConditionalOnMissingBean
+//    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+//    public AresTcpHandler aresTcpHandler() {
+//        return new AresTcpHandlerImpl();
+//    }
+//
+//    @Bean
+//    @ConditionalOnMissingBean
+//    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+//    public AresTcpHandler aresTcpHandler() {
+//        return new AresTcpHandlerImpl();
+//    }
 }

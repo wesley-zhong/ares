@@ -1,6 +1,6 @@
 package com.ares.gateway.network;
 
-import com.ares.core.annotation.CalledMsgId;
+import com.ares.core.annotation.MsgId;
 import com.ares.core.service.AresController;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.utils.AresContextThreadLocal;
@@ -14,14 +14,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class ClientConnHandler implements AresController {
+public class PeerConnHandler implements AresController {
     @Autowired
     private PeerConn  peerConn;
     @Autowired
     private AresTcpClient aresTcpClient;
 
 
-    @CalledMsgId(ProtoInner.InnerProtoCode.INNER_SERVER_HAND_SHAKE_RES_VALUE)
+    @MsgId(ProtoInner.InnerProtoCode.INNER_SERVER_HAND_SHAKE_RES_VALUE)
     public void innerHandShakeRes(ProtoInner.InnerServerHandShakeRes innerLoginRequest) {
         AresTKcpContext aresTKcpContext = AresContextThreadLocal.get();
         peerConn.addContext(innerLoginRequest.getAreaId(), innerLoginRequest.getServiceName(), aresTKcpContext);
