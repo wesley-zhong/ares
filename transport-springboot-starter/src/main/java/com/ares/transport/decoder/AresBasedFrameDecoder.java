@@ -9,6 +9,6 @@ public class AresBasedFrameDecoder extends LengthFieldBasedFrameDecoder {
     }
 
     public AresBasedFrameDecoder(int maxFrameLength, int lengthFieldOffset, int lengthFieldLength) {
-        super(maxFrameLength, lengthFieldOffset, lengthFieldLength, 0, 4);
+        super(maxFrameLength, lengthFieldOffset, lengthFieldLength, 0, 0);
     }
 }

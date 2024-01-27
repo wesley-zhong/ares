@@ -53,3 +53,15 @@ message PerformanceTestRes{
   string resBody = 2;
   int64  someIdAdd =3;
 }
+
+message  DirectToWorldReq{
+  int64  someId = 1;
+  string resBody = 2;
+  int64  someIdAdd =3;
+}
+
+message  DirectToWorldRes{
+  int64  someId = 1;
+  string resBody = 2;
+  int64  someIdAdd =3;
+}

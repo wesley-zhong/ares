@@ -1,11 +1,15 @@
 package com.ares.game.network;
 
+import com.ares.common.bean.ServerType;
 import com.ares.core.bean.AresPacket;
 import com.ares.core.bean.AresRpcMethod;
 import com.ares.core.exception.AresBaseException;
 import com.ares.core.service.ServiceMgr;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.tcp.AresTcpHandler;
+import com.ares.core.utils.AresContextThreadLocal;
+import com.ares.transport.bean.ServerNodeInfo;
+import com.ares.transport.bean.TcpConnServerInfo;
 import com.ares.transport.client.AresTcpClient;
 import com.game.protoGen.ProtoInner;
 import io.netty.buffer.ByteBufInputStream;
@@ -29,6 +33,9 @@ public class InnerAresTcpHandlerImpl implements AresTcpHandler{
     @Value("${area.id:100}")
     private int areaId;
 
+    @Autowired
+    private PeerConn peerConn;
+
 
     protected static final String UTF8 = "UTF-8";
     @Override
@@ -38,8 +45,17 @@ public class InnerAresTcpHandlerImpl implements AresTcpHandler{
             AresRpcMethod calledMethod = serviceMgr.getCalledMethod(aresPacket.getMsgId());
             if (calledMethod == null) {
                // tcpNetWorkHandler.handleMsgRcv(aresPacket);
+                /**
+                 * if from fgate
+                 */
+                if(fromServerType() == ServerType.GATEWAY){
+                    peerConn.directSendToWorld(aresPacket);
+                }else{
+                    peerConn.directSendToGateway(aresPacket);
+                }
                 return;
             }
+            aresPacket.getRecvByteBuf().skipBytes(6);
             int headerLen = aresPacket.getRecvByteBuf().readShort();
             long pid = 0;
             if (headerLen > 0) {
@@ -55,6 +71,16 @@ public class InnerAresTcpHandlerImpl implements AresTcpHandler{
         } catch (Throwable e) {
             log.error("==error length ={} msgId ={}  ", length, aresPacket.getMsgId(), e);
         }
+    }
+
+    private ServerType fromServerType(){
+        AresTKcpContext aresTKcpContext = AresContextThreadLocal.get();
+        Object cacheObj = aresTKcpContext.getCacheObj();
+        if(cacheObj instanceof TcpConnServerInfo tcpConnServerInfo){
+            ServerNodeInfo serverNodeInfo = tcpConnServerInfo.getServerNodeInfo();
+            return  ServerType.from(serverNodeInfo.getServiceName());
+        }
+        return  null;
     }
 
     @Override

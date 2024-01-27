@@ -5,6 +5,7 @@ import com.ares.core.service.AresController;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.utils.AresContextThreadLocal;
 
+import com.ares.gateway.bean.PlayerSession;
 import com.ares.gateway.service.SessionService;
 import com.game.protoGen.ProtoCommon;
 import com.game.protoGen.ProtoInner;
@@ -29,6 +30,8 @@ public class LoginController implements AresController {
     @MsgId(ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_RES_VALUE)
     public void onGameLoginRes(long roleId, ProtoInner.InnerGameLoginResponse loginResponse) {
         log.info(" INNER_TO_GAME_LOGIN_RES_VALUE :{} ",loginResponse);
+
+        sessionService.loginSuccess(loginResponse);
         ProtoTask.LoginResponse response = ProtoTask.LoginResponse.newBuilder()
                 .setErrorCode(0)
                 .setRoleId(loginResponse.getRoleId())

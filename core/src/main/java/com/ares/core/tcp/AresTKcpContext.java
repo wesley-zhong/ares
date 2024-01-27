@@ -25,5 +25,7 @@ public interface AresTKcpContext {
 
     boolean isActive();
 
+    void clearPackageData();
+
     void close();
 }

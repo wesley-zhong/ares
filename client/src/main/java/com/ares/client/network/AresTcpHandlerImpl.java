@@ -30,6 +30,7 @@ public class AresTcpHandlerImpl implements AresTcpHandler {
                // tcpNetWorkHandler.handleMsgRcv(aresPacket);
                 return;
             }
+            aresPacket.getRecvByteBuf().skipBytes(6);
             length = aresPacket.getRecvByteBuf().readableBytes();
             Object paraObj = calledMethod.getParser().parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), length));
             calledMethod.getAresServiceProxy().callMethod(calledMethod, paraObj);

@@ -96,6 +96,11 @@ public class AresTKcpContext implements com.ares.core.tcp.AresTKcpContext {
         return ctx.channel().isActive();
     }
 
+    @Override
+    public void clearPackageData() {
+
+    }
+
     public boolean equals(Object target) {
         if (this == target) {
             return true;
@@ -139,6 +144,7 @@ public class AresTKcpContext implements com.ares.core.tcp.AresTKcpContext {
             ctx.channel().close();
         }
     }
+
 
     private void tcpSendByteBuf(ByteBuf byteBuf) {
         //ByteBuf will release in channel pipleine

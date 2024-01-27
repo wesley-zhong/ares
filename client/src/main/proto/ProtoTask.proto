@@ -25,7 +25,7 @@ message LoginRequest {
   int64 roleId = 2; // 角色
   string loginToken = 3;  // login token
   int32 gameTicket = 4; // game ticket
-  int32 areaId = 5; // 游戏 区id
+  int32 areaId = 5; // 游戏服务器id
 }
 
 message LoginResponse {
@@ -49,6 +49,18 @@ message  PerformanceTestReq{
 }
 
 message PerformanceTestRes{
+  int64  someId = 1;
+  string resBody = 2;
+  int64  someIdAdd =3;
+}
+
+message  DirectToWorldReq{
+  int64  someId = 1;
+  string resBody = 2;
+  int64  someIdAdd =3;
+}
+
+message  DirectToWorldRes{
   int64  someId = 1;
   string resBody = 2;
   int64  someIdAdd =3;

@@ -40,8 +40,8 @@ message InnerGameLoginRequest {
 }
 
 message InnerGameLoginResponse {
-  int64 sid = 1; //sessionId
-  int64 roleId = 2;
+  int64 roleId = 1; //sessionId
+  int32 areaId = 2;
 }
 
 message InnerWorldLoginRequest{
@@ -50,7 +50,8 @@ message InnerWorldLoginRequest{
 
 message InnerWorldLoginResponse{
   int64  roleId = 1;
-  int32 code = 2;
+  int32  areaId = 2;
+  int32 code = 3;
 
 }
 

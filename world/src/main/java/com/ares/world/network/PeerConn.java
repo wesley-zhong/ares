@@ -54,13 +54,13 @@ public class PeerConn {
 
     public void send(int areaId, ServerType serverType, long roleId, int msgId, Message body) {
         ChannelHandlerContext aresTcpContext = getAresTcpContext(areaId, serverType);
-        if (aresTcpContext != null) {
-            ProtoInner.InnerMsgHeader innerMsgHeader = ProtoInner.InnerMsgHeader.newBuilder().setRoleId(roleId).build();
-            AresPacket aresPacket = AresPacket.create(msgId, innerMsgHeader, body);
-            aresTcpContext.writeAndFlush(aresPacket);
+        if (aresTcpContext == null) {
+            log.error("========= areaId = {} servetType={} not connected", areaId, serverType);
             return;
         }
-        log.error("========= areaId = {} servetType={} not connected", areaId, serverType);
+        ProtoInner.InnerMsgHeader innerMsgHeader = ProtoInner.InnerMsgHeader.newBuilder().setRoleId(roleId).build();
+        AresPacket aresPacket = AresPacket.create(msgId, innerMsgHeader, body);
+        aresTcpContext.writeAndFlush(aresPacket);
     }
 
     public void sendToGame(int areaId, long roleId, int msgId, Message body) {

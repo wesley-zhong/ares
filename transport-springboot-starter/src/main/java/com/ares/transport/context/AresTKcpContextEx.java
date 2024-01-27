@@ -19,6 +19,10 @@ public class AresTKcpContextEx extends AresTKcpContext {
     public AresPacket getRcvPackage() {
         return aresPacket;
     }
+    @Override
+    public void clearPackageData() {
+        aresPacket = null;
+    }
 
 
 

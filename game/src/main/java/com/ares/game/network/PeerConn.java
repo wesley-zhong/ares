@@ -81,4 +81,22 @@ public class PeerConn {
         send(this.areaId, ServerType.GATEWAY, roleId, msgId, body);
     }
 
+    public void directSendToWorld(AresPacket aresPacket){
+        ChannelHandlerContext aresTcpContext = getAresTcpContext(areaId, ServerType.WORLD);
+        if(aresTcpContext == null){
+            log.error("areaId ={} serverType ={}  not found connection", aresPacket, ServerType.WORLD);
+            return;
+        }
+
+        aresTcpContext.writeAndFlush(aresPacket.getRecvByteBuf().retain());
+    }
+
+    public void directSendToGateway(AresPacket aresPacket){
+        ChannelHandlerContext aresTcpContext = getAresTcpContext(areaId, ServerType.GATEWAY);
+        if(aresTcpContext == null){
+            log.error("areaId ={} serverType ={}  not found connection", aresPacket, ServerType.WORLD);
+            return;
+        }
+        aresTcpContext.writeAndFlush(aresPacket.getRecvByteBuf().retain());
+    }
 }
