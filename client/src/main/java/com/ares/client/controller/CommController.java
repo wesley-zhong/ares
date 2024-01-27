@@ -1,6 +1,7 @@
 package com.ares.client.controller;
 
 import com.ares.client.Client;
+import com.ares.client.performance.PerformanceTestService;
 import com.ares.core.annotation.MsgId;
 import com.ares.core.bean.AresPacket;
 import com.ares.core.service.AresController;
@@ -16,6 +17,9 @@ import org.springframework.stereotype.Controller;
 public class CommController implements AresController {
     @Autowired
     private Client client;
+    @Autowired
+    private PerformanceTestService  performanceTestService;
+
     @MsgId(ProtoCommon.ProtoCode.LOGIN_RESPONSE_VALUE)
     public void userLoginResponse(ProtoTask.LoginResponse response){
         log.info("------login response ={}", response);
@@ -31,6 +35,10 @@ public class CommController implements AresController {
 
         AresPacket  directWorld = AresPacket.create(ProtoCommon.ProtoCode.DIRECT_TO_WORLD_REQ_VALUE, req);
         client.getChannel().writeAndFlush(directWorld);
+
+        performanceTestService.startSend();
+
+
     }
 
     @MsgId(ProtoCommon.ProtoCode.PERFORMANCE_TEST_RES_VALUE)

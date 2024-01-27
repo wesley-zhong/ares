@@ -82,7 +82,6 @@ public class AresTcpHandlerImpl implements AresTcpHandler {
         ByteBuf body = aresPacket.getRecvByteBuf();
         body.readerIndex(0);
         int totalLen = body.getInt(0);
-        int msgId = body.getShort(4);
 
         int sendMsgLen = totalLen - 2 - headerLen;
         body.skipBytes(headerLen + 2);
@@ -90,9 +89,6 @@ public class AresTcpHandlerImpl implements AresTcpHandler {
         body.setInt(headerLen + 2, sendMsgLen);
         body.setShort(headerLen + 2 + 4, aresPacket.getMsgId());
         body.retain();
-
-//        int leng = body.readInt();
-//        int tmsgId = body.readShort();
         sessionService.sendPlayerMsg(roleId, body);
     }
 
