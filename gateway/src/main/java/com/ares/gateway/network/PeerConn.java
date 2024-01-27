@@ -86,7 +86,7 @@ public class PeerConn {
             return;
         }
         channelHandlerContext.writeAndFlush(byteBufs);
-        log.info("-----direct msg to game game server roleId ={} msgId ={} areaId={}", roleId, aresPacket.getMsgId(), areaId);
+     //   log.info("-----direct msg to game game server roleId ={} msgId ={} areaId={}", roleId, aresPacket.getMsgId(), areaId);
     }
 
     public void send(ServerType serverType, long roleId, int msgId, Message body) {
