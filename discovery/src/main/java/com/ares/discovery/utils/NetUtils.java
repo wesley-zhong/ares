@@ -37,6 +37,9 @@ public class NetUtils {
     }
 
     public static String createServiceId(String appName, String ip, int port, int areaId) {
+        if(areaId == 0){
+            return  appName + "/" + ip + ":" + port;
+        }
         return areaId + "/" + appName + "/" + ip + ":" + port;
     }
 }

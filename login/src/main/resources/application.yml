@@ -1,0 +1,30 @@
+server:
+  port: 6080
+
+spring:
+  application:
+    name: login.V1
+  cloud:
+    config:
+      enabled:  false
+  main:
+    allow-bean-definition-overriding: true
+    allow-circular-references: true
+
+
+
+discovery:
+  endpoints:
+    - http://localhost:2379
+    - http://localhost:2379
+  watch-servers:
+    - service-name-prefix: gateway.V1
+#      areas:
+#        - area-id: 100
+#          connect: true
+
+mongo:
+  addrs: localhost:27017;localhost:27017
+  userName: admin
+  password: admin
+

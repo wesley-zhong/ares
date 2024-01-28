@@ -1,6 +1,7 @@
 package com.ares.dal.redis;
 
-import com.alibaba.fastjson.JSON;
+
+import com.ares.core.json.transcoder.JsonObjectMapper;
 import com.ares.core.utils.JsonUtil;
 import com.fasterxml.jackson.databind.JavaType;
 import org.slf4j.Logger;
@@ -69,7 +70,7 @@ public abstract class RedisTaskDisPatchBase<T> {
     }
 
     private void distributeAddTask(T task, long timeOut) {
-        String distributeKey = JSON.toJSONString(task);
+        String distributeKey = JsonObjectMapper.toJSONString(task);
         boolean ret = redisDAO.lock(distributeKey, 15);
         if (ret) {
             try {

@@ -26,6 +26,10 @@ public class DiscoveryEndPoints {
 
         public List<String> getWatchPrefix() {
             List<String> watchList = new ArrayList<>();
+            if(areas == null || areas.length == 0){
+                watchList.add(serviceNamePrefix);
+                return watchList;
+            }
             for (Areas area : areas) {
                 watchList.add(area.areaId + "/" + serviceNamePrefix);
             }
