@@ -1,6 +1,5 @@
 package com.ares.game.controller;
 
-import com.ares.common.bean.ServerType;
 import com.ares.core.annotation.MsgId;
 import com.ares.core.service.AresController;
 import com.ares.core.tcp.AresTKcpContext;
