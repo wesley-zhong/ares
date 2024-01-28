@@ -20,5 +20,4 @@ public class LoginService{
         AresPacket  aresPacket = AresPacket.create(ProtoCommon.ProtoCode.LOGIN_REQUEST_VALUE,loginRequest.build());
         channel.writeAndFlush(aresPacket);
     }
-
 }

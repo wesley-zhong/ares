@@ -21,10 +21,14 @@ public class PlayerRoleService {
         GamePlayer gamePlayer =  playerMap.get(pid);
         if(gamePlayer == null){
             RoleDO roleDO = roleDAO.getSingle(pid);
+            if(roleDO == null){
+                return  null;
+            }
             gamePlayer = new GamePlayer();
             gamePlayer.setRoleDO(roleDO);
         }
-       return  playerMap.put(pid, gamePlayer);
+         playerMap.put(pid, gamePlayer);
+        return gamePlayer;
     }
 
     public GamePlayer getRoleDo(long id) {

@@ -4,7 +4,7 @@ package com.ares.transport.thread;
 import com.ares.core.bean.AresPacket;
 import com.ares.core.tcp.AresTcpHandler;
 import com.ares.core.utils.AresContextThreadLocal;
-import com.ares.transport.context.AresTKcpContextEx;
+import com.ares.transport.context.AresTKcpContextImplEx;
 import com.lmax.disruptor.EventHandler;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
@@ -21,12 +21,12 @@ public class AresEventHandler implements EventHandler<AresPacketEvent> {
 
     @Override
     public void onEvent(AresPacketEvent event, long sequence, boolean endOfBatch) {
-        AresTKcpContextEx aresPacketEx = event.getPacket();
+        AresTKcpContextImplEx aresPacketEx = event.getPacket();
         onPacket(aresPacketEx);
         clearEvent(event);
     }
 
-    void onPacket(AresTKcpContextEx aresPacketEx) {
+    void onPacket(AresTKcpContextImplEx aresPacketEx) {
         try {
             if (aresPacketEx.getRcvPackage() != null) {
                 doOnPacket(aresPacketEx);
@@ -36,7 +36,7 @@ public class AresEventHandler implements EventHandler<AresPacketEvent> {
         }
     }
 
-    private void doOnPacket(AresTKcpContextEx aresPacketEx) {
+    private void doOnPacket(AresTKcpContextImplEx aresPacketEx) {
         AresPacket aresPacket = aresPacketEx.getRcvPackage();
         ChannelHandlerContext context = aresPacketEx.getCtx();
         if (context.isRemoved()) {
@@ -52,7 +52,7 @@ public class AresEventHandler implements EventHandler<AresPacketEvent> {
     }
 
 
-    private void clearPacket(AresTKcpContextEx aresPacketEx) {
+    private void clearPacket(AresTKcpContextImplEx aresPacketEx) {
         if (aresPacketEx == null) {
             return;
         }

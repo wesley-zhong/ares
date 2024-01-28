@@ -1,7 +1,7 @@
 package com.ares.transport.thread;
 
 import com.ares.core.tcp.AresTcpHandler;
-import com.ares.transport.context.AresTKcpContextEx;
+import com.ares.transport.context.AresTKcpContextImplEx;
 import com.lmax.disruptor.LiteTimeoutBlockingWaitStrategy;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
@@ -46,7 +46,7 @@ public class DisruptorSingleExecutor implements IMessageExecutor {
     }
 
     @Override
-    public void execute(AresTKcpContextEx aresPacket) {
+    public void execute(AresTKcpContextImplEx aresPacket) {
         try {
             final long sequence = ringBuffer.tryNext();
             try {

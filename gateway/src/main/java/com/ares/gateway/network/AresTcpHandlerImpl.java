@@ -113,6 +113,12 @@ public class AresTcpHandlerImpl implements AresTcpHandler {
     @Override
     public void onClientClosed(AresTKcpContext aresTKcpContext) {
         log.info("-----onClientClosed={} ", aresTKcpContext);
+        Object cacheObj = aresTKcpContext.getCacheObj();
+        if (cacheObj instanceof PlayerSession playerSession) {
+            ProtoInner.InnerPlayerDisconnectRequest disconnectRequest = ProtoInner.InnerPlayerDisconnectRequest.newBuilder()
+                    .setRoleId(playerSession.getRoleId()).build();
+            peerConn.sendToGameMsg(playerSession.getAreaId(), playerSession.getRoleId(), ProtoInner.InnerProtoCode.INNER_PLAYER_DISCONNECT_REQ_VALUE, disconnectRequest);
+        }
     }
 
     @Override

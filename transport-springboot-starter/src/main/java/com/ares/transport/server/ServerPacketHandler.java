@@ -1,10 +1,12 @@
 package com.ares.transport.server;
 
 
+import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.tcp.AresTcpHandler;
 import com.ares.transport.consts.FMsgId;
 import com.ares.core.bean.AresPacket;
-import com.ares.transport.context.AresTKcpContextEx;
+import com.ares.transport.context.AresTKcpContextImpl;
+import com.ares.transport.context.AresTKcpContextImplEx;
 import com.ares.transport.thread.PackageProcessThreadPool;
 import com.ares.transport.thread.PackageProcessThreadPoolGroup;
 import com.ares.transport.utils.AresPacketUtils;
@@ -44,11 +46,11 @@ public class ServerPacketHandler extends ChannelInboundHandlerAdapter {
         ByteBuf body = (ByteBuf) in;
 
         int msgId = body.getShort(4);//body.readShort();
-        AresTKcpContextEx aresTcpContextEx = AresPacketUtils.parseAresPacket(ctx, body, msgId);
+        AresTKcpContextImplEx aresTcpContextEx = AresPacketUtils.parseAresPacket(ctx, body, msgId);
         processAresPacket(aresTcpContextEx, ctx);
     }
 
-    private void processAresPacket(AresTKcpContextEx aresMsgEx, ChannelHandlerContext ctx) {
+    private void processAresPacket(AresTKcpContextImplEx aresMsgEx, ChannelHandlerContext ctx) {
         AresPacket aresPacket = aresMsgEx.getRcvPackage();
         boolean ret = checkValid(aresMsgEx, aresPacket.getMsgId());
         if (!ret) {
@@ -65,7 +67,7 @@ public class ServerPacketHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) {
-        AresTKcpContextEx aresTcpContextEx = new AresTKcpContextEx(ctx);
+        AresTKcpContextImplEx aresTcpContextEx = new AresTKcpContextImplEx(ctx);
         aresRpcHandler.onClientConnected(aresTcpContextEx);
     }
 
@@ -90,7 +92,8 @@ public class ServerPacketHandler extends ChannelInboundHandlerAdapter {
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         try {
             log.error("{} ------  socket channelInactive", ctx.channel().remoteAddress());
-            aresRpcHandler.onServerClosed(ctx.channel());
+            AresTKcpContext aresTKcpContext = new AresTKcpContextImpl(ctx);
+            aresRpcHandler.onClientClosed(aresTKcpContext);
             ctx.close();
         } finally {
             try {
@@ -112,7 +115,7 @@ public class ServerPacketHandler extends ChannelInboundHandlerAdapter {
         ctx.writeAndFlush(ping);
     }
 
-    private boolean checkValid(AresTKcpContextEx aresMsgEx, int msgId) {
+    private boolean checkValid(AresTKcpContextImplEx aresMsgEx, int msgId) {
         if (msgId == FMsgId.PONG) {
             if (hearBeatCount < MAX_NO_CHECK_COUNT) {
                 hearBeatCount++;
