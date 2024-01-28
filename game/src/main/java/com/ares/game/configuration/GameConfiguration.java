@@ -2,7 +2,7 @@ package com.ares.game.configuration;
 
 import com.ares.common.bean.ServerType;
 import com.ares.core.tcp.AresTcpHandler;
-import com.ares.game.network.InnerAresTcpHandlerImpl;
+import com.ares.game.network.GameMsgHandler;
 import com.ares.core.utils.SnowFlake;
 import com.ares.dal.mongo.AresMongoClient;
 import com.ares.transport.client.AresTcpClient;
@@ -61,7 +61,7 @@ public class GameConfiguration  implements InitializingBean {
 
     @Bean
     public AresTcpHandler aresTcpHandler() {
-        return new InnerAresTcpHandlerImpl();
+        return new GameMsgHandler();
     }
 
     @Override

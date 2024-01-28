@@ -1,6 +1,6 @@
 package com.ares.client.configuration;
 
-import com.ares.client.network.AresTcpHandlerImpl;
+import com.ares.client.network.ClientMsgHandler;
 import com.ares.core.tcp.AresTcpHandler;
 import com.ares.transport.client.AresTcpClientConn;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class Configuration {
 
     @Bean
     public AresTcpHandler aresTcpHandler(){
-        return new AresTcpHandlerImpl();
+        return new ClientMsgHandler();
     }
 
 }

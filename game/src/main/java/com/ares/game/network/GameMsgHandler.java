@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 
 @Slf4j
-public class InnerAresTcpHandlerImpl implements AresTcpHandler{
+public class GameMsgHandler implements AresTcpHandler{
     @Autowired
     protected ServiceMgr serviceMgr;
 

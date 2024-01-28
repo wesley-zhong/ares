@@ -1,4 +1,4 @@
-package com.ares.client.network;
+package com.ares.world.network;
 
 import com.ares.core.bean.AresPacket;
 import com.ares.core.bean.AresRpcMethod;
@@ -16,24 +16,38 @@ import org.springframework.beans.factory.annotation.Value;
 
 
 @Slf4j
-public class AresTcpHandlerImpl implements AresTcpHandler {
-
+public class WorldMsgHandler implements AresTcpHandler {
     @Autowired
     private ServiceMgr serviceMgr;
-    
+    @Autowired
+    private AresTcpClient aresTcpClient;
+    @Value("${spring.application.name}")
+    private String appName;
+
+
+    @Value("${area.id:100}")
+    private int areaId;
     @Override
     public void handleMsgRcv(AresPacket aresPacket) {
         int length = 0;
         try {
             AresRpcMethod calledMethod = serviceMgr.getCalledMethod(aresPacket.getMsgId());
+            aresPacket.getRecvByteBuf().skipBytes(6);
             if (calledMethod == null) {
-               // tcpNetWorkHandler.handleMsgRcv(aresPacket);
+                log.error("msgId ={} not found call function", aresPacket.getMsgId());
                 return;
             }
-            aresPacket.getRecvByteBuf().skipBytes(6);
+            int headerLen = aresPacket.getRecvByteBuf().readShort();
+
+            long pid = 0;
+            if (headerLen > 0) {
+                ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), headerLen));
+                pid = header.getRoleId();
+            }
+
             length = aresPacket.getRecvByteBuf().readableBytes();
             Object paraObj = calledMethod.getParser().parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), length));
-            calledMethod.getAresServiceProxy().callMethod(calledMethod, paraObj);
+            calledMethod.getAresServiceProxy().callMethod(calledMethod, pid, paraObj);
         } catch (AresBaseException e) {
             log.error("===error  length ={} msgId={} ", length, aresPacket.getMsgId(), e);
         } catch (Throwable e) {
@@ -41,9 +55,9 @@ public class AresTcpHandlerImpl implements AresTcpHandler {
         }
     }
 
+
     @Override
     public void onServerConnected(Channel aresTKcpContext) {
-        log.info("----- {} connected", aresTKcpContext);
 
     }
 
@@ -67,4 +81,5 @@ public class AresTcpHandlerImpl implements AresTcpHandler {
     public void onServerClosed(Channel aresTKcpContext) {
 
     }
+
 }

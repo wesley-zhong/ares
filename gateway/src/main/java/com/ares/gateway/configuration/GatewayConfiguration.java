@@ -1,7 +1,7 @@
 package com.ares.gateway.configuration;
 
 import com.ares.core.tcp.AresTcpHandler;
-import com.ares.gateway.network.AresTcpHandlerImpl;
+import com.ares.gateway.network.GateWayMsgHandler;
 import com.ares.transport.client.AresTcpClient;
 import com.ares.transport.client.AresTcpClientConn;
 import com.ares.transport.client.AresTcpClientImpl;
@@ -49,6 +49,6 @@ public class GatewayConfiguration {
 
     @Bean
     public AresTcpHandler aresTcpHandler() {
-        return new AresTcpHandlerImpl();
+        return new GateWayMsgHandler();
     }
 }
