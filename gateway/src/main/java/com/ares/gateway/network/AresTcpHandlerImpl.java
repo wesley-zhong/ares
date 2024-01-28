@@ -32,9 +32,6 @@ public class AresTcpHandlerImpl implements AresTcpHandler {
     @Value("${spring.application.name}")
     private String appName;
 
-
-    @Value("${area.id:100}")
-    private int areaId;
     @Autowired
     private SessionService sessionService;
 
@@ -44,12 +41,12 @@ public class AresTcpHandlerImpl implements AresTcpHandler {
         try {
             AresTKcpContext aresTKcpContext = AresContextThreadLocal.get();
             AresRpcMethod calledMethod = serviceMgr.getCalledMethod(aresPacket.getMsgId());
-            // aresPacket.getRecvByteBuf().markReaderIndex();
             aresPacket.getRecvByteBuf().skipBytes(6);
-            //come from peer server node
+
             long roleId = 0;
             if (aresTKcpContext.getCacheObj() instanceof TcpConnServerInfo
                     || aresPacket.getMsgId() == ProtoInner.InnerProtoCode.INNER_SERVER_HAND_SHAKE_RES_VALUE) {
+                //come from peer server node
                 int headerLen = aresPacket.getRecvByteBuf().readShort();
                 if (headerLen > 0) {
                     ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), headerLen));
@@ -90,6 +87,7 @@ public class AresTcpHandlerImpl implements AresTcpHandler {
         body.setShort(headerLen + 2 + 4, aresPacket.getMsgId());
         body.retain();
         sessionService.sendPlayerMsg(roleId, body);
+        log.info("------- direct send to client msg roleId ={} msgId={}", roleId, aresPacket.getMsgId());
     }
 
     private void directSendGame(PlayerSession playerSession, AresPacket aresPacket) {
@@ -99,7 +97,6 @@ public class AresTcpHandlerImpl implements AresTcpHandler {
     @Override
     public void onServerConnected(Channel aresTKcpContext) {
         ProtoInner.InnerServerHandShakeReq handleShake = ProtoInner.InnerServerHandShakeReq.newBuilder()
-                .setAreaId(areaId)
                 .setServiceName(appName).build();
 
         ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.newBuilder().build();

@@ -5,8 +5,8 @@ import com.ares.game.DO.RoleDO;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class PlayerDAO extends MongoBaseDAO<RoleDO> {
-    public PlayerDAO() {
+public class RoleDAO extends MongoBaseDAO<RoleDO> {
+    public RoleDAO() {
         super(RoleDO.class);
     }
 }

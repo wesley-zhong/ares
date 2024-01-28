@@ -79,7 +79,7 @@ public class SessionServiceImp implements SessionService {
     public void sendPlayerMsg(long roleId, ByteBuf body) {
         AresTKcpContext channelHandlerContext = playerChannelContext.get(roleId);
         if (channelHandlerContext == null) {
-            log.error("roleId = {}  not login in gateway", roleId);
+            log.error("roleId = {}  not found in gateway", roleId);
             return;
         }
         channelHandlerContext.send(body);

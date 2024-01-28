@@ -40,7 +40,7 @@ public class WorldController implements AresController {
         ProtoTask.DirectToWorldRes fromWorld = ProtoTask.DirectToWorldRes.newBuilder()
                 .setResBody("from world")
                 .setSomeId(881)
-                .setSomeIdAdd(9999L).build();
+                .setSomeIdAdd(9955599L).build();
         peerConn.sendToGame(pid,ProtoCommon.ProtoCode.DIRECT_TO_WORLD_RES_VALUE, fromWorld);
     }
 }

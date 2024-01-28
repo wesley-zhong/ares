@@ -8,10 +8,13 @@ import com.ares.core.service.ServiceMgr;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.tcp.AresTcpHandler;
 import com.ares.core.utils.AresContextThreadLocal;
+import com.ares.game.player.GamePlayer;
+import com.ares.game.service.PlayerRoleService;
 import com.ares.transport.bean.ServerNodeInfo;
 import com.ares.transport.bean.TcpConnServerInfo;
 import com.ares.transport.client.AresTcpClient;
 import com.game.protoGen.ProtoInner;
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +39,9 @@ public class InnerAresTcpHandlerImpl implements AresTcpHandler{
     @Autowired
     private PeerConn peerConn;
 
+    @Autowired
+    private PlayerRoleService playerRoleService;
+
 
     protected static final String UTF8 = "UTF-8";
     @Override
@@ -43,18 +49,6 @@ public class InnerAresTcpHandlerImpl implements AresTcpHandler{
         int length = 0;
         try {
             AresRpcMethod calledMethod = serviceMgr.getCalledMethod(aresPacket.getMsgId());
-            if (calledMethod == null) {
-               // tcpNetWorkHandler.handleMsgRcv(aresPacket);
-                /**
-                 * if from fgate
-                 */
-                if(fromServerType() == ServerType.GATEWAY){
-                    peerConn.directSendToWorld(aresPacket);
-                }else{
-                    peerConn.directSendToGateway(aresPacket);
-                }
-                return;
-            }
             aresPacket.getRecvByteBuf().skipBytes(6);
             int headerLen = aresPacket.getRecvByteBuf().readShort();
             long pid = 0;
@@ -62,6 +56,23 @@ public class InnerAresTcpHandlerImpl implements AresTcpHandler{
                 ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), headerLen));
                 pid = header.getRoleId();
             }
+
+            if (calledMethod == null) {
+                if(fromServerType() == ServerType.GATEWAY){
+                    peerConn.directSendToWorld(aresPacket);
+                }else{
+                    directToGateway(pid, aresPacket);
+                    //peerConn.directSendToGateway(pid,aresPacket);
+                }
+                return;
+            }
+//            aresPacket.getRecvByteBuf().skipBytes(6);
+//            int headerLen = aresPacket.getRecvByteBuf().readShort();
+//            long pid = 0;
+//            if (headerLen > 0) {
+//                ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), headerLen));
+//                pid = header.getRoleId();
+//            }
 
             length = aresPacket.getRecvByteBuf().readableBytes();
             Object paraObj = calledMethod.getParser().parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), length));
@@ -71,6 +82,18 @@ public class InnerAresTcpHandlerImpl implements AresTcpHandler{
         } catch (Throwable e) {
             log.error("==error length ={} msgId ={}  ", length, aresPacket.getMsgId(), e);
         }
+    }
+
+    private void directToGateway(long pid, AresPacket aresPacket){
+        GamePlayer player = playerRoleService.getPlayer(pid);
+        if(player == null){
+            log.error("pid = {} not found", pid);
+            return;
+        }
+        ByteBuf sendBody = aresPacket.getRecvByteBuf().retain();
+        sendBody.readerIndex(0);
+        player.send(sendBody);
+        log.info("-------------------- direct to gateway pid ={} msgId={} ", pid, aresPacket.getMsgId());
     }
 
     private ServerType fromServerType(){

@@ -14,16 +14,23 @@ public class PerformanceTestService {
     @Autowired
     private Client client;
     public void  startSend (){
-        try {
-            for (int i = 0; i < Integer.MAX_VALUE; i++) {
-                ProtoTask.DirectToWorldReq req = ProtoTask.DirectToWorldReq.newBuilder().setResBody("OOOOOOOOOOOOOOOOO").setSomeId(13223333).build();
 
-                AresPacket directWorld = AresPacket.create(ProtoCommon.ProtoCode.DIRECT_TO_WORLD_REQ_VALUE, req);
-                client.getChannel().writeAndFlush(directWorld);
-                Thread.sleep(10);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    for (int i = 0; i < Integer.MAX_VALUE; i++) {
+                        ProtoTask.DirectToWorldReq req = ProtoTask.DirectToWorldReq.newBuilder().setResBody("OOOOOOOOOOOOOOOOO").setSomeId(13223333).build();
+                        AresPacket directWorld = AresPacket.create(ProtoCommon.ProtoCode.DIRECT_TO_WORLD_REQ_VALUE, req);
+                        client.getChannel().writeAndFlush(directWorld);
+                        Thread.sleep(10);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
             }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        }).start();
+
     }
 }

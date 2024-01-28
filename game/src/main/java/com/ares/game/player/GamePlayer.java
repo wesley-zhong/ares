@@ -10,11 +10,15 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GamePlayer extends PeerTransfer {
-    private final long pid;
     private RoleDO roleDO;
 
-    public GamePlayer(ChannelHandlerContext context, long pid) {
+    public GamePlayer(){
+    }
+    public GamePlayer(ChannelHandlerContext context) {
         super(context);
-        this.pid = pid;
+    }
+
+    public long getPid(){
+        return roleDO.getPid();
     }
 }

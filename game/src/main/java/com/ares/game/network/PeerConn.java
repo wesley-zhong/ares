@@ -4,6 +4,7 @@ package com.ares.game.network;
 import com.ares.common.bean.ServerType;
 import com.ares.core.bean.AresPacket;
 import com.ares.core.tcp.AresTKcpContext;
+import com.ares.game.player.GamePlayer;
 import com.game.protoGen.ProtoInner;
 import com.google.protobuf.Message;
 import io.netty.channel.ChannelHandlerContext;
@@ -63,6 +64,13 @@ public class PeerConn {
         channelHandlerContext.writeAndFlush(aresPacket);
     }
 
+    public void send(GamePlayer gamePlayer, int msgId, Message body) {
+        ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.newBuilder().setRoleId(gamePlayer.getPid()).build();
+        AresPacket aresPacket = AresPacket.create(msgId, header, body);
+        gamePlayer.send(aresPacket);
+    }
+
+
     public void send(ServerType serverType, long roleId, int msgId, Message body) {
         send(areaId, serverType, roleId, msgId, body);
     }
@@ -70,30 +78,33 @@ public class PeerConn {
     public void sendWorldMsg(int areaId, long roleId, int msgId, Message body) {
         send(areaId, ServerType.WORLD, roleId, msgId, body);
     }
-    public void sendWorldMsg(long roleId, int msgId, Message body){
+
+    public void sendWorldMsg(long roleId, int msgId, Message body) {
         send(this.areaId, ServerType.WORLD, roleId, msgId, body);
     }
 
-    public void sendGateWayMsg(int areaId, long roleId, int msgId, Message body){
-        send(areaId, ServerType.GATEWAY, roleId, msgId, body);
-    }
-    public void sendGateWayMsg(long roleId, int msgId, Message body){
-        send(this.areaId, ServerType.GATEWAY, roleId, msgId, body);
+    public void sendGateWayMsg(GamePlayer gamePlayer, long roleId, int msgId, Message body) {
+        send(gamePlayer, msgId, body);
     }
 
-    public void directSendToWorld(AresPacket aresPacket){
+    public void sendGateWayMsg(GamePlayer gamePlayer, int msgId, Message body) {
+        send(gamePlayer, msgId, body);
+    }
+
+    public void directSendToWorld(AresPacket aresPacket) {
         ChannelHandlerContext aresTcpContext = getAresTcpContext(areaId, ServerType.WORLD);
-        if(aresTcpContext == null){
+        if (aresTcpContext == null) {
             log.error("areaId ={} serverType ={}  not found connection", aresPacket, ServerType.WORLD);
             return;
         }
 
+        aresPacket.getRecvByteBuf().readerIndex(0);
         aresTcpContext.writeAndFlush(aresPacket.getRecvByteBuf().retain());
     }
 
-    public void directSendToGateway(AresPacket aresPacket){
+    public void directSendToGateway(long pid,AresPacket aresPacket) {
         ChannelHandlerContext aresTcpContext = getAresTcpContext(areaId, ServerType.GATEWAY);
-        if(aresTcpContext == null){
+        if (aresTcpContext == null) {
             log.error("areaId ={} serverType ={}  not found connection", aresPacket, ServerType.WORLD);
             return;
         }

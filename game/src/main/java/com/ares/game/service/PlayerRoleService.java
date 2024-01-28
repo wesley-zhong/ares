@@ -1,8 +1,7 @@
 package com.ares.game.service;
 
-import com.ares.core.utils.SnowFlake;
 import com.ares.game.DO.RoleDO;
-import com.ares.game.dao.PlayerDAO;
+import com.ares.game.dao.RoleDAO;
 import com.ares.game.player.GamePlayer;
 import io.netty.channel.ChannelHandlerContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,27 +13,34 @@ import java.util.Map;
 @Component
 public class PlayerRoleService {
     @Autowired
-    private PlayerDAO playerDAO;
+    private RoleDAO roleDAO;
 
     private final Map<Long, GamePlayer> playerMap = new HashMap<>();
 
     public GamePlayer getPlayer(long pid) {
-        return playerMap.get(pid);
+        GamePlayer gamePlayer =  playerMap.get(pid);
+        if(gamePlayer == null){
+            RoleDO roleDO = roleDAO.getSingle(pid);
+            gamePlayer = new GamePlayer();
+            gamePlayer.setRoleDO(roleDO);
+        }
+       return  playerMap.put(pid, gamePlayer);
     }
 
     public GamePlayer getRoleDo(long id) {
         return playerMap.get(id);
     }
 
-    public GamePlayer createGamePlayer(ChannelHandlerContext channelHandlerContext, String name) {
-        long pid = SnowFlake.nextId();
-        GamePlayer gamePlayer = new GamePlayer(channelHandlerContext, pid);
+    public GamePlayer createGamePlayer(long roleId, String name) {
+        //long pid = SnowFlake.nextId();
+        GamePlayer gamePlayer = new GamePlayer();
         RoleDO roleDO = new RoleDO();
-        roleDO.setPid(pid);
-        roleDO.setId(pid);
+        roleDO.setPid(roleId);
+        roleDO.setId(roleId);
         roleDO.setName(name);
-        playerDAO.insert(roleDO);
+        roleDAO.insert(roleDO);
         gamePlayer.setRoleDO(roleDO);
+        playerMap.put(roleId, gamePlayer);
         return gamePlayer;
     }
 

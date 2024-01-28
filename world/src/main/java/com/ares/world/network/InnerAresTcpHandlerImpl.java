@@ -34,7 +34,7 @@ public class InnerAresTcpHandlerImpl implements AresTcpHandler {
             AresRpcMethod calledMethod = serviceMgr.getCalledMethod(aresPacket.getMsgId());
             aresPacket.getRecvByteBuf().skipBytes(6);
             if (calledMethod == null) {
-              //  tcpNetWorkHandler.handleMsgRcv(aresPacket);
+                log.error("msgId ={} not found call function", aresPacket.getMsgId());
                 return;
             }
             int headerLen = aresPacket.getRecvByteBuf().readShort();
