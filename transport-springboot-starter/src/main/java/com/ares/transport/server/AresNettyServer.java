@@ -3,7 +3,7 @@ package com.ares.transport.server;
 import com.ares.core.tcp.AresTcpHandler;
 import com.ares.transport.decoder.AresBasedFrameDecoder;
 import com.ares.transport.encode.AresPacketMsgEncoder;
-import com.ares.core.thread.PackageProcessThreadPoolGroup;
+import com.ares.core.thread.LogicProcessThreadPoolGroup;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
@@ -73,7 +73,7 @@ public class AresNettyServer implements InitializingBean {
             workerGroup = new NioEventLoopGroup(4);
         }
 
-        //PackageProcessThreadPoolGroup processThreadPoolGroup = PackageProcessThreadPoolGroup.create(eventCount, aresRpcHandler, asynLogicThreadCount);
+        //LogicProcessThreadPoolGroup processThreadPoolGroup = LogicProcessThreadPoolGroup.create(eventCount, aresRpcHandler, asynLogicThreadCount);
         b.group(bossGroup, workerGroup)
                 .channel(useLinux() ? EpollServerSocketChannel.class : NioServerSocketChannel.class)
                 .childHandler(new ChannelInitializer<SocketChannel>() {
@@ -135,7 +135,7 @@ public class AresNettyServer implements InitializingBean {
             for (Channel bindChannel : bindChannels) {
                 bindChannel.close().sync();
             }
-            PackageProcessThreadPoolGroup.INSTANCE.shutDown();
+            LogicProcessThreadPoolGroup.INSTANCE.shutDown();
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
             log.info("-XXXXXXXXXXXXXXXXXXXXXXXXXXXX  stop ares netty server success");

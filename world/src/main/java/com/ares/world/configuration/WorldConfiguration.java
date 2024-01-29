@@ -1,12 +1,11 @@
 package com.ares.world.configuration;
 
 import com.ares.core.tcp.AresTcpHandler;
-import com.ares.core.thread.PackageProcessThreadPool;
+import com.ares.core.thread.LogicProcessThreadPool;
 import com.ares.transport.client.AresTcpClient;
 import com.ares.transport.client.AresTcpClientConn;
 import com.ares.transport.client.AresTcpClientImpl;
 import com.ares.world.network.WorldMsgHandler;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -56,7 +55,7 @@ public class WorldConfiguration {
     }
 
     @Bean
-    public PackageProcessThreadPool packageProcessThreadPool(){
-        return  PackageProcessThreadPool.create(1);
+    public LogicProcessThreadPool packageProcessThreadPool(){
+        return  LogicProcessThreadPool.create(1);
     }
 }

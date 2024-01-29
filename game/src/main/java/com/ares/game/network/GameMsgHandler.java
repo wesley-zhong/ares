@@ -7,8 +7,7 @@ import com.ares.core.exception.AresBaseException;
 import com.ares.core.service.ServiceMgr;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.tcp.AresTcpHandler;
-import com.ares.core.thread.PackageProcessThreadPool;
-import com.ares.core.utils.AresContextThreadLocal;
+import com.ares.core.thread.LogicProcessThreadPool;
 import com.ares.game.player.GamePlayer;
 import com.ares.game.service.PlayerRoleService;
 import com.ares.transport.bean.ServerNodeInfo;
@@ -71,7 +70,7 @@ public class GameMsgHandler implements AresTcpHandler {
 
             length = aresPacket.getRecvByteBuf().readableBytes();
             Object paraObj = calledMethod.getParser().parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), length));
-            PackageProcessThreadPool.INSTANCE.execute(aresTKcpContext, calledMethod,pid, paraObj);
+            LogicProcessThreadPool.INSTANCE.execute(aresTKcpContext, calledMethod,pid, paraObj);
            // calledMethod.getAresServiceProxy().callMethod(calledMethod, pid, paraObj);
         } catch (AresBaseException e) {
             log.error("===error  length ={} msgId={} ", length, aresPacket.getMsgId(), e);

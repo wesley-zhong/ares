@@ -5,34 +5,34 @@ import lombok.extern.slf4j.Slf4j;
 
 // 1 epoll event thread 1  ServerRpcProcessThreadPoolGroup
 @Slf4j
-public class PackageProcessThreadPoolGroup {
+public class LogicProcessThreadPoolGroup {
 
     static final int MAXIMUM_CAPACITY = 1 << 30;
-    public static PackageProcessThreadPoolGroup INSTANCE;
-    private PackageProcessThreadPool[] serverRpcProcessThreadPools;
+    public static LogicProcessThreadPoolGroup INSTANCE;
+    private LogicProcessThreadPool[] serverRpcProcessThreadPools;
     private final int threadCount;
 
-    public static PackageProcessThreadPoolGroup create(int eventThreadCount, AresTcpHandler aresRpcHandler, int logicAysnThreadCount) {
+    public static LogicProcessThreadPoolGroup create(int eventThreadCount, AresTcpHandler aresRpcHandler, int logicAysnThreadCount) {
         if (INSTANCE != null) {
             return INSTANCE;
         }
-        INSTANCE = new PackageProcessThreadPoolGroup(eventThreadCount, logicAysnThreadCount);
+        INSTANCE = new LogicProcessThreadPoolGroup(eventThreadCount, logicAysnThreadCount);
         return INSTANCE;
     }
 
-    public PackageProcessThreadPoolGroup(int eventThreadCount, int logicAysnThreadCount) {
+    public LogicProcessThreadPoolGroup(int eventThreadCount, int logicAysnThreadCount) {
         if (logicAysnThreadCount == 0) { // no asyn thread it should be synchronize call
             threadCount = 1;
         } else {
             threadCount = threadSizeFor(eventThreadCount);
         }
-        serverRpcProcessThreadPools = new PackageProcessThreadPool[threadCount];
+        serverRpcProcessThreadPools = new LogicProcessThreadPool[threadCount];
         for (int i = 0; i < threadCount; ++i) {
-            serverRpcProcessThreadPools[i] = PackageProcessThreadPool.create(logicAysnThreadCount);
+            serverRpcProcessThreadPools[i] = LogicProcessThreadPool.create(logicAysnThreadCount);
         }
     }
 
-    public PackageProcessThreadPool getThreadPoolByThreadId() {
+    public LogicProcessThreadPool getThreadPoolByThreadId() {
         if (threadCount == 1) {//this was not a thread pool it should be synchronize call
             return serverRpcProcessThreadPools[0];
         }
@@ -73,7 +73,7 @@ public class PackageProcessThreadPoolGroup {
     }
 
     public void shutDown() {
-        for (PackageProcessThreadPool serverRpcProcessThreadPool : serverRpcProcessThreadPools) {
+        for (LogicProcessThreadPool serverRpcProcessThreadPool : serverRpcProcessThreadPools) {
             if (serverRpcProcessThreadPool != null) {
                 serverRpcProcessThreadPool.shutDown();
             }

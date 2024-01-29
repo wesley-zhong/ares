@@ -2,11 +2,10 @@ package com.ares.core.thread;
 
 import com.ares.core.bean.AresMsgIdMethod;
 import com.ares.core.tcp.AresTKcpContext;
-import com.google.protobuf.Message;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class PackageProcessThreadPool {
+public class LogicProcessThreadPool {
     private int processThreadCount;
     private IMessageExecutor[] iMessageExecutors;
 
@@ -20,15 +19,15 @@ public class PackageProcessThreadPool {
 
     private volatile long threadId;
 
-    public  static  PackageProcessThreadPool INSTANCE = new PackageProcessThreadPool(1);
+    public  static LogicProcessThreadPool INSTANCE = new LogicProcessThreadPool(1);
 
 
-    public static PackageProcessThreadPool create(int logicAysnThreadCount) {
-        return new PackageProcessThreadPool(logicAysnThreadCount);
+    public static LogicProcessThreadPool create(int logicAysnThreadCount) {
+        return new LogicProcessThreadPool(logicAysnThreadCount);
     }
 
 
-    public PackageProcessThreadPool(int logicAysnThreadCount) {
+    public LogicProcessThreadPool(int logicAysnThreadCount) {
         processThreadCount = logicAysnThreadCount;
         iMessageExecutors = new IMessageExecutor[processThreadCount];
         AresThreadFactory aresThreadFactory = new AresThreadFactory("ares-tcp-thread-pool-");

@@ -6,7 +6,7 @@ import com.ares.core.exception.AresBaseException;
 import com.ares.core.service.ServiceMgr;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.tcp.AresTcpHandler;
-import com.ares.core.thread.PackageProcessThreadPool;
+import com.ares.core.thread.LogicProcessThreadPool;
 import com.ares.gateway.bean.PlayerSession;
 import com.ares.gateway.service.SessionService;
 import com.ares.transport.bean.TcpConnServerInfo;
@@ -67,7 +67,7 @@ public class GateWayMsgHandler implements AresTcpHandler {
             length = aresPacket.getRecvByteBuf().readableBytes();
             Object paraObj = calledMethod.getParser().parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), length));
            // calledMethod.getAresServiceProxy().callMethod(calledMethod, roleId, paraObj);
-            PackageProcessThreadPool.INSTANCE.execute(aresTKcpContext, calledMethod,roleId, paraObj);
+            LogicProcessThreadPool.INSTANCE.execute(aresTKcpContext, calledMethod,roleId, paraObj);
 
         } catch (AresBaseException e) {
             log.error("===error  length ={} msgId={} ", length, aresPacket.getMsgId(), e);
