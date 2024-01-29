@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class OnDiscoveryWatch implements OnWatchServiceChange {
-    @Autowired
-    private AresTcpClient aresTcpClient;
+//    @Autowired
+//    private AresTcpClient aresTcpClient;
     @Autowired
     private DiscoveryService discoveryService;
 

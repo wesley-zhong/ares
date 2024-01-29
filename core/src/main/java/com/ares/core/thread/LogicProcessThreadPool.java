@@ -30,7 +30,7 @@ public class LogicProcessThreadPool {
     public LogicProcessThreadPool(int logicAysnThreadCount) {
         processThreadCount = logicAysnThreadCount;
         iMessageExecutors = new IMessageExecutor[processThreadCount];
-        AresThreadFactory aresThreadFactory = new AresThreadFactory("ares-tcp-thread-pool-");
+        AresThreadFactory aresThreadFactory = new AresThreadFactory("a-l-t-P-");
         for (int i = 0; i < logicAysnThreadCount; ++i) {
             iMessageExecutors[i] = new DisruptorSingleExecutor(aresThreadFactory);
             iMessageExecutors[i].start();

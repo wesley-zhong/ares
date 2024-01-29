@@ -135,7 +135,7 @@ public class AresNettyServer implements InitializingBean {
             for (Channel bindChannel : bindChannels) {
                 bindChannel.close().sync();
             }
-            LogicProcessThreadPoolGroup.INSTANCE.shutDown();
+           // LogicProcessThreadPoolGroup.INSTANCE.shutDown();
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
             log.info("-XXXXXXXXXXXXXXXXXXXXXXXXXXXX  stop ares netty server success");

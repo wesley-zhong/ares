@@ -20,14 +20,6 @@ import org.springframework.beans.factory.annotation.Value;
 public class WorldMsgHandler implements AresTcpHandler {
     @Autowired
     private ServiceMgr serviceMgr;
-    @Autowired
-    private AresTcpClient aresTcpClient;
-    @Value("${spring.application.name}")
-    private String appName;
-
-
-    @Value("${area.id:100}")
-    private int areaId;
     @Override
     public void handleMsgRcv(AresTKcpContext aresTKcpContext) {
         int length = 0;

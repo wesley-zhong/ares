@@ -19,13 +19,6 @@ import org.springframework.context.annotation.Lazy;
 @Configuration
 @ComponentScan("com.ares")
 public class GameConfiguration  implements InitializingBean {
-
-    @Value("${spring.application.name}")
-    private String appName;
-
-    @Value("${server.port}")
-    private int serverPort;
-
     @Value("${area.id:100}")
     private int areaId;
 
