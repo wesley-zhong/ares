@@ -8,10 +8,7 @@ import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Slf4j
@@ -35,25 +32,53 @@ public class AresTcpClientImpl extends AresTcpClientBase {
     @Override
     public Channel connect(ServerNodeInfo serverNodeInfo) {
         Map<String, List<TcpConnServerInfo>> stringListMap = tcpConnServerInfoMap.get(serverNodeInfo.getAreaId());
-        if(CollectionUtils.isEmpty(stringListMap)){
-            return  doConnect(serverNodeInfo, null);
+        if (CollectionUtils.isEmpty(stringListMap)) {
+            return doConnect(serverNodeInfo, null);
         }
         List<TcpConnServerInfo> tcpConnServerInfos = stringListMap.get(serverNodeInfo.getServiceName());
-        if(CollectionUtils.isEmpty(tcpConnServerInfos)){
+        if (CollectionUtils.isEmpty(tcpConnServerInfos)) {
             return doConnect(serverNodeInfo, null);
         }
 
 
-        for(TcpConnServerInfo  existConn : tcpConnServerInfos){
-            if(existConn.getServerNodeInfo().getServiceId().equals(serverNodeInfo.getServiceId())){
+        for (TcpConnServerInfo existConn : tcpConnServerInfos) {
+            if (existConn.getServerNodeInfo().getServiceId().equals(serverNodeInfo.getServiceId())) {
                 Channel channel = existConn.getChannel();
-                if(channel.isActive()){
-                    return   channel;
+                if (channel.isActive()) {
+                    return channel;
                 }
-                return  doConnect(serverNodeInfo, existConn);
+                return doConnect(serverNodeInfo, existConn);
             }
         }
-        return  doConnect(serverNodeInfo, null);
+        return doConnect(serverNodeInfo, null);
+    }
+
+    @Override
+    public void close(ServerNodeInfo serverNodeInfo) {
+        Map<String, List<TcpConnServerInfo>> stringListMap = tcpConnServerInfoMap.get(serverNodeInfo.getAreaId());
+        if (CollectionUtils.isEmpty(stringListMap)) {
+            log.info("close server ={} not found connection", serverNodeInfo);
+             return;
+        }
+        List<TcpConnServerInfo> tcpConnServerInfos = stringListMap.get(serverNodeInfo.getServiceName());
+        if(CollectionUtils.isEmpty(tcpConnServerInfos)){
+            log.info("close server ={} not found connection 2", serverNodeInfo);
+            return;
+        }
+        Iterator<TcpConnServerInfo> iterator = tcpConnServerInfos.iterator();
+        while(iterator.hasNext()){
+            TcpConnServerInfo tcpConnServerInfo = iterator.next();
+            if(tcpConnServerInfo.getServerNodeInfo().getServiceId().equals(serverNodeInfo.getServiceId())){
+                iterator.remove();
+                if(tcpConnServerInfo.getChannel() != null) {
+                    delServerInfo(tcpConnServerInfo.getServerNodeInfo());
+                    tcpConnServerInfo.getChannel().close();
+                    log.info("-----remove and close server node: {}",tcpConnServerInfo.getServerNodeInfo());
+                    return ;
+                }
+            }
+        }
+        log.info("close server ={} not found connection 3", serverNodeInfo);
     }
 
     private Channel doConnect(ServerNodeInfo serverNodeInfo, TcpConnServerInfo oldConnServerInfo) {
@@ -63,7 +88,7 @@ public class AresTcpClientImpl extends AresTcpClientBase {
             return null;
         }
 
-        if(oldConnServerInfo != null){
+        if (oldConnServerInfo != null) {
             oldConnServerInfo.setChannel(channel);
             return channel;
         }
@@ -85,11 +110,11 @@ public class AresTcpClientImpl extends AresTcpClientBase {
             return channel;
         }
         tcpConnServerInfos.add(tcpConnServerInfo);
-        return  channel;
+        return channel;
     }
 
     @Override
-    public void send(int areaId, String serverName, int msgId,  Message body) {
+    public void send(int areaId, String serverName, int msgId, Message body) {
         TcpConnServerInfo tcpConnServerInfo = getTcpConnServerInfo(areaId, serverName);
         if (tcpConnServerInfo == null || !tcpConnServerInfo.getChannel().isActive()) {
             log.error("areaId ={} serveName ={} not found", areaId, serverName);
@@ -101,18 +126,18 @@ public class AresTcpClientImpl extends AresTcpClientBase {
     @Override
     public TcpConnServerInfo getTcpConnServerInfo(int areaId, String gameServiceName) {
         Map<String, List<TcpConnServerInfo>> stringListMap = tcpConnServerInfoMap.get(areaId);
-        if(stringListMap == null){
-           return null;
+        if (stringListMap == null) {
+            return null;
         }
         List<TcpConnServerInfo> tcpConnServerInfos = stringListMap.get(gameServiceName);
-        if(tcpConnServerInfos == null){
-            return  null;
+        if (tcpConnServerInfos == null) {
+            return null;
         }
 
         //may be used load balance
-        for(TcpConnServerInfo tcpConnServerInfo : tcpConnServerInfos){
-            if(tcpConnServerInfo.getServerNodeInfo().getServiceName().equals(gameServiceName)){
-                return  tcpConnServerInfo;
+        for (TcpConnServerInfo tcpConnServerInfo : tcpConnServerInfos) {
+            if (tcpConnServerInfo.getServerNodeInfo().getServiceName().equals(gameServiceName)) {
+                return tcpConnServerInfo;
             }
         }
         return null;
@@ -120,8 +145,8 @@ public class AresTcpClientImpl extends AresTcpClientBase {
 
     @Override
     public void send(int areaId, String serviceName, AresPacket... packets) {
-        TcpConnServerInfo tcpConnServerInfo =getTcpConnServerInfo(areaId, serviceName);
-        if(tcpConnServerInfo == null){
+        TcpConnServerInfo tcpConnServerInfo = getTcpConnServerInfo(areaId, serviceName);
+        if (tcpConnServerInfo == null) {
             return;
         }
         super.send(tcpConnServerInfo.getChannel(), packets);
@@ -130,16 +155,9 @@ public class AresTcpClientImpl extends AresTcpClientBase {
 
     @Override
     public void send(int areaId, String serviceName, AresPacket packet) {
-        TcpConnServerInfo tcpConnServerInfo =getTcpConnServerInfo(areaId, serviceName);
+        TcpConnServerInfo tcpConnServerInfo = getTcpConnServerInfo(areaId, serviceName);
         super.send(tcpConnServerInfo.getChannel(), packet);
     }
 
-    private void checkAndAdd(ServerNodeInfo newserverNodeInfo){
-        for(ServerNodeInfo serverNodeInfo : serverNodeInfos){
-            if(serverNodeInfo.getServiceId().equals(newserverNodeInfo.getServiceId())){
-                return;
-            }
-        }
-        serverNodeInfos.add(newserverNodeInfo);
-    }
+
 }

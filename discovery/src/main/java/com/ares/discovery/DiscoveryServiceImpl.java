@@ -11,14 +11,14 @@ public class DiscoveryServiceImpl implements DiscoveryService {
     private Client etcdClient;
     private EtcdRegister etcdRegister;
     private EtcdDiscovery etcdDiscovery;
-    private BiFunction< WatchEvent.EventType, ServerNodeInfo, Void> onNodeChangeFun;
+    private BiFunction<WatchEvent.EventType, ServerNodeInfo, Void> onNodeChangeFun;
 
-    public void init(String[] endpoints, String appName, int port,int areaId, List<String>watchServicePrefix, BiFunction< WatchEvent.EventType, ServerNodeInfo, Void> onNodeChangeFun) {
+    public void init(String[] endpoints, String appName, int port, int areaId, List<String> watchServicePrefix, BiFunction<WatchEvent.EventType, ServerNodeInfo, Void> onNodeChangeFun) {
         etcdClient = Client.builder().endpoints(endpoints).build();
         etcdRegister = new EtcdRegister(etcdClient, appName, port, areaId);
         etcdRegister.startRegister();
 
-        etcdDiscovery = new EtcdDiscovery(etcdClient,onNodeChangeFun);
+        etcdDiscovery = new EtcdDiscovery(etcdClient, onNodeChangeFun);
         etcdDiscovery.watchService(watchServicePrefix);
 
     }
@@ -31,5 +31,10 @@ public class DiscoveryServiceImpl implements DiscoveryService {
     @Override
     public EtcdDiscovery getEtcdDiscovery() {
         return etcdDiscovery;
+    }
+
+    @Override
+    public EtcdRegister getEtcdRegister() {
+        return etcdRegister;
     }
 }

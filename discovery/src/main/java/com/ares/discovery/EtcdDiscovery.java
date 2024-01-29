@@ -49,9 +49,7 @@ public class EtcdDiscovery {
                 //获取当前前缀下的服务并存储
                 List<KeyValue> kvs = getResponseCompletableFuture.get().getKvs();
                 for (KeyValue kv : kvs) {
-
                     ServerNodeInfo serverNodeInfo = JsonObjectMapper.parseObject(kv.getValue().toString(UTF_8), ServerNodeInfo.class);
-                    onNodeChangeFun.apply(WatchEvent.EventType.PUT, serverNodeInfo);
                     setServerList(kv.getKey().toString(UTF_8), serverNodeInfo);
                 }
 
@@ -80,7 +78,6 @@ public class EtcdDiscovery {
                 switch (eventType) {
                     case PUT:  //修改或者新增
                         ServerNodeInfo serverNodeInfo = JsonObjectMapper.parseObject(keyValue.getValue().toString(UTF_8), ServerNodeInfo.class);
-                        onNodeChangeFun.apply(WatchEvent.EventType.PUT, serverNodeInfo);
                         setServerList(keyValue.getKey().toString(UTF_8), serverNodeInfo);
                         break;
                     case DELETE: //删除
@@ -96,7 +93,7 @@ public class EtcdDiscovery {
     private void setServerList(String key, ServerNodeInfo serverNodeInfo) {
         synchronized (lock) {
             serverList.put(key, serverNodeInfo);
-            //  System.out.println("put key:" + key + ",value:" + value);
+            onNodeChangeFun.apply(WatchEvent.EventType.PUT, serverNodeInfo);
         }
     }
 
@@ -104,8 +101,9 @@ public class EtcdDiscovery {
 
     private void delServerList(String key) {
         synchronized (lock) {
-            serverList.remove(key);
+            ServerNodeInfo remove = serverList.remove(key);
             log.info("del key:{}", key);
+            onNodeChangeFun.apply(WatchEvent.EventType.DELETE, remove);
         }
     }
 

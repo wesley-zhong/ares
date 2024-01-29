@@ -10,7 +10,8 @@ public class ServerNodeInfo {
     private String serviceId;
     private String serviceName;
     private String ip;
+    private boolean available;
     private int port;
     private int areaId;
-    private Map<String, Object> metaData = new HashMap<>();
+    private Map<String, String> metaData = new HashMap<>();
 }

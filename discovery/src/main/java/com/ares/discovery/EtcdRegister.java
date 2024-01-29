@@ -8,6 +8,8 @@ import io.etcd.jetcd.lease.LeaseKeepAliveResponse;
 import io.etcd.jetcd.options.PutOption;
 import io.grpc.stub.CallStreamObserver;
 
+import java.util.Map;
+
 import static com.google.common.base.Charsets.UTF_8;
 
 public class EtcdRegister {
@@ -15,6 +17,7 @@ public class EtcdRegister {
     private final String appName;
     private final  int port;
     private final  int areaId;
+    private ServerNodeInfo serverNodeInfo;
     public EtcdRegister(Client client, String appName, int port, int areaId) {
        this.client = client;
        this.appName = appName;
@@ -22,7 +25,7 @@ public class EtcdRegister {
        this.areaId = areaId;
     }
     public  void startRegister(){
-        ServerNodeInfo serverNodeInfo  = new ServerNodeInfo();
+        serverNodeInfo  = new ServerNodeInfo();
         String addr = NetUtils.getIpAddress().get(0);
         String serviceId = NetUtils.createServiceId(appName,addr, port, areaId);
 
@@ -34,9 +37,17 @@ public class EtcdRegister {
 
         putWithLease(serviceId, JsonUtil.toJsonString(serverNodeInfo));
     }
+    public ServerNodeInfo getMyNodeInfo(){
+        return serverNodeInfo;
+    }
 
     public void updateServerNodeInfo(ServerNodeInfo serverNodeInfo){
         putWithLease(serverNodeInfo.getServiceId(), JsonUtil.toJsonString(serverNodeInfo));
+    }
+    public void updateServerNodeInfo(Map<String, String> metadata){
+        serverNodeInfo.getMetaData().putAll(metadata);
+        updateServerNodeInfo(serverNodeInfo);
+
     }
 
     /**
@@ -55,7 +66,7 @@ public class EtcdRegister {
     private void putWithLease(String key, String value) {
         Lease leaseClient = getClient().getLeaseClient();
 
-        leaseClient.grant(60).thenAccept(result -> {
+        leaseClient.grant(10).thenAccept(result -> {
             // 租约ID
             long leaseId = result.getID();
 

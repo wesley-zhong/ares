@@ -75,12 +75,20 @@ public abstract class AresTcpClientBase implements AresTcpClient {
         }
     }
 
+    protected void checkAndAdd(ServerNodeInfo newserverNodeInfo) {
+        for (ServerNodeInfo serverNodeInfo : serverNodeInfos) {
+            if (serverNodeInfo.getServiceId().equals(newserverNodeInfo.getServiceId())) {
+                return;
+            }
+        }
+        serverNodeInfos.add(newserverNodeInfo);
+    }
     public void addServerInfo(ServerNodeInfo serverNodeInfo) {
         serverNodeInfos.add(serverNodeInfo);
     }
 
     public void delServerInfo(ServerNodeInfo serverNodeInfo) {
-        serverNodeInfos.remove(serverNodeInfo);
+        serverNodeInfos.removeIf(value->value.getServiceId().equals(serverNodeInfo.getServiceId()));
     }
 
    public  void send(TcpConnServerInfo serverInfo, int msgId, Message body){

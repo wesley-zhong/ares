@@ -5,20 +5,28 @@ import com.ares.core.service.AresController;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.utils.AresContextThreadLocal;
 
+import com.ares.discovery.DiscoveryService;
 import com.ares.gateway.bean.PlayerSession;
 import com.ares.gateway.service.SessionService;
+import com.ares.transport.bean.ServerNodeInfo;
 import com.game.protoGen.ProtoCommon;
 import com.game.protoGen.ProtoInner;
 import com.game.protoGen.ProtoTask;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @Slf4j
 public class LoginController implements AresController {
     @Autowired
     private SessionService sessionService;
+    @Autowired
+    private DiscoveryService discoveryService;
 
     @MsgId(ProtoCommon.ProtoCode.LOGIN_REQUEST_VALUE)
     public void loginRequest(long roleId, ProtoTask.LoginRequest loginRequest) {
@@ -37,5 +45,20 @@ public class LoginController implements AresController {
                 .setRoleId(loginResponse.getRoleId())
                 .setServerTime(System.currentTimeMillis()).build();
         sessionService.sendPlayerMsg(loginResponse.getRoleId(),ProtoCommon.ProtoCode.LOGIN_RESPONSE_VALUE, response );
+
+        //update online count to etcd
+        updateMyNodeInfo();
+    }
+
+    private void updateMyNodeInfo(){
+        ServerNodeInfo myNodeInfo = discoveryService.getEtcdRegister().getMyNodeInfo();
+        int online = 0;
+        String strOnline = myNodeInfo.getMetaData().get("online");
+        if(strOnline != null){
+            online = Integer.parseInt(strOnline);
+        }
+        online ++;
+        myNodeInfo.getMetaData().put("online",online+"");
+        discoveryService.getEtcdRegister().updateServerNodeInfo(myNodeInfo );
     }
 }

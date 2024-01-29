@@ -17,6 +17,7 @@ public interface AresTcpClient {
 
 
     Channel connect(ServerNodeInfo serverNodeInfo);
+    void close(ServerNodeInfo serverNodeInfo);
 
     TcpConnServerInfo getTcpConnServerInfo(int areaId, String gameServiceName);
 
