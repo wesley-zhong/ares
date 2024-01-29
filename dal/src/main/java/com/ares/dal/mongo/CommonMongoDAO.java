@@ -1,9 +1,10 @@
 package com.ares.dal.mongo;
 
-import com.ares.dal.mongo.annotation.CollectionName;
-import com.ares.dal.mongo.annotation.MdbName;
 import com.ares.dal.DO.BaseDO;
 import com.ares.dal.DO.CASDO;
+import com.ares.dal.DO.CommDO;
+import com.ares.dal.mongo.annotation.CollectionName;
+import com.ares.dal.mongo.annotation.MdbName;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -17,7 +18,6 @@ import org.bson.conversions.Bson;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.Serializable;
 import java.util.List;
 
 import static com.mongodb.client.model.Filters.and;
@@ -26,7 +26,7 @@ import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.set;
 
 @Slf4j
-public class MongoBaseDAO<T extends BaseDO> implements InitializingBean {
+public class CommonMongoDAO <T extends CommDO> implements InitializingBean {
     private final static String _ID = "_id";
     private final static String _VER = "ver";
     private final Class<T> doClass;
@@ -36,7 +36,7 @@ public class MongoBaseDAO<T extends BaseDO> implements InitializingBean {
 
     private final static ReplaceOptions UPINSERT_OPTIONS = new ReplaceOptions().upsert(true);
 
-    public MongoBaseDAO(Class<T> doClass) {
+    public CommonMongoDAO(Class<T> doClass) {
         this.doClass = doClass;
     }
 
@@ -106,7 +106,7 @@ public class MongoBaseDAO<T extends BaseDO> implements InitializingBean {
 
 
     public long replaceOne(T obj) {
-        long id = obj.getId();
+        String id = obj.getId();
         if (obj instanceof CASDO casObj) {
             long verEQ = casObj.getVer();
             casObj.setVer(casObj.getVer() + 1);
@@ -122,7 +122,7 @@ public class MongoBaseDAO<T extends BaseDO> implements InitializingBean {
 
 
     public long delete(T obj) {
-        long id = obj.getId();
+        String  id = obj.getId();
         if (obj instanceof CASDO casObj) {
             long verEQ = casObj.getVer();
             DeleteResult deleteResult = collection.deleteOne(and(eq(_ID, id), eq(_VER, verEQ)));
@@ -170,4 +170,5 @@ public class MongoBaseDAO<T extends BaseDO> implements InitializingBean {
         tableName = tableName.toLowerCase();
         collection = database.getCollection(tableName, this.doClass);
     }
+
 }

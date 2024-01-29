@@ -1,6 +1,6 @@
 package com.ares.dal.DO;
 
-public class CASDO extends BaseDO {
+public class CASDO  {
     private long ver;
     public long getVer() {
         return ver;

@@ -1,26 +1,20 @@
 package com.ares.dal.DO;
 
-/**
- * note: if we use common dao to save DO we should use  DO extends BaseDO
- *
- * @author zhongwq
- */
+public class CommDO extends CASDO{
 
-public class BaseDO  extends CASDO {
+    public String  id;
 
-    public long id;
-
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
     @Override
     public int hashCode() {
-        return  Long.hashCode(id);
+        return id.hashCode();
     }
 
     @Override
@@ -29,7 +23,7 @@ public class BaseDO  extends CASDO {
             return true;
         }
         if (target instanceof BaseDO baseDO) {
-            return this.getId() == baseDO.getId();
+            return this.getId().equals(baseDO.getId());
         }
         return false;
     }
