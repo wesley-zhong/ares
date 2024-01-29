@@ -2,11 +2,10 @@ package com.ares.core.service;
 
 
 import com.ares.core.annotation.MsgId;
-import com.ares.core.bean.AresRpcMethod;
+import com.ares.core.bean.AresMsgIdMethod;
 import com.ares.core.constdata.FConst;
 import com.ares.core.exception.AresBaseException;
 import com.esotericsoftware.reflectasm.MethodAccess;
-import com.google.protobuf.Message;
 import com.google.protobuf.Parser;
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,21 +35,21 @@ public class AresServiceProxy {
             }
             int msgId = calledMsgId.value();
             String methodName = method.getName();
-            AresRpcMethod aresRpcMethod = new AresRpcMethod();
+            AresMsgIdMethod aresMsgIdMethod = new AresMsgIdMethod();
             if (!Modifier.isPublic(method.getModifiers())) {
                 log.warn("method name ={} called msgId ={} is not public will be ignored", methodName, msgId);
                 continue;
             }
             log.info("--------  ready to init methodName ={} callMsgId ={}", methodName, msgId);
-            aresRpcMethod.setMethodIndex(methodAccess.getIndex(methodName));
+            aresMsgIdMethod.setMethodIndex(methodAccess.getIndex(methodName));
 
             Type paramsType = getType(method);
             Class<?> paramClass = (Class<?>) paramsType;
-            aresRpcMethod.setAresServiceProxy(this);
-            Parser<?> parser = AresRpcMethod.pbParser(paramClass);
-            aresRpcMethod.setParser(parser);
+            aresMsgIdMethod.setAresServiceProxy(this);
+            Parser<?> parser = AresMsgIdMethod.pbParser(paramClass);
+            aresMsgIdMethod.setParser(parser);
 
-            iMsgCall.onMethodInit(msgId, aresRpcMethod);
+            iMsgCall.onMethodInit(msgId, aresMsgIdMethod);
         }
         log.info("============ init  service ={}  end", aresController.getClass().getSimpleName());
     }
@@ -71,7 +70,7 @@ public class AresServiceProxy {
         return paramsType;
     }
 
-    public Object callMethod(AresRpcMethod aresRpcMethod, Object... paramObj) {
-        return methodAccess.invoke(aresController, aresRpcMethod.getMethodIndex(), paramObj);
+    public Object callMethod(AresMsgIdMethod aresMsgIdMethod, Object... paramObj) {
+        return methodAccess.invoke(aresController, aresMsgIdMethod.getMethodIndex(), paramObj);
     }
 }

@@ -3,7 +3,7 @@ package com.ares.transport.server;
 import com.ares.core.tcp.AresTcpHandler;
 import com.ares.transport.decoder.AresBasedFrameDecoder;
 import com.ares.transport.encode.AresPacketMsgEncoder;
-import com.ares.transport.thread.PackageProcessThreadPoolGroup;
+import com.ares.core.thread.PackageProcessThreadPoolGroup;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
@@ -73,7 +73,7 @@ public class AresNettyServer implements InitializingBean {
             workerGroup = new NioEventLoopGroup(4);
         }
 
-        PackageProcessThreadPoolGroup processThreadPoolGroup = PackageProcessThreadPoolGroup.create(eventCount, aresRpcHandler, asynLogicThreadCount);
+        //PackageProcessThreadPoolGroup processThreadPoolGroup = PackageProcessThreadPoolGroup.create(eventCount, aresRpcHandler, asynLogicThreadCount);
         b.group(bossGroup, workerGroup)
                 .channel(useLinux() ? EpollServerSocketChannel.class : NioServerSocketChannel.class)
                 .childHandler(new ChannelInitializer<SocketChannel>() {
@@ -84,7 +84,7 @@ public class AresNettyServer implements InitializingBean {
                                 .addLast(new ChannelTrafficShapingHandler(0, packetLimit))
                                 .addLast(new AresBasedFrameDecoder())
                                 .addLast(new AresPacketMsgEncoder())
-                                .addLast(new ServerPacketHandler(aresRpcHandler, processThreadPoolGroup, firstTotalIgnoreReadIdleCount));
+                                .addLast(new ServerPacketHandler(aresRpcHandler, firstTotalIgnoreReadIdleCount));
                     }
 
                     @Override

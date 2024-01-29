@@ -1,7 +1,9 @@
-package com.ares.transport.thread;
+package com.ares.core.thread;
 
+import com.ares.core.bean.AresMsgIdMethod;
+import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.tcp.AresTcpHandler;
-import com.ares.transport.context.AresTKcpContextImplEx;
+import com.google.protobuf.Message;
 import com.lmax.disruptor.LiteTimeoutBlockingWaitStrategy;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
@@ -21,9 +23,9 @@ public class DisruptorSingleExecutor implements IMessageExecutor {
     private final Disruptor<AresPacketEvent> disruptor;
 
 
-    public DisruptorSingleExecutor(AresTcpHandler aresRpcHandler, ThreadFactory threadFactory) {
+    public DisruptorSingleExecutor(ThreadFactory threadFactory) {
         disruptor = new Disruptor<>(new AresEventFactory(), MAX_QUE_SIZE, threadFactory, ProducerType.MULTI, new LiteTimeoutBlockingWaitStrategy(10, TimeUnit.MILLISECONDS));
-        disruptor.handleEventsWith(new AresEventHandler(aresRpcHandler));
+        disruptor.handleEventsWith(new AresEventHandler());
         ringBuffer = disruptor.getRingBuffer();
     }
 
@@ -46,12 +48,15 @@ public class DisruptorSingleExecutor implements IMessageExecutor {
     }
 
     @Override
-    public void execute(AresTKcpContextImplEx aresPacket) {
+    public   void execute(AresTKcpContext aresTKcpContext,AresMsgIdMethod method, long param1, Object param2){
         try {
             final long sequence = ringBuffer.tryNext();
             try {
                 AresPacketEvent aresPacketEvent = ringBuffer.get(sequence);
-                aresPacketEvent.setPacket(aresPacket);
+                aresPacketEvent.setAresTKcpContext(aresTKcpContext);
+                aresPacketEvent.setMethod(method);
+                aresPacketEvent.setParam1(param1);
+                aresPacketEvent.setParam2(param2);
             } finally {
                 ringBuffer.publish(sequence);
             }

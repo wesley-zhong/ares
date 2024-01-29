@@ -1,11 +1,12 @@
 package com.ares.client.network;
 
 import com.ares.core.bean.AresPacket;
-import com.ares.core.bean.AresRpcMethod;
+import com.ares.core.bean.AresMsgIdMethod;
 import com.ares.core.exception.AresBaseException;
 import com.ares.core.service.ServiceMgr;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.tcp.AresTcpHandler;
+import com.ares.core.thread.PackageProcessThreadPool;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
@@ -19,16 +20,18 @@ public class ClientMsgHandler implements AresTcpHandler {
     private ServiceMgr serviceMgr;
     
     @Override
-    public void handleMsgRcv(AresPacket aresPacket) {
+    public void handleMsgRcv(AresTKcpContext aresTKcpContext) {
         int length = 0;
+        AresPacket aresPacket = aresTKcpContext.getRcvPackage();
         try {
-            AresRpcMethod calledMethod = serviceMgr.getCalledMethod(aresPacket.getMsgId());
+            AresMsgIdMethod calledMethod = serviceMgr.getCalledMethod(aresPacket.getMsgId());
             if (calledMethod == null) {
                 return;
             }
             aresPacket.getRecvByteBuf().skipBytes(6);
             length = aresPacket.getRecvByteBuf().readableBytes();
             Object paraObj = calledMethod.getParser().parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), length));
+           // PackageProcessThreadPool.INSTANCE.execute(aresTKcpContext,calledMethod, );
             calledMethod.getAresServiceProxy().callMethod(calledMethod, paraObj);
         } catch (AresBaseException e) {
             log.error("===error  length ={} msgId={} ", length, aresPacket.getMsgId(), e);

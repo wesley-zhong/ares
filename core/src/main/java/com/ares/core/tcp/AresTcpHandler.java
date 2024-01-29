@@ -1,11 +1,10 @@
 package com.ares.core.tcp;
 
-import com.ares.core.bean.AresPacket;
 import io.netty.channel.Channel;
 
 public interface AresTcpHandler {
 
-    void handleMsgRcv(AresPacket aresPacket);
+    void handleMsgRcv(AresTKcpContext aresPacket);
 
     void onClientConnected(AresTKcpContext aresTKcpContext);
 

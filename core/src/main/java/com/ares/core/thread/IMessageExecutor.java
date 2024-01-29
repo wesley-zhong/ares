@@ -1,7 +1,9 @@
-package com.ares.transport.thread;
+package com.ares.core.thread;
 
 
-import com.ares.transport.context.AresTKcpContextImplEx;
+import com.ares.core.bean.AresMsgIdMethod;
+import com.ares.core.tcp.AresTKcpContext;
+import com.google.protobuf.Message;
 
 /**
  * 消息处理器
@@ -28,9 +30,7 @@ public interface IMessageExecutor {
 
     /**
      * 执行任务
-     * 注意: 如果线程等于当前线程 则直接执行  如果非当前线程放进队列
      *
-     * @param iTask
      */
-    void execute(AresTKcpContextImplEx iTask);
+    void execute(AresTKcpContext aresTKcpContext,AresMsgIdMethod method, long param1, Object param2);
 }

@@ -1,11 +1,12 @@
 package com.ares.world.network;
 
 import com.ares.core.bean.AresPacket;
-import com.ares.core.bean.AresRpcMethod;
+import com.ares.core.bean.AresMsgIdMethod;
 import com.ares.core.exception.AresBaseException;
 import com.ares.core.service.ServiceMgr;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.tcp.AresTcpHandler;
+import com.ares.core.thread.PackageProcessThreadPool;
 import com.ares.transport.client.AresTcpClient;
 import com.game.protoGen.ProtoInner;
 import io.netty.buffer.ByteBufInputStream;
@@ -28,10 +29,11 @@ public class WorldMsgHandler implements AresTcpHandler {
     @Value("${area.id:100}")
     private int areaId;
     @Override
-    public void handleMsgRcv(AresPacket aresPacket) {
+    public void handleMsgRcv(AresTKcpContext aresTKcpContext) {
         int length = 0;
+        AresPacket aresPacket = aresTKcpContext.getRcvPackage();
         try {
-            AresRpcMethod calledMethod = serviceMgr.getCalledMethod(aresPacket.getMsgId());
+            AresMsgIdMethod calledMethod = serviceMgr.getCalledMethod(aresPacket.getMsgId());
             aresPacket.getRecvByteBuf().skipBytes(6);
             if (calledMethod == null) {
                 log.error("msgId ={} not found call function", aresPacket.getMsgId());
@@ -47,7 +49,8 @@ public class WorldMsgHandler implements AresTcpHandler {
 
             length = aresPacket.getRecvByteBuf().readableBytes();
             Object paraObj = calledMethod.getParser().parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), length));
-            calledMethod.getAresServiceProxy().callMethod(calledMethod, pid, paraObj);
+            PackageProcessThreadPool.INSTANCE.execute(aresTKcpContext, calledMethod, pid, paraObj);
+           // calledMethod.getAresServiceProxy().callMethod(calledMethod, pid, paraObj);
         } catch (AresBaseException e) {
             log.error("===error  length ={} msgId={} ", length, aresPacket.getMsgId(), e);
         } catch (Throwable e) {
@@ -81,5 +84,4 @@ public class WorldMsgHandler implements AresTcpHandler {
     public void onServerClosed(Channel aresTKcpContext) {
 
     }
-
 }

@@ -36,8 +36,7 @@ public class ClientMsgHandler extends ChannelInboundHandlerAdapter {
                 arePacket.release();
                 return;
             }
-            AresContextThreadLocal.cache(aresPacketEx);
-            aresTcpHandler.handleMsgRcv(arePacket);
+            aresTcpHandler.handleMsgRcv(aresPacketEx);
         }
     }
 

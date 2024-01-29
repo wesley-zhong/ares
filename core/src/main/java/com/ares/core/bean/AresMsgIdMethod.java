@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
 
 @Data
 @Slf4j
-public class AresRpcMethod {
+public class AresMsgIdMethod {
     private int methodIndex;
     private Parser<?> parser;
     private AresServiceProxy aresServiceProxy;

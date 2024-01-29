@@ -1,9 +1,9 @@
 package com.ares.core.service;
 
-import com.ares.core.bean.AresRpcMethod;
+import com.ares.core.bean.AresMsgIdMethod;
 
 public interface IMsgCall {
-    void onMethodInit(int msgId, AresRpcMethod aresRpcMethod);
+    void onMethodInit(int msgId, AresMsgIdMethod aresMsgIdMethod);
 
-    AresRpcMethod getCalledMethod(int msgId);
+    AresMsgIdMethod getCalledMethod(int msgId);
 }

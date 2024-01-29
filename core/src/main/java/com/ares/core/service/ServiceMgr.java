@@ -1,6 +1,6 @@
 package com.ares.core.service;
 
-import com.ares.core.bean.AresRpcMethod;
+import com.ares.core.bean.AresMsgIdMethod;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,14 +36,14 @@ public class ServiceMgr implements IMsgCall, InitializingBean {
     }
 
     @Override
-    public void onMethodInit(int msgId, AresRpcMethod aresRpcMethod) {
-        serviceMethods.put(msgId, aresRpcMethod);
+    public void onMethodInit(int msgId, AresMsgIdMethod aresMsgIdMethod) {
+        serviceMethods.put(msgId, aresMsgIdMethod);
     }
 
     @Override
-    public AresRpcMethod getCalledMethod(int msgId) {
+    public AresMsgIdMethod getCalledMethod(int msgId) {
         return serviceMethods.get(msgId);
     }
 
-    private final Map<Integer, AresRpcMethod> serviceMethods = new HashMap<>();
+    private final Map<Integer, AresMsgIdMethod> serviceMethods = new HashMap<>();
 }

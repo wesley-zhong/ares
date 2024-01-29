@@ -1,14 +1,13 @@
 package com.ares.transport.server;
 
 
+import com.ares.core.bean.AresPacket;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.tcp.AresTcpHandler;
+import com.ares.core.utils.AresContextThreadLocal;
 import com.ares.transport.consts.FMsgId;
-import com.ares.core.bean.AresPacket;
 import com.ares.transport.context.AresTKcpContextImpl;
 import com.ares.transport.context.AresTKcpContextImplEx;
-import com.ares.transport.thread.PackageProcessThreadPool;
-import com.ares.transport.thread.PackageProcessThreadPoolGroup;
 import com.ares.transport.utils.AresPacketUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -20,8 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ServerPacketHandler extends ChannelInboundHandlerAdapter {
     private static AresTcpHandler aresRpcHandler;
-    private static PackageProcessThreadPoolGroup s_serverRpcProcessThreadPoolGroup;
-    private final PackageProcessThreadPool serverRpcProcessThreadPool;
     private int hearBeatCount;
     private int curIgnoreReadIdleCount;
     private static final int MAX_NO_CHECK_COUNT = 64;
@@ -29,12 +26,10 @@ public class ServerPacketHandler extends ChannelInboundHandlerAdapter {
     private final static int MSG_ID_OFFSET = 4;
 
 
-    public ServerPacketHandler(AresTcpHandler aresRpc, PackageProcessThreadPoolGroup packageProcessThreadPoolGroup, int totalIgnoreReadIdleCount) {
-        if (aresRpcHandler == null || s_serverRpcProcessThreadPoolGroup == null) {
+    public ServerPacketHandler(AresTcpHandler aresRpc,  int totalIgnoreReadIdleCount) {
+        if (aresRpcHandler == null ) {
             aresRpcHandler = aresRpc;
-            s_serverRpcProcessThreadPoolGroup = packageProcessThreadPoolGroup;
         }
-        serverRpcProcessThreadPool = s_serverRpcProcessThreadPoolGroup.getThreadPoolByThreadId();
         hearBeatCount = 0;
         curIgnoreReadIdleCount = 0;
         this.totalIgnoreReadIdleCount = totalIgnoreReadIdleCount;
@@ -44,13 +39,12 @@ public class ServerPacketHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object in) {
         ByteBuf body = (ByteBuf) in;
-
         int msgId = body.getShort(4);//body.readShort();
         AresTKcpContextImplEx aresTcpContextEx = AresPacketUtils.parseAresPacket(ctx, body, msgId);
-        processAresPacket(aresTcpContextEx, ctx);
+        processAresPacket(aresTcpContextEx);
     }
 
-    private void processAresPacket(AresTKcpContextImplEx aresMsgEx, ChannelHandlerContext ctx) {
+    private void processAresPacket(AresTKcpContextImplEx aresMsgEx) {
         AresPacket aresPacket = aresMsgEx.getRcvPackage();
         boolean ret = checkValid(aresMsgEx, aresPacket.getMsgId());
         if (!ret) {
@@ -59,10 +53,15 @@ public class ServerPacketHandler extends ChannelInboundHandlerAdapter {
         }
         if (aresPacket.getMsgId() == FMsgId.PONG) {
             aresPacket.release();
-            sendPing(ctx);
+            sendPing(aresMsgEx.getCtx());
             return;
         }
-        serverRpcProcessThreadPool.execute(aresMsgEx);
+        try {
+            aresRpcHandler.handleMsgRcv(aresMsgEx);
+        }finally {
+            aresPacket.release();
+            aresMsgEx.clearPackageData();
+        }
     }
 
     @Override

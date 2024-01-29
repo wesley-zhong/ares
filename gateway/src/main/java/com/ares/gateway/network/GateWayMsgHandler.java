@@ -1,12 +1,12 @@
 package com.ares.gateway.network;
 
+import com.ares.core.bean.AresMsgIdMethod;
 import com.ares.core.bean.AresPacket;
-import com.ares.core.bean.AresRpcMethod;
 import com.ares.core.exception.AresBaseException;
 import com.ares.core.service.ServiceMgr;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.tcp.AresTcpHandler;
-import com.ares.core.utils.AresContextThreadLocal;
+import com.ares.core.thread.PackageProcessThreadPool;
 import com.ares.gateway.bean.PlayerSession;
 import com.ares.gateway.service.SessionService;
 import com.ares.transport.bean.TcpConnServerInfo;
@@ -36,11 +36,11 @@ public class GateWayMsgHandler implements AresTcpHandler {
     private SessionService sessionService;
 
     @Override
-    public void handleMsgRcv(AresPacket aresPacket) {
+    public void handleMsgRcv(AresTKcpContext aresTKcpContext) {
         int length = 0;
+        AresPacket aresPacket = aresTKcpContext.getRcvPackage();
         try {
-            AresTKcpContext aresTKcpContext = AresContextThreadLocal.get();
-            AresRpcMethod calledMethod = serviceMgr.getCalledMethod(aresPacket.getMsgId());
+            AresMsgIdMethod calledMethod = serviceMgr.getCalledMethod(aresPacket.getMsgId());
             aresPacket.getRecvByteBuf().skipBytes(6);
 
             long roleId = 0;
@@ -66,7 +66,9 @@ public class GateWayMsgHandler implements AresTcpHandler {
             }
             length = aresPacket.getRecvByteBuf().readableBytes();
             Object paraObj = calledMethod.getParser().parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), length));
-            calledMethod.getAresServiceProxy().callMethod(calledMethod, roleId, paraObj);
+           // calledMethod.getAresServiceProxy().callMethod(calledMethod, roleId, paraObj);
+            PackageProcessThreadPool.INSTANCE.execute(aresTKcpContext, calledMethod,roleId, paraObj);
+
         } catch (AresBaseException e) {
             log.error("===error  length ={} msgId={} ", length, aresPacket.getMsgId(), e);
         } catch (Throwable e) {

@@ -1,4 +1,4 @@
-package com.ares.transport.thread;
+package com.ares.core.thread;
 
 import com.ares.core.tcp.AresTcpHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -16,11 +16,11 @@ public class PackageProcessThreadPoolGroup {
         if (INSTANCE != null) {
             return INSTANCE;
         }
-        INSTANCE = new PackageProcessThreadPoolGroup(eventThreadCount, aresRpcHandler, logicAysnThreadCount);
+        INSTANCE = new PackageProcessThreadPoolGroup(eventThreadCount, logicAysnThreadCount);
         return INSTANCE;
     }
 
-    public PackageProcessThreadPoolGroup(int eventThreadCount, AresTcpHandler aresRpcHandler, int logicAysnThreadCount) {
+    public PackageProcessThreadPoolGroup(int eventThreadCount, int logicAysnThreadCount) {
         if (logicAysnThreadCount == 0) { // no asyn thread it should be synchronize call
             threadCount = 1;
         } else {
@@ -28,7 +28,7 @@ public class PackageProcessThreadPoolGroup {
         }
         serverRpcProcessThreadPools = new PackageProcessThreadPool[threadCount];
         for (int i = 0; i < threadCount; ++i) {
-            serverRpcProcessThreadPools[i] = PackageProcessThreadPool.create(aresRpcHandler, logicAysnThreadCount);
+            serverRpcProcessThreadPools[i] = PackageProcessThreadPool.create(logicAysnThreadCount);
         }
     }
 
