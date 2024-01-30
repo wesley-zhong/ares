@@ -3,7 +3,10 @@ package com.ares.core.thread;
 
 import com.ares.core.bean.AresMsgIdMethod;
 import com.ares.core.tcp.AresTKcpContext;
+import com.ares.core.thread.task.EventFunction;
 import com.google.protobuf.Message;
+
+import java.util.function.BiFunction;
 
 /**
  * 消息处理器
@@ -33,4 +36,6 @@ public interface IMessageExecutor {
      *
      */
     void execute(AresTKcpContext aresTKcpContext,AresMsgIdMethod method, long param1, Object param2);
+
+    <T> void execute(long id, EventFunction<T> method, long p1, T p2);
 }

@@ -58,5 +58,7 @@ public class LoginServiceImpl implements LoginService{
             PutOption putOption = PutOption.builder().withLeaseId(leaseId).build();
             kvClient.put(ByteSequence.from((roleId+"").getBytes()), ByteSequence.from(secret.getBytes()), putOption);
         });
+
+       // discoveryService.getEtcdClient().getKVClient().txn().
     }
 }
