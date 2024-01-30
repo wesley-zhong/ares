@@ -54,7 +54,7 @@ public class PeerConnHandler implements AresController {
     public void innerHandShakeRes(long id, ProtoInner.InnerServerHandShakeRes innerLoginRequest) {
         AresTKcpContext aresTKcpContext = AresContextThreadLocal.get();
         peerConn.addContext(innerLoginRequest.getAreaId(), innerLoginRequest.getServiceName(), aresTKcpContext);
-        log.info("####  from: {} innerHandShake Response :{}  finish", aresTKcpContext, innerLoginRequest);
+        log.info("####  innerHandShake from: {}  Response :{}  finish", aresTKcpContext, innerLoginRequest);
         TcpConnServerInfo tcpConnServerInfo = aresTcpClient.getTcpConnServerInfo(innerLoginRequest.getAreaId(), innerLoginRequest.getServiceName());
         if(tcpConnServerInfo == null){
             log.error("server connect error  service name ={} areaId ={}",innerLoginRequest.getServiceName(), innerLoginRequest.getAreaId());

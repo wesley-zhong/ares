@@ -25,7 +25,7 @@ public class AresServiceProxy {
 
     public void init(IMsgCall iMsgCall) {
         Method[] methods = aresController.getClass().getDeclaredMethods();
-        log.info("============ init  service ={}  begin", aresController.getClass().getSimpleName());
+        log.info("============ init  service:  {}  begin", aresController.getClass().getSimpleName());
         methodAccess = MethodAccess.get(aresController.getClass());
 
         for (Method method : methods) {
@@ -40,7 +40,7 @@ public class AresServiceProxy {
                 log.warn("method name: {} called msgId: {} is not public will be ignored", methodName, msgId);
                 continue;
             }
-            log.info("--ready to init methodName: {} callMsgId: {}", methodName, msgId);
+            log.info("--  init methodName: {}  -- callMsgId: {}", methodName, msgId);
             aresMsgIdMethod.setMethodIndex(methodAccess.getIndex(methodName));
 
             Type paramsType = getType(method);

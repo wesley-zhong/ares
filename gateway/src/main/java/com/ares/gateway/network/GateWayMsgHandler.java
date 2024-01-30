@@ -103,7 +103,7 @@ public class GateWayMsgHandler implements AresTcpHandler {
         ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.newBuilder().build();
         AresPacket aresPacket = AresPacket.create(ProtoInner.InnerProtoCode.INNER_SERVER_HAND_SHAKE_REQ_VALUE, header, handleShake);
         aresTKcpContext.writeAndFlush(aresPacket);
-        log.info("###### send to {} handshake msg: {}", aresTKcpContext, handleShake);
+        log.info("######  handshake send to {}  msg: {}", aresTKcpContext, handleShake);
     }
 
     @Override
