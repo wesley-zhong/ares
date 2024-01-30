@@ -49,7 +49,8 @@ public class GameController implements AresController {
         ProtoInner.InnerLoginWorldRequest innerRequest = ProtoInner.InnerLoginWorldRequest.newBuilder()
                 .setRoleId(gameInnerLoginRequest.getRoleId()).build();
 
-        peerConn.sendWorldMsg(pid, ProtoInner.InnerProtoCode.INNER_TO_WORLD_LOGIN_REQ_VALUE, innerRequest);
+      //  peerConn.sendWorldMsg(pid, ProtoInner.InnerProtoCode.INNER_TO_WORLD_LOGIN_REQ_VALUE, innerRequest);
+        player.sendToWorld(ProtoInner.InnerProtoCode.INNER_TO_WORLD_LOGIN_REQ_VALUE, innerRequest);
     }
 
     @MsgId(ProtoInner.InnerProtoCode.INNER_TO_WORLD_LOGIN_RES_VALUE)
@@ -64,7 +65,8 @@ public class GameController implements AresController {
                 .setAreaId(areaId)
                 .setRoleId(worldLoginResponse.getRoleId()).build();
 
-        peerConn.sendGateWayMsg(player, ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_RES_VALUE, innerGameLoginRes);
+       // peerConn.sendGateWayMsg(player, ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_RES_VALUE, innerGameLoginRes);
+        player.sendToGateway(ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_RES_VALUE, innerGameLoginRes);
     }
 
 

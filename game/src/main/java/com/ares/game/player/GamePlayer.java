@@ -11,9 +11,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GamePlayer extends PeerTransfer {
+
     private RoleDO roleDO;
 
-    public GamePlayer(){
+    public GamePlayer(long pid){
+        super(pid);
     }
     public GamePlayer(AresTKcpContext context,long pid) {
         super(context, pid);

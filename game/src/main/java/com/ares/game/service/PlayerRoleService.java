@@ -24,7 +24,7 @@ public class PlayerRoleService {
             if(roleDO == null){
                 return  null;
             }
-            gamePlayer = new GamePlayer();
+            gamePlayer = new GamePlayer(pid);
             gamePlayer.setRoleDO(roleDO);
         }
          playerMap.put(pid, gamePlayer);
@@ -37,7 +37,7 @@ public class PlayerRoleService {
 
     public GamePlayer createGamePlayer(long roleId, String name) {
         //long pid = SnowFlake.nextId();
-        GamePlayer gamePlayer = new GamePlayer();
+        GamePlayer gamePlayer = new GamePlayer(roleId);
         RoleDO roleDO = new RoleDO();
         roleDO.setPid(roleId);
         roleDO.setId(roleId);

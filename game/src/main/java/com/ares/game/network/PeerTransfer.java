@@ -18,8 +18,8 @@ public class PeerTransfer {
     private AresTKcpContext worldContext;
     private ProtoInner.InnerMsgHeader msgHeader;
 
-    public PeerTransfer() {
-
+    public PeerTransfer(long pid) {
+        msgHeader = ProtoInner.InnerMsgHeader.newBuilder().setRoleId(pid).build();
     }
 
     public PeerTransfer(AresTKcpContext gateWayContext, long pid) {
