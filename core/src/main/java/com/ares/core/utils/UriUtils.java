@@ -1,33 +1,27 @@
 package com.ares.core.utils;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author wesley
  */
 
+@Slf4j
 public abstract class UriUtils {
-	private static final Logger LOGGER = LoggerFactory.getLogger( UriUtils.class );
 
-	public static List<URI> stringListAsUriList( final List<String> stringList ) {
-		return Lists.transform( stringList, new Function<String, URI>() {
-			@Override
-			public URI apply( String input ) {
-				try {
-					return URI.create( input );
-				} catch ( Exception e ) {
-					LOGGER.error( "Exception in URI.create('{}'): {}", input, e );
-				}
-
-				return null;
-			}
-		});
-
-	}
+    public static List<URI> stringListAsUriList(final List<String> stringList) {
+		List<URI> uriList = new ArrayList<>();
+        try {
+            for (String url : stringList) {
+                uriList.add(URI.create(url));
+            }
+        } catch (Exception e) {
+            log.error("Exception in URI.create", e);
+        }
+		return uriList;
+    }
 }
