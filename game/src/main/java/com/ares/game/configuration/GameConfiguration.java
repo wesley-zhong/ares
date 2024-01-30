@@ -41,14 +41,6 @@ public class GameConfiguration implements InitializingBean {
         aresTcpClientConn.init(aresTcpHandler);
         return aresTcpClientConn;
     }
-//    @Bean
-//    @Lazy
-//    public AresTcpClient  aresTcpClient(@Autowired WorldServerInfoList serverInfoList, @Autowired @Lazy AresTcpClientConn conn){
-//        AresTcpClient aresTcpClient = new AresTcpClientImpl(serverInfoList.getServers(), conn);
-//        aresTcpClient.init();
-//        return aresTcpClient;
-//    }
-
 
     @Bean
     @Lazy
@@ -57,13 +49,6 @@ public class GameConfiguration implements InitializingBean {
         aresTcpClient.init();
         return aresTcpClient;
     }
-
-//    @Bean
-//    public AresMongoClient aresMongoClient(@Autowired MongoClient mongoClient) {
-//        AresMongoClient mongoClient = new AresMongoClient(mongoConfig.getAddrs(), mongoConfig.getUserName(), mongoConfig.getPassword());
-//        mongoClient.init();
-//        return mongoClient;
-//    }
 
     @Bean
     public MongoClient mongoClient(@Autowired MongoConfig mongoConfig) {

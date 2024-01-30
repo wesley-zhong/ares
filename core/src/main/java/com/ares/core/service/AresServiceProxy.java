@@ -37,10 +37,10 @@ public class AresServiceProxy {
             String methodName = method.getName();
             AresMsgIdMethod aresMsgIdMethod = new AresMsgIdMethod();
             if (!Modifier.isPublic(method.getModifiers())) {
-                log.warn("method name ={} called msgId ={} is not public will be ignored", methodName, msgId);
+                log.warn("method name: {} called msgId: {} is not public will be ignored", methodName, msgId);
                 continue;
             }
-            log.info("--------  ready to init methodName ={} callMsgId ={}", methodName, msgId);
+            log.info("--ready to init methodName: {} callMsgId: {}", methodName, msgId);
             aresMsgIdMethod.setMethodIndex(methodAccess.getIndex(methodName));
 
             Type paramsType = getType(method);

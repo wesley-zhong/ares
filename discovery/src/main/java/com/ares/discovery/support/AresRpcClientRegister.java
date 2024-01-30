@@ -141,7 +141,7 @@ public class AresRpcClientRegister implements ImportBeanDefinitionRegistrar,
         BeanDefinitionHolder holder = new BeanDefinitionHolder(beanDefinition, className,
                 new String[]{alias});
         BeanDefinitionReaderUtils.registerBeanDefinition(holder, registry);
-        log.info("-------register ares rpc service {}  class name={}----finish", targetServiceName, className);
+        log.info("----- ares rpc service {}  class name={}----finish", targetServiceName, className);
     }
 
     private String getQualifier(Map<String, Object> client) {
