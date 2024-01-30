@@ -34,9 +34,56 @@
         </dependency>
     </dependencies>
 
+    <!--    <build>-->
+    <!--        <finalName>game</finalName>-->
+    <!--        <plugins>-->
+    <!--            <plugin>-->
+    <!--                <groupId>org.apache.maven.plugins</groupId>-->
+    <!--                <artifactId>maven-compiler-plugin</artifactId>-->
+    <!--                <configuration>-->
+    <!--                    <source>${java.version}</source>-->
+    <!--                    <target>${java.version}</target>-->
+    <!--                    <encoding>utf8</encoding>-->
+    <!--                </configuration>-->
+    <!--            </plugin>-->
+    <!--            <plugin>-->
+    <!--                <groupId>org.springframework.boot</groupId>-->
+    <!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
+    <!--                <configuration>-->
+    <!--                    <mainClass>com.ares.game.GameApplication</mainClass>-->
+    <!--                </configuration>-->
+    <!--                <executions>-->
+    <!--                    <execution>-->
+    <!--                        <id>repackage</id>-->
+    <!--                        <configuration>-->
+    <!--                            <excludeDevtools>true</excludeDevtools>-->
+    <!--                        </configuration>-->
+    <!--                    </execution>-->
+    <!--                </executions>-->
+    <!--            </plugin>-->
+    <!--        </plugins>-->
+    <!--    </build>-->
+
+
     <build>
         <finalName>game</finalName>
         <plugins>
+            <!--设置应用 Main 参数启动依赖查找的地址指向外部 lib 文件夹-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <!-- 项目所依赖的jar位于同一级的lib目录下-->
+                            <classpathPrefix>lib/</classpathPrefix>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -46,17 +93,35 @@
                     <encoding>utf8</encoding>
                 </configuration>
             </plugin>
+
+
+            <!--设置 SpringBoot 打包插件不包含任何 Jar 依赖包-->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <mainClass>com.ares.game.GameApplication</mainClass>
+                    <includes>
+                        <include>
+                            <groupId>nothing</groupId>
+                            <artifactId>nothing</artifactId>
+                        </include>
+                    </includes>
                 </configuration>
+            </plugin>
+            <!--设置将 lib 拷贝到应用 Jar 外面-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>repackage</id>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
                         <configuration>
-                            <excludeDevtools>true</excludeDevtools>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -64,53 +129,4 @@
         </plugins>
     </build>
 
-<!--    <build>-->
-<!--        <finalName>game</finalName>-->
-<!--        <plugins>-->
-<!--            <plugin>-->
-<!--                <groupId>org.springframework.boot</groupId>-->
-<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
-<!--                <configuration>-->
-<!--                    &lt;!&ndash;启动类位置&ndash;&gt;-->
-<!--                    <mainClass>com.ares.game.GameApplication</mainClass>-->
-<!--                    <layout>ZIP</layout>-->
-<!--                    <includes>-->
-<!--                        &lt;!&ndash; 没有自定义的jar包写 nothing&ndash;&gt;-->
-<!--                        <include>-->
-<!--                            <groupId>nothing</groupId>-->
-<!--                            <artifactId>nothing</artifactId>-->
-<!--                        </include>-->
-<!--                    </includes>-->
-<!--                    <layers>-->
-<!--                        <enabled>false</enabled>-->
-<!--                    </layers>-->
-<!--                </configuration>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <goals>-->
-<!--                            <goal>repackage</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
-
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-compiler-plugin</artifactId>-->
-<!--                <configuration>-->
-<!--                    <source>21</source>-->
-<!--                    <target>21</target>-->
-<!--                    <encoding>UTF-8</encoding>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
-
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-surefire-plugin</artifactId>-->
-<!--                <configuration>-->
-<!--                    <skipTests>true</skipTests>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
-<!--        </plugins>-->
-<!--    </build>-->
 </project>

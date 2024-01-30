@@ -1,11 +1,11 @@
 package com.ares.dal.mongo;
 
-import com.ares.dal.DO.BaseDO;
 import com.ares.dal.DO.CASDO;
 import com.ares.dal.DO.CommDO;
 import com.ares.dal.mongo.annotation.CollectionName;
 import com.ares.dal.mongo.annotation.MdbName;
 import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.ReplaceOptions;
@@ -26,12 +26,12 @@ import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.set;
 
 @Slf4j
-public class CommonMongoDAO <T extends CommDO> implements InitializingBean {
+public class CommonMongoDAO<T extends CommDO> implements InitializingBean {
     private final static String _ID = "_id";
     private final static String _VER = "ver";
     private final Class<T> doClass;
     @Autowired
-    private AresMongoClient aresMongoClient;
+    private MongoClient mongoClient;
     protected MongoCollection<T> collection;
 
     private final static ReplaceOptions UPINSERT_OPTIONS = new ReplaceOptions().upsert(true);
@@ -122,7 +122,7 @@ public class CommonMongoDAO <T extends CommDO> implements InitializingBean {
 
 
     public long delete(T obj) {
-        String  id = obj.getId();
+        String id = obj.getId();
         if (obj instanceof CASDO casObj) {
             long verEQ = casObj.getVer();
             DeleteResult deleteResult = collection.deleteOne(and(eq(_ID, id), eq(_VER, verEQ)));
@@ -158,7 +158,7 @@ public class CommonMongoDAO <T extends CommDO> implements InitializingBean {
         } else {
             dbName = mdbName.value();
         }
-        MongoDatabase database = aresMongoClient.getMongoClient().getDatabase(dbName);
+        MongoDatabase database = mongoClient.getDatabase(dbName);
         CollectionName collectionName = this.doClass.getAnnotation(CollectionName.class);
         String tableName;
         if (collectionName == null) {

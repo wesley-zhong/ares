@@ -19,7 +19,6 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 @Getter
 @Setter
-
 public class AresMongoClient {
     private String mongoAddrs;
     private String mongoUserName;

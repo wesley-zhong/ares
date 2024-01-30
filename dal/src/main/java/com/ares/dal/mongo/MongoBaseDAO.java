@@ -1,10 +1,11 @@
 package com.ares.dal.mongo;
 
-import com.ares.dal.mongo.annotation.CollectionName;
-import com.ares.dal.mongo.annotation.MdbName;
 import com.ares.dal.DO.BaseDO;
 import com.ares.dal.DO.CASDO;
+import com.ares.dal.mongo.annotation.CollectionName;
+import com.ares.dal.mongo.annotation.MdbName;
 import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.ReplaceOptions;
@@ -17,7 +18,6 @@ import org.bson.conversions.Bson;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.Serializable;
 import java.util.List;
 
 import static com.mongodb.client.model.Filters.and;
@@ -31,7 +31,7 @@ public class MongoBaseDAO<T extends BaseDO> implements InitializingBean {
     private final static String _VER = "ver";
     private final Class<T> doClass;
     @Autowired
-    private AresMongoClient aresMongoClient;
+    private MongoClient mongoClient;
     protected MongoCollection<T> collection;
 
     private final static ReplaceOptions UPINSERT_OPTIONS = new ReplaceOptions().upsert(true);
@@ -158,7 +158,7 @@ public class MongoBaseDAO<T extends BaseDO> implements InitializingBean {
         } else {
             dbName = mdbName.value();
         }
-        MongoDatabase database = aresMongoClient.getMongoClient().getDatabase(dbName);
+        MongoDatabase database = mongoClient.getDatabase(dbName);
         CollectionName collectionName = this.doClass.getAnnotation(CollectionName.class);
         String tableName;
         if (collectionName == null) {
