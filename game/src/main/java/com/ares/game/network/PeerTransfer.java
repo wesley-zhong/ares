@@ -1,55 +1,88 @@
 package com.ares.game.network;
 
 import com.ares.core.bean.AresPacket;
+import com.ares.core.tcp.AresTKcpContext;
+import com.game.protoGen.ProtoInner;
 import com.google.protobuf.Message;
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
 import lombok.Setter;
 
 import java.util.Map;
 import java.util.Set;
 
-public  class PeerTransfer {
+public class PeerTransfer {
 
     @Setter
-    private ChannelHandlerContext context;
-    public PeerTransfer(){
+    private AresTKcpContext gateWayContext;
+    @Setter
+    private AresTKcpContext worldContext;
+    private ProtoInner.InnerMsgHeader msgHeader;
+
+    public PeerTransfer() {
 
     }
-    public PeerTransfer(ChannelHandlerContext context){
-        if(context == null){
+
+    public PeerTransfer(AresTKcpContext gateWayContext, long pid) {
+        if (gateWayContext == null) {
             return;
         }
-        this.context = context;
-    }
-    public void disconnected(){
-        this.context = null;
+        msgHeader = ProtoInner.InnerMsgHeader.newBuilder().setRoleId(pid).build();
+        this.gateWayContext = gateWayContext;
     }
 
-    public void close(){
-        if(this.context != null){
-            this.context.close();
+    public void disconnected() {
+        this.gateWayContext = null;
+    }
+
+    public void close() {
+        if (this.gateWayContext != null) {
+            this.gateWayContext.close();
         }
     }
 
-   public   void send(int msgId, Message body){
-       AresPacket aresPacket =AresPacket.create(msgId, body);
-       context.writeAndFlush(aresPacket);
-     }
-     public void send(AresPacket aresPacket){
-        context.writeAndFlush(aresPacket);
-     }
+    public void sendToGateway(int msgId, Message body) {
+        AresPacket aresPacket = AresPacket.create(msgId, msgHeader, body);
+        gateWayContext.send(aresPacket);
+    }
 
-     public void send(ByteBuf body){
-        context.writeAndFlush(body);
-     }
+    public void sendToGateway(AresPacket aresPacket) {
+        gateWayContext.send(aresPacket);
+    }
 
-    public   void send(Map<Integer,Message> msgs){
+    public void sendToGateway(ByteBuf body) {
+        gateWayContext.send(body);
+    }
+
+    public void sendToGateway(Map<Integer, Message> msgs) {
         Set<Map.Entry<Integer, Message>> entries = msgs.entrySet();
-        for(Map.Entry<Integer, Message> entry: entries){
-            AresPacket aresPacket =AresPacket.create(entry.getKey(), entry.getValue());
-            context.write(aresPacket);
+        AresPacket[] packets = new AresPacket[entries.size()];
+        int index = 0;
+        for (Map.Entry<Integer, Message> entry : entries) {
+            packets[index++] = AresPacket.create(entry.getKey(), msgHeader, entry.getValue());
         }
-        context.flush();
+        gateWayContext.send(packets);
+    }
+
+    public void sendToWorld(int msgId, Message body) {
+        AresPacket aresPacket = AresPacket.create(msgId, msgHeader, body);
+        worldContext.send(aresPacket);
+    }
+
+    public void sendToWorld(AresPacket aresPacket) {
+        worldContext.send(aresPacket);
+    }
+
+    public void sendToWorld(ByteBuf body) {
+        worldContext.send(body);
+    }
+
+    public void sendToWorld(Map<Integer, Message> msgs) {
+        Set<Map.Entry<Integer, Message>> entries = msgs.entrySet();
+        AresPacket[] packets = new AresPacket[entries.size()];
+        int index = 0;
+        for (Map.Entry<Integer, Message> entry : entries) {
+            packets[index++] = AresPacket.create(entry.getKey(), msgHeader, entry.getValue());
+        }
+        worldContext.send(packets);
     }
 }

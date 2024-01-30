@@ -24,7 +24,7 @@ public class WorldController implements AresController {
     private PeerConn peerConn;
 
     @MsgId(ProtoInner.InnerProtoCode.INNER_TO_WORLD_LOGIN_REQ_VALUE)
-    public void playerWorldLoginRequest(long pid,ProtoInner.InnerLoginWorldRequest innerLoginRequest) {
+    public void playerWorldLoginRequest(long pid, ProtoInner.InnerLoginWorldRequest innerLoginRequest) {
         log.info("  loginRequest  = {}", innerLoginRequest);
         playerService.playerLogin(pid, innerLoginRequest);
     }
@@ -35,12 +35,12 @@ public class WorldController implements AresController {
     }
 
     @MsgId(ProtoCommon.ProtoCode.DIRECT_TO_WORLD_REQ_VALUE)
-    public void directToWorldMsg(long pid, ProtoTask.DirectToWorldReq directToWorldReq){
+    public void directToWorldMsg(long pid, ProtoTask.DirectToWorldReq directToWorldReq) {
         log.info("XXXXXXXXXX  directToWorldMsg pid={}  body={} ", pid, directToWorldReq);
         ProtoTask.DirectToWorldRes fromWorld = ProtoTask.DirectToWorldRes.newBuilder()
                 .setResBody("from world")
                 .setSomeId(881)
                 .setSomeIdAdd(9955599L).build();
-        peerConn.sendToGame(pid,ProtoCommon.ProtoCode.DIRECT_TO_WORLD_RES_VALUE, fromWorld);
+        peerConn.sendToGame(pid, ProtoCommon.ProtoCode.DIRECT_TO_WORLD_RES_VALUE, fromWorld);
     }
 }

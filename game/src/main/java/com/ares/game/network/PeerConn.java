@@ -22,7 +22,7 @@ import java.util.Map;
 public class PeerConn {
     @Value("${area.id}")
     private int areaId;
-    private final Map<Integer, Map<Integer, ChannelHandlerContext>> peerConns = new HashMap<>();
+    private final Map<Integer, Map<Integer, AresTKcpContext>> peerConns = new HashMap<>();
 
     public synchronized void addContext(int areaId, String serviceName, AresTKcpContext aresTKcpContext) {
         ServerType serverType = ServerType.from(serviceName);
@@ -30,23 +30,23 @@ public class PeerConn {
             log.error("service name == {} not be defined in ServerType enum", serviceName);
             return;
         }
-        Map<Integer, ChannelHandlerContext> stringAresTcpContextMap = peerConns.get(areaId);
+        Map<Integer, AresTKcpContext> stringAresTcpContextMap = peerConns.get(areaId);
         if (stringAresTcpContextMap == null) {
             stringAresTcpContextMap = new HashMap<>();
-            stringAresTcpContextMap.put(serverType.getValue(), aresTKcpContext.getCtx());
+            stringAresTcpContextMap.put(serverType.getValue(), aresTKcpContext);
             peerConns.put(areaId, stringAresTcpContextMap);
             return;
         }
-        stringAresTcpContextMap.put(serverType.getValue(), aresTKcpContext.getCtx());
+        stringAresTcpContextMap.put(serverType.getValue(), aresTKcpContext);
     }
 
 
-    public synchronized ChannelHandlerContext getAresTcpContext(ServerType serverType) {
+    public synchronized AresTKcpContext getAresTcpContext(ServerType serverType) {
         return getAresTcpContext(areaId, serverType);
     }
 
-    public synchronized ChannelHandlerContext getAresTcpContext(int areaId, ServerType serverType) {
-        Map<Integer, ChannelHandlerContext> stringAresTcpContextMap = peerConns.get(areaId);
+    public synchronized AresTKcpContext getAresTcpContext(int areaId, ServerType serverType) {
+        Map<Integer, AresTKcpContext> stringAresTcpContextMap = peerConns.get(areaId);
         if (CollectionUtils.isEmpty(stringAresTcpContextMap)) {
             return null;
         }
@@ -54,20 +54,20 @@ public class PeerConn {
     }
 
     public void send(int areaId, ServerType serverType, long roleId, int msgId, Message body) {
-        ChannelHandlerContext channelHandlerContext = getAresTcpContext(areaId, serverType);
+        AresTKcpContext channelHandlerContext = getAresTcpContext(areaId, serverType);
         if (channelHandlerContext == null) {
             log.error("areaId ={} sererType ={}  not found to send msgId ={}", areaId, serverType, msgId);
             return;
         }
         ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.newBuilder().setRoleId(roleId).build();
         AresPacket aresPacket = AresPacket.create(msgId, header, body);
-        channelHandlerContext.writeAndFlush(aresPacket);
+        channelHandlerContext.send(aresPacket);
     }
 
     public void send(GamePlayer gamePlayer, int msgId, Message body) {
         ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.newBuilder().setRoleId(gamePlayer.getPid()).build();
         AresPacket aresPacket = AresPacket.create(msgId, header, body);
-        gamePlayer.send(aresPacket);
+        gamePlayer.sendToGateway(aresPacket);
     }
 
 
@@ -92,22 +92,22 @@ public class PeerConn {
     }
 
     public void directSendToWorld(AresPacket aresPacket) {
-        ChannelHandlerContext aresTcpContext = getAresTcpContext(areaId, ServerType.WORLD);
+        AresTKcpContext aresTcpContext = getAresTcpContext(areaId, ServerType.WORLD);
         if (aresTcpContext == null) {
             log.error("areaId ={} serverType ={}  not found connection", aresPacket, ServerType.WORLD);
             return;
         }
 
         aresPacket.getRecvByteBuf().readerIndex(0);
-        aresTcpContext.writeAndFlush(aresPacket.getRecvByteBuf().retain());
+        aresTcpContext.send(aresPacket.getRecvByteBuf().retain());
     }
 
     public void directSendToGateway(long pid,AresPacket aresPacket) {
-        ChannelHandlerContext aresTcpContext = getAresTcpContext(areaId, ServerType.GATEWAY);
+        AresTKcpContext aresTcpContext = getAresTcpContext(areaId, ServerType.GATEWAY);
         if (aresTcpContext == null) {
             log.error("areaId ={} serverType ={}  not found connection", aresPacket, ServerType.WORLD);
             return;
         }
-        aresTcpContext.writeAndFlush(aresPacket.getRecvByteBuf().retain());
+        aresTcpContext.send(aresPacket.getRecvByteBuf().retain());
     }
 }

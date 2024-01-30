@@ -35,7 +35,7 @@ public class CommController implements AresController {
         AresPacket directWorld = AresPacket.create(ProtoCommon.ProtoCode.DIRECT_TO_WORLD_REQ_VALUE, req);
         client.getChannel().writeAndFlush(directWorld);
 
-     //   performanceTestService.startSend();
+        performanceTestService.startSend();
     }
 
     @MsgId(ProtoCommon.ProtoCode.PERFORMANCE_TEST_RES_VALUE)

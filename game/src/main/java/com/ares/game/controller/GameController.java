@@ -1,5 +1,6 @@
 package com.ares.game.controller;
 
+import com.ares.common.bean.ServerType;
 import com.ares.core.annotation.MsgId;
 import com.ares.core.service.AresController;
 import com.ares.core.tcp.AresTKcpContext;
@@ -11,6 +12,7 @@ import com.ares.game.service.PlayerRoleService;
 import com.game.protoGen.ProtoCommon;
 import com.game.protoGen.ProtoInner;
 import com.game.protoGen.ProtoTask;
+import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,10 +42,13 @@ public class GameController implements AresController {
         if (player == null) {
             player = playerRoleService.createGamePlayer(gameInnerLoginRequest.getRoleId(), "hello");
         }
-        player.setContext(aresTKcpContext.getCtx());
+        player.setGateWayContext(aresTKcpContext);
+        AresTKcpContext worldContext = peerConn.getAresTcpContext(areaId, ServerType.WORLD);
+        player.setWorldContext(worldContext);
 
         ProtoInner.InnerLoginWorldRequest innerRequest = ProtoInner.InnerLoginWorldRequest.newBuilder()
                 .setRoleId(gameInnerLoginRequest.getRoleId()).build();
+
         peerConn.sendWorldMsg(pid, ProtoInner.InnerProtoCode.INNER_TO_WORLD_LOGIN_REQ_VALUE, innerRequest);
     }
 

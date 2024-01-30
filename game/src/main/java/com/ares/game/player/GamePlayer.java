@@ -1,5 +1,6 @@
 package com.ares.game.player;
 
+import com.ares.core.tcp.AresTKcpContext;
 import com.ares.game.DO.RoleDO;
 import com.ares.game.network.PeerTransfer;
 import io.netty.channel.ChannelHandlerContext;
@@ -14,8 +15,8 @@ public class GamePlayer extends PeerTransfer {
 
     public GamePlayer(){
     }
-    public GamePlayer(ChannelHandlerContext context) {
-        super(context);
+    public GamePlayer(AresTKcpContext context,long pid) {
+        super(context, pid);
     }
 
     public long getPid(){

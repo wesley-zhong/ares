@@ -1,5 +1,6 @@
 package com.ares.world.service;
 
+import com.ares.core.tcp.AresTKcpContext;
 import com.ares.world.player.WorldPlayer;
 import io.netty.channel.ChannelHandlerContext;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,7 @@ public class WorldPlayerMgr {
         return playerMap.get(pid);
     }
 
-    public WorldPlayer crateWorldPlayer(ChannelHandlerContext context, long pid) {
+    public WorldPlayer crateWorldPlayer(AresTKcpContext context, long pid) {
         return new WorldPlayer(context, pid);
     }
 }

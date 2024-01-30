@@ -2,9 +2,7 @@ package com.ares.core.thread;
 
 import com.ares.core.bean.AresMsgIdMethod;
 import com.ares.core.tcp.AresTKcpContext;
-import com.ares.core.thread.task.EventFunction;
-import com.ares.core.thread.task.PacketEventTask;
-import com.ares.core.thread.task.TaskEventTask;
+import com.ares.core.thread.task.*;
 import com.lmax.disruptor.LiteTimeoutBlockingWaitStrategy;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
@@ -60,7 +58,6 @@ public class DisruptorSingleExecutor implements IMessageExecutor {
                 packetEventTask.setParam2(param2);
                 AresEventProcess aresEventProcess = ringBuffer.get(sequence);
                 aresEventProcess.setEventTask(packetEventTask);
-
             } finally {
                 ringBuffer.publish(sequence);
             }
@@ -72,13 +69,33 @@ public class DisruptorSingleExecutor implements IMessageExecutor {
     }
 
     @Override
-    public <T> void execute(long id, EventFunction<T> method, long p1, T p2) {
+    public <T> void execute(long p1, T p2, EventBiFunction<T> method) {
+        try {
+            final long sequence = ringBuffer.tryNext();
+            try {
+                TaskBiEventTask<T> taskBiEventTask = new TaskBiEventTask<>();
+                taskBiEventTask.setP1(p1);
+                taskBiEventTask.setP2(p2);
+                taskBiEventTask.setFunction(method);
+                AresEventProcess aresEventProcess = ringBuffer.get(sequence);
+                aresEventProcess.setEventTask(taskBiEventTask);
+            } finally {
+                ringBuffer.publish(sequence);
+            }
+        } catch (Exception e) {
+            // This exception is used by the Disruptor as a global goto. It is a singleton
+            // and has no stack trace.  Don't worry about performance.
+            log.error("Logic thread disruptor buff is error", e);
+        }
+    }
+
+    @Override
+    public <T> void execute(T p, EventFunction<T> method) {
         try {
             final long sequence = ringBuffer.tryNext();
             try {
                 TaskEventTask<T> taskEventTask = new TaskEventTask<>();
-                taskEventTask.setP1(p1);
-                taskEventTask.setP2(p2);
+                taskEventTask.setP(p);
                 taskEventTask.setFunction(method);
                 AresEventProcess aresEventProcess = ringBuffer.get(sequence);
                 aresEventProcess.setEventTask(taskEventTask);
@@ -90,5 +107,6 @@ public class DisruptorSingleExecutor implements IMessageExecutor {
             // and has no stack trace.  Don't worry about performance.
             log.error("Logic thread disruptor buff is error", e);
         }
+
     }
 }

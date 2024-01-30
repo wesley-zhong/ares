@@ -2,11 +2,9 @@ package com.ares.core.thread;
 
 import com.ares.core.bean.AresMsgIdMethod;
 import com.ares.core.tcp.AresTKcpContext;
+import com.ares.core.thread.task.EventBiFunction;
 import com.ares.core.thread.task.EventFunction;
 import lombok.extern.slf4j.Slf4j;
-
-import java.nio.file.LinkOption;
-import java.util.function.BiFunction;
 
 @Slf4j
 public class LogicProcessThreadPool {
@@ -44,20 +42,30 @@ public class LogicProcessThreadPool {
     public void execute(AresTKcpContext aresTKcpContext, AresMsgIdMethod method, long p1, Object p2) {
         try {
             IMessageExecutor iMessageExecutor = getChannelIMessageExecutor();
-            iMessageExecutor.execute(aresTKcpContext, method, p1, p1);
+            iMessageExecutor.execute(aresTKcpContext, method, p1, p2);
         } catch (Exception e) {
             log.error("---error-- ", e);
         }
     }
 
-    public <T> void execute(long id, EventFunction<T> method, long p1, T p2) {
+    public <T> void execute(long hashCode, EventBiFunction<T> method, long p1, T p2) {
         try {
             IMessageExecutor iMessageExecutor = getChannelIMessageExecutor();
-            iMessageExecutor.execute(id, method, p1, p2);
+            iMessageExecutor.execute(p1, p2,method);
         } catch (Exception e) {
             log.error("---error-- ", e);
         }
     }
+    public <T> void execute(long hashCode, T p, EventFunction<T>  method){
+        try {
+            IMessageExecutor iMessageExecutor = getChannelIMessageExecutor();
+            iMessageExecutor.execute(p,method);
+        } catch (Exception e) {
+            log.error("---error-- ", e);
+        }
+    }
+
+
 
 
     public void shutDown() {

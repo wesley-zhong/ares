@@ -87,7 +87,7 @@ public class GameMsgHandler implements AresTcpHandler {
         }
         ByteBuf sendBody = aresPacket.getRecvByteBuf().retain();
         sendBody.readerIndex(0);
-        player.send(sendBody);
+        player.sendToGateway(sendBody);
         log.info("-------------------- direct to gateway pid ={} msgId={} ", pid, aresPacket.getMsgId());
     }
 
