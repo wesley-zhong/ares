@@ -15,7 +15,7 @@ public class LoginService{
                 .setAccountId(1000L)
                 .setLoginToken("abc")
                 .setAreaId(100)
-                .setRoleId(99999488);
+                .setRoleId(99999488666L);
 
         AresPacket  aresPacket = AresPacket.create(ProtoCommon.ProtoCode.LOGIN_REQUEST_VALUE,loginRequest.build());
         channel.writeAndFlush(aresPacket);

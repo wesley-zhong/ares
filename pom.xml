@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.ares</groupId>
     <artifactId>ares-parent</artifactId>
-    <version>2023.7.8</version>
+    <version>2024.1.1</version>
     <packaging>pom</packaging>
     <name>ares-parent</name>
     <description>game server</description>
@@ -32,7 +32,7 @@
         <logback.version>1.4.14</logback.version>
         <slf4j.version>2.0.7</slf4j.version>
         <maven.test.skip>true</maven.test.skip>
-        <ares.version>2023.7.8</ares.version>
+        <ares.version>2024.1.1</ares.version>
     </properties>
 
     <dependencyManagement>
@@ -72,22 +72,10 @@
                 <version>${ares.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.apache.rocketmq</groupId>
-                <artifactId>rocketmq-spring-boot</artifactId>
-                <version>2.1.1.5</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-data-redis</artifactId>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/io.netty/netty-all -->
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-all</artifactId>
-                <version>4.1.100.Final</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.springframework.boot</groupId>-->
+<!--                <artifactId>spring-boot-starter-data-redis</artifactId>-->
+<!--            </dependency>-->
             <dependency>
                 <groupId>com.esotericsoftware</groupId>
                 <artifactId>reflectasm</artifactId>
@@ -99,18 +87,12 @@
                 <artifactId>guava</artifactId>
                 <version>32.1.2-jre</version>
             </dependency>
-            <dependency>
-                <groupId>org.yaml</groupId>
-                <artifactId>snakeyaml</artifactId>
-                <version>2.0</version>
-            </dependency>
-
-
 <!--            <dependency>-->
-<!--                <groupId>org.springframework.boot</groupId>-->
-<!--                <artifactId>spring-boot-starter-webflux</artifactId>-->
+<!--                <groupId>org.yaml</groupId>-->
+<!--                <artifactId>snakeyaml</artifactId>-->
+<!--                <version>2.0</version>-->
 <!--            </dependency>-->
-            <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
+
             <dependency>
                 <groupId>com.google.protobuf</groupId>
                 <artifactId>protobuf-java</artifactId>
@@ -121,7 +103,7 @@
             <dependency>
                 <groupId>com.lmax</groupId>
                 <artifactId>disruptor</artifactId>
-                <version>3.4.4</version>
+                <version>4.0.0</version>
             </dependency>
 
             <!--- logs  -->
@@ -155,12 +137,6 @@
                 <artifactId>commons-lang</artifactId>
                 <version>2.4</version>
             </dependency>
-
-            <dependency>
-                <groupId>commons-codec</groupId>
-                <artifactId>commons-codec</artifactId>
-                <version>1.16.0</version>
-            </dependency>
             <dependency>
                 <groupId>io.etcd</groupId>
                 <artifactId>jetcd-core</artifactId>
@@ -183,11 +159,6 @@
                 <artifactId>spring-boot-starter-test</artifactId>
                 <scope>test</scope>
             </dependency>
-<!--            <dependency>-->
-<!--                <groupId>io.projectreactor</groupId>-->
-<!--                <artifactId>reactor-test</artifactId>-->
-<!--                <scope>test</scope>-->
-<!--            </dependency>-->
         </dependencies>
     </dependencyManagement>
 

@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Value;
 
 @Slf4j
 public class GateWayMsgHandler implements AresTcpHandler {
-
     @Autowired
     private ServiceMgr serviceMgr;
     @Autowired

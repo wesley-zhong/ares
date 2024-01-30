@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.ares</groupId>
         <artifactId>ares-parent</artifactId>
-        <version>2023.7.8</version>
+        <version>2024.1.1</version>
     </parent>
 
     <artifactId>gateway</artifactId>
