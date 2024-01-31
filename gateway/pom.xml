@@ -36,7 +36,6 @@
 
     <build>
         <finalName>gateway</finalName>
-
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

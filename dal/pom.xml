@@ -47,7 +47,7 @@
     </dependencies>
 
     <build>
-        <finalName>game</finalName>
+        <finalName>dal</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
