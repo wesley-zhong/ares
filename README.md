@@ -6,6 +6,7 @@
       transport-springboot-starter: network based on Netty
       dal : data access layer , redis cluster , mongoDB
       discovery:  service register and discovery  with etcd
+      login: for account login  based http
 ## game server practice
       gateway : game proxy server
       game  : game  logic server
