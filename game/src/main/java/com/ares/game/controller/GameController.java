@@ -12,7 +12,6 @@ import com.ares.game.service.PlayerRoleService;
 import com.game.protoGen.ProtoCommon;
 import com.game.protoGen.ProtoInner;
 import com.game.protoGen.ProtoTask;
-import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +28,7 @@ public class GameController implements AresController {
     private PeerConn peerConn;
     @Autowired
     private WorldServerClientTransfer worldServerClientTransfer;
+
 
     @MsgId(ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_REQ_VALUE)
     public void gameInnerLoginRequest(long pid, ProtoInner.InnerGameLoginRequest gameInnerLoginRequest) {
@@ -49,7 +49,7 @@ public class GameController implements AresController {
         ProtoInner.InnerLoginWorldRequest innerRequest = ProtoInner.InnerLoginWorldRequest.newBuilder()
                 .setRoleId(gameInnerLoginRequest.getRoleId()).build();
 
-      //  peerConn.sendWorldMsg(pid, ProtoInner.InnerProtoCode.INNER_TO_WORLD_LOGIN_REQ_VALUE, innerRequest);
+        //  peerConn.sendWorldMsg(pid, ProtoInner.InnerProtoCode.INNER_TO_WORLD_LOGIN_REQ_VALUE, innerRequest);
         player.sendToWorld(ProtoInner.InnerProtoCode.INNER_TO_WORLD_LOGIN_REQ_VALUE, innerRequest);
     }
 
@@ -65,7 +65,7 @@ public class GameController implements AresController {
                 .setAreaId(areaId)
                 .setRoleId(worldLoginResponse.getRoleId()).build();
 
-       // peerConn.sendGateWayMsg(player, ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_RES_VALUE, innerGameLoginRes);
+        // peerConn.sendGateWayMsg(player, ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_RES_VALUE, innerGameLoginRes);
         player.sendToGateway(ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_RES_VALUE, innerGameLoginRes);
     }
 
@@ -85,5 +85,9 @@ public class GameController implements AresController {
         log.info("-----performanceTest  pid ={} body={} ", pid, req);
         ProtoTask.PerformanceTestRes performanceBOyd = ProtoTask.PerformanceTestRes.newBuilder().setResBody("performanceBody").setSomeId(44444).build();
         peerConn.sendGateWayMsg(player, ProtoCommon.ProtoCode.PERFORMANCE_TEST_RES_VALUE, performanceBOyd);
+
+
+        //for test
+        playerRoleService.asynUpdateTest(player.getRoleDO());
     }
 }

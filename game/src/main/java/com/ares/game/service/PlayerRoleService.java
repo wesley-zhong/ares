@@ -3,7 +3,6 @@ package com.ares.game.service;
 import com.ares.game.DO.RoleDO;
 import com.ares.game.dao.RoleDAO;
 import com.ares.game.player.GamePlayer;
-import io.netty.channel.ChannelHandlerContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +19,7 @@ public class PlayerRoleService {
     public GamePlayer getPlayer(long pid) {
         GamePlayer gamePlayer =  playerMap.get(pid);
         if(gamePlayer == null){
-            RoleDO roleDO = roleDAO.getSingle(pid);
+            RoleDO roleDO = roleDAO.getById(pid);
             if(roleDO == null){
                 return  null;
             }
@@ -46,6 +45,13 @@ public class PlayerRoleService {
         gamePlayer.setRoleDO(roleDO);
         playerMap.put(roleId, gamePlayer);
         return gamePlayer;
+    }
+
+    public void asynUpdateTest(RoleDO roleDO){
+        for(int i = 0;  i < 2000; i++){
+            roleDO.setCountTest(roleDO.getCountTest()  + 1);
+            roleDAO.asynUpInsert(roleDO);
+        }
     }
 
 }

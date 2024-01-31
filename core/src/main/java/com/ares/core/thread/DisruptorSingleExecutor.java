@@ -69,6 +69,29 @@ public class DisruptorSingleExecutor implements IMessageExecutor {
     }
 
     @Override
+    public <T1, T2, T3> void execute(T1 p1, T2 p2, T3 p3, EventThFunction<T1, T2, T3> method) {
+        try {
+            final long sequence = ringBuffer.tryNext();
+            try {
+                TaskThEventTask<T1, T2, T3> taskBiEventTask = new TaskThEventTask<>();
+                taskBiEventTask.setP1(p1);
+                taskBiEventTask.setP2(p2);
+                taskBiEventTask.setP3(p3);
+                taskBiEventTask.setFunction(method);
+                AresEventProcess aresEventProcess = ringBuffer.get(sequence);
+                aresEventProcess.setEventTask(taskBiEventTask);
+            } finally {
+                ringBuffer.publish(sequence);
+            }
+        } catch (Exception e) {
+            // This exception is used by the Disruptor as a global goto. It is a singleton
+            // and has no stack trace.  Don't worry about performance.
+            log.error("Logic thread disruptor buff is error", e);
+        }
+
+    }
+
+    @Override
     public <T> void execute(long p1, T p2, EventBiFunction<T> method) {
         try {
             final long sequence = ringBuffer.tryNext();

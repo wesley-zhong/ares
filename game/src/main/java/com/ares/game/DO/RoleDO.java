@@ -14,4 +14,5 @@ public class RoleDO extends BaseDO {
     private long pid;
     @BsonProperty("n")
     private String name;
+    private int countTest;
 }

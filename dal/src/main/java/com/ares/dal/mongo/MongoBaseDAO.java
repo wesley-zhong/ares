@@ -1,5 +1,6 @@
 package com.ares.dal.mongo;
 
+import com.ares.core.thread.VirtualThreadPool;
 import com.ares.dal.DO.BaseDO;
 import com.ares.dal.DO.CASDO;
 import com.ares.dal.mongo.annotation.CollectionName;
@@ -33,8 +34,9 @@ public class MongoBaseDAO<T extends BaseDO> implements InitializingBean {
     @Autowired
     private MongoClient mongoClient;
     protected MongoCollection<T> collection;
+    private final static VirtualThreadPool virtualThreadPool = new VirtualThreadPool(1);
 
-    private final static ReplaceOptions UPINSERT_OPTIONS = new ReplaceOptions().upsert(true);
+    private final static ReplaceOptions UP_INSERT_OPTIONS = new ReplaceOptions().upsert(true);
 
     public MongoBaseDAO(Class<T> doClass) {
         this.doClass = doClass;
@@ -51,20 +53,23 @@ public class MongoBaseDAO<T extends BaseDO> implements InitializingBean {
             if (obj instanceof CASDO casObj) {
                 long verEQ = casObj.getVer();
                 casObj.setVer(casObj.getVer() + 1);
-                UpdateResult updateResult = collection.replaceOne(and(eq(_ID, obj.getId()), eq(_VER, verEQ)), obj, UPINSERT_OPTIONS);
+                UpdateResult updateResult = collection.replaceOne(and(eq(_ID, obj.getId()), eq(_VER, verEQ)), obj, UP_INSERT_OPTIONS);
                 if (updateResult.getModifiedCount() != 1) {
                     log.error("####### replace id = {}, ver = {}, modify count = {}  ", obj.getId(), verEQ, updateResult.getModifiedCount());
                 }
                 return updateResult.wasAcknowledged();
             }
 
-            UpdateResult updateResult = collection.replaceOne(eq(_ID, obj.getId()), obj, UPINSERT_OPTIONS);
+            UpdateResult updateResult = collection.replaceOne(eq(_ID, obj.getId()), obj, UP_INSERT_OPTIONS);
             return updateResult.wasAcknowledged();
         } catch (Exception e) {
             log.error("===== mongdb error", e);
         }
         return false;
+    }
 
+    public void asynUpInsert(T obj) {
+        virtualThreadPool.execute(0, obj, this::upInsert);
     }
 
     public boolean bathInsert(List<T> objs) {
@@ -72,20 +77,24 @@ public class MongoBaseDAO<T extends BaseDO> implements InitializingBean {
         return insertManyResult.wasAcknowledged();
     }
 
+    public void aysBathInsert(List<T> objs) {
+        virtualThreadPool.execute(0, objs, this::bathInsert);
+    }
+
     public long deleteMany(Bson condition) {
         return collection.deleteMany(condition).getDeletedCount();
     }
 
-    public T getSingle(long key) {
+    public void asyDeleteMany(Bson condition) {
+        virtualThreadPool.execute(0, condition, this::deleteMany);
+    }
+
+    public T getById(long key) {
         return collection.find(eq(_ID, key)).first();
     }
 
-    public T getSingle(String key) {
+    public T getById(String key) {
         return collection.find(eq(_ID, key)).first();
-    }
-
-    public T getSingle() {
-        return collection.find().first();
     }
 
     public T findOne(String fieldName, Object fieldValue) {
@@ -120,6 +129,10 @@ public class MongoBaseDAO<T extends BaseDO> implements InitializingBean {
         return updateResult.getModifiedCount();
     }
 
+    public void asyReplaceOne(T obj) {
+        virtualThreadPool.execute(0, obj, this::replaceOne);
+    }
+
 
     public long delete(T obj) {
         long id = obj.getId();
@@ -131,6 +144,11 @@ public class MongoBaseDAO<T extends BaseDO> implements InitializingBean {
         DeleteResult deleteResult = collection.deleteOne(eq(_ID, id));
         return deleteResult.getDeletedCount();
     }
+
+    public void asyDelete(T obj) {
+        virtualThreadPool.execute(0, obj, this::delete);
+    }
+
 
     /////////////////////////////////////////////////////////////////////////////////////
     // mongodb force operator
@@ -145,6 +163,11 @@ public class MongoBaseDAO<T extends BaseDO> implements InitializingBean {
     public long findReplace(String fieldName, String fieldValue, T obj) {
         UpdateResult updateResult = collection.replaceOne(eq(fieldName, fieldValue), obj);
         return updateResult.getModifiedCount();
+    }
+
+    public void asyfindReplace(String fieldName, String fieldValue, T obj) {
+        virtualThreadPool.execute(0, fieldName, fieldValue, obj, this::asyfindReplace);
+
     }
     /////////////////////////////////////////////////////////////////////////////////////
 

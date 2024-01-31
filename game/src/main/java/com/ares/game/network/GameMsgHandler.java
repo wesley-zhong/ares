@@ -70,8 +70,8 @@ public class GameMsgHandler implements AresTcpHandler {
 
             length = aresPacket.getRecvByteBuf().readableBytes();
             Object paraObj = calledMethod.getParser().parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), length));
-            LogicProcessThreadPool.INSTANCE.execute(aresTKcpContext, calledMethod,pid, paraObj);
-           // calledMethod.getAresServiceProxy().callMethod(calledMethod, pid, paraObj);
+            LogicProcessThreadPool.INSTANCE.execute(aresTKcpContext, calledMethod, pid, paraObj);
+            // calledMethod.getAresServiceProxy().callMethod(calledMethod, pid, paraObj);
         } catch (AresBaseException e) {
             log.error("===error  length ={} msgId={} ", length, aresPacket.getMsgId(), e);
         } catch (Throwable e) {
@@ -88,7 +88,7 @@ public class GameMsgHandler implements AresTcpHandler {
         ByteBuf sendBody = aresPacket.getRecvByteBuf().retain();
         sendBody.readerIndex(0);
         player.sendToGateway(sendBody);
-        log.info("-------------------- direct to gateway pid ={} msgId={} ", pid, aresPacket.getMsgId());
+       // log.info("-------------------- direct to gateway pid ={} msgId={} ", pid, aresPacket.getMsgId());
     }
 
     private ServerType fromServerType(AresTKcpContext aresTKcpContext) {

@@ -88,7 +88,7 @@ public class GateWayMsgHandler implements AresTcpHandler {
         body.setShort(headerLen + 2 + 4, aresPacket.getMsgId());
         body.retain();
         sessionService.sendPlayerMsg(roleId, body);
-        log.info("------- direct send to client msg roleId ={} msgId={}", roleId, aresPacket.getMsgId());
+      //  log.info("------- direct send to client msg roleId ={} msgId={}", roleId, aresPacket.getMsgId());
     }
 
     private void directSendGame(PlayerSession playerSession, AresPacket aresPacket) {
