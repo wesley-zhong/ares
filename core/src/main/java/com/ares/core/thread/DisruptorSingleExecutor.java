@@ -3,8 +3,8 @@ package com.ares.core.thread;
 import com.ares.core.bean.AresMsgIdMethod;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.thread.task.*;
-import com.lmax.disruptor.LiteTimeoutBlockingWaitStrategy;
 import com.lmax.disruptor.RingBuffer;
+import com.lmax.disruptor.TimeoutBlockingWaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ public class DisruptorSingleExecutor implements IMessageExecutor {
 
 
     public DisruptorSingleExecutor(ThreadFactory threadFactory) {
-        disruptor = new Disruptor<>(new AresEventFactory(), MAX_QUE_SIZE, threadFactory, ProducerType.MULTI, new LiteTimeoutBlockingWaitStrategy(1, TimeUnit.MILLISECONDS));
+        disruptor = new Disruptor<>(new AresEventFactory(), MAX_QUE_SIZE, threadFactory, ProducerType.MULTI, new TimeoutBlockingWaitStrategy(10, TimeUnit.MILLISECONDS));
         disruptor.handleEventsWith(new AresEventHandler());
         ringBuffer = disruptor.getRingBuffer();
     }
