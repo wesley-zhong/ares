@@ -65,8 +65,8 @@ public class GateWayMsgHandler implements AresTcpHandler {
             }
             length = aresPacket.getRecvByteBuf().readableBytes();
             Object paraObj = calledMethod.getParser().parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), length));
-           // calledMethod.getAresServiceProxy().callMethod(calledMethod, roleId, paraObj);
-            LogicProcessThreadPool.INSTANCE.execute(aresTKcpContext, calledMethod,roleId, paraObj);
+            // calledMethod.getAresServiceProxy().callMethod(calledMethod, roleId, paraObj);
+            LogicProcessThreadPool.INSTANCE.execute(aresTKcpContext, calledMethod, roleId, paraObj);
 
         } catch (AresBaseException e) {
             log.error("===error  length ={} msgId={} ", length, aresPacket.getMsgId(), e);
@@ -88,7 +88,7 @@ public class GateWayMsgHandler implements AresTcpHandler {
         body.setShort(headerLen + 2 + 4, aresPacket.getMsgId());
         body.retain();
         sessionService.sendPlayerMsg(roleId, body);
-      //  log.info("------- direct send to client msg roleId ={} msgId={}", roleId, aresPacket.getMsgId());
+        //  log.info("------- direct send to client msg roleId ={} msgId={}", roleId, aresPacket.getMsgId());
     }
 
     private void directSendGame(PlayerSession playerSession, AresPacket aresPacket) {

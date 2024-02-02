@@ -6,8 +6,10 @@ import com.ares.core.bean.AresPacket;
 import com.ares.core.tcp.AresTKcpContext;
 import com.game.protoGen.ProtoInner;
 import com.google.protobuf.Message;
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.CompositeByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -75,10 +77,23 @@ public class PeerConn {
         int readableBytes = aresPacket.getRecvByteBuf().readableBytes();
         byte[] header = build.toByteArray();
         int totalLen = readableBytes + 2 + 2 + header.length;
-        CompositeByteBuf byteBufs = ByteBufAllocator.DEFAULT.compositeDirectBuffer().writeInt(totalLen)
-                .writeShort(aresPacket.getMsgId())
-                .writeShort(header.length).writeBytes(header)
-                .writeBytes(aresPacket.getRecvByteBuf());
+//
+//        CompositeByteBuf byteBufs = ByteBufAllocator.DEFAULT.compositeDirectBuffer()
+//                .writeInt(totalLen)
+//                .writeShort(aresPacket.getMsgId())
+//                .writeShort(header.length).writeBytes(header)
+//                .writeBytes(aresPacket.getRecvByteBuf());
+
+
+        CompositeByteBuf byteBufs = ByteBufAllocator.DEFAULT.compositeDirectBuffer();
+
+        ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer(4 + 2 + 2 + header.length);
+        buffer.writeInt(totalLen);
+        buffer.writeShort(aresPacket.getMsgId())
+                .writeShort(header.length).writeBytes(header);
+
+        byteBufs.addComponents(true,buffer, aresPacket.getRecvByteBuf().retain());
+
 
         ChannelHandlerContext channelHandlerContext = getAresTcpContext(areaId, ServerType.GAME);
         if (channelHandlerContext == null) {
@@ -86,7 +101,7 @@ public class PeerConn {
             return;
         }
         channelHandlerContext.writeAndFlush(byteBufs);
-     //   log.info("-----direct msg to game game server roleId ={} msgId ={} areaId={}", roleId, aresPacket.getMsgId(), areaId);
+        //   log.info("-----direct msg to game game server roleId ={} msgId ={} areaId={}", roleId, aresPacket.getMsgId(), areaId);
     }
 
     public void send(ServerType serverType, long roleId, int msgId, Message body) {
