@@ -3,7 +3,6 @@ package com.ares.login.configuration;
 import com.ares.common.bean.ServerType;
 
 import com.ares.core.utils.SnowFlake;
-import com.ares.dal.mongo.AresMongoClient;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
@@ -27,7 +26,9 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 @Configuration
 @ComponentScan("com.ares")
-public class GameConfiguration  implements InitializingBean {
+public class LoginConfiguration implements InitializingBean {
+    @Value("${srvId:1}")
+    private int srvId;
     @Bean
     public MongoClient mongoClient(@Autowired MongoConfig mongoConfig) {
         CodecRegistry pojoCodecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
@@ -51,9 +52,6 @@ public class GameConfiguration  implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        /**
-         * this should increased from etcd
-         */
-        SnowFlake.init(0, ServerType.GAME.getValue());
+        SnowFlake.init(srvId, ServerType.LOGIN.getValue());
     }
 }

@@ -34,6 +34,7 @@ public class PlayerService {
         player.send(ProtoInner.InnerProtoCode.INNER_TO_WORLD_LOGIN_RES_VALUE, response);
 
 
+      //  log.info("PPPPPPPPPPPPPPPPPPPPP player login ={}", roleId);
         ScheduleService.INSTANCE.executeTimerTaskWithMS(this::timerTaskTest,new BeanTest(2211,"hello"),2000);
     }
 

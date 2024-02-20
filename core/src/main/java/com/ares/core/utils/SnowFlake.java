@@ -9,7 +9,7 @@ import java.util.Set;
 public class SnowFlake {
     //下面两个每个5位，加起来就是10位的工作机器id
 
-    //-----39  bit  system time-(15 years) --------2  bit serverType-- 11 bit groupId(2048 group)----11 bit(2048)： sequence num
+    //-----39  bit  system time-(15 years) --------2  bit serverType-- 11 bit areaId(2048 )----11 bit(2048)： sequence num
     private static long workerId;    //areaId
     private static long serverType;   //serverTYpe
     //12位的序列号
@@ -29,7 +29,6 @@ public class SnowFlake {
         workerId = areaId;
         serverType = sType;
         sequence = 1;
-
     }
 
 

@@ -71,7 +71,6 @@ public class GameMsgHandler implements AresTcpHandler {
             length = aresPacket.getRecvByteBuf().readableBytes();
             Object paraObj = calledMethod.getParser().parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), length));
             LogicProcessThreadPool.INSTANCE.execute(aresTKcpContext, calledMethod, pid, paraObj);
-            // calledMethod.getAresServiceProxy().callMethod(calledMethod, pid, paraObj);
         } catch (AresBaseException e) {
             log.error("===error  length ={} msgId={} ", length, aresPacket.getMsgId(), e);
         } catch (Throwable e) {

@@ -9,5 +9,6 @@ public interface DiscoveryService {
     Client  getEtcdClient();
     EtcdDiscovery  getEtcdDiscovery();
     EtcdRegister    getEtcdRegister();
+    int genNextSeqNum(String key);
 
 }

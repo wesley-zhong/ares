@@ -1,5 +1,6 @@
 package com.ares.discovery;
 
+import com.ares.discovery.utils.BytesUtils;
 import com.ares.discovery.utils.NetUtils;
 import com.ares.core.utils.JsonUtil;
 import com.ares.transport.bean.ServerNodeInfo;
@@ -53,16 +54,6 @@ public class EtcdRegister {
         updateServerNodeInfo(serverNodeInfo);
 
     }
-
-    /**
-     * 将字符串转为客户端所需的ByteSequence实例
-     * @param val
-     * @return
-     */
-    public static ByteSequence bytesOf(String val) {
-        return ByteSequence.from(val, UTF_8);
-    }
-
     private Client getClient() {
         return client;
     }
@@ -81,7 +72,7 @@ public class EtcdRegister {
             PutOption putOption = PutOption.builder().withLeaseId(leaseId).build();
 
             // put操作
-            kvClient.put(bytesOf(key), bytesOf(value), putOption)
+            kvClient.put(BytesUtils.bytesOf(key), BytesUtils.bytesOf(value), putOption)
                     .thenAccept(putResponse -> {
                         // put操作完成后，再设置无限续租的操作
                         leaseClient.keepAlive(leaseId, new CallStreamObserver<LeaseKeepAliveResponse>() {

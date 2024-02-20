@@ -21,11 +21,11 @@ public class ScheduleService {
     }
 
 
-    public <T> AresTimerTask executeTimerTaskWithMS(EventFunction<T> function, T extraData, long timeOut) {
+    public <T> AresTimerTask<?> executeTimerTaskWithMS(EventFunction<T> function, T extraData, long timeOut) {
         return executeTimerTask(function, extraData, timeOut, TimeUnit.MILLISECONDS);
     }
 
-    public <T> AresTimerTask executeTimerTask(EventFunction<T> function, T extraData, long timeOut, TimeUnit timeUnit) {
+    public <T> AresTimerTask<?> executeTimerTask(EventFunction<T> function, T extraData, long timeOut, TimeUnit timeUnit) {
         AresTimerTask aresTimerTask = AresTimerTask.NewTimerTask(extraData, function);
         Timeout timeout = HASHED_WHEEL_TIMER.newTimeout(aresTimerTask, timeOut, timeUnit);
         aresTimerTask.setAresTimerTaskConsumer(aresTimerTaskConsumer);

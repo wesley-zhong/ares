@@ -4,12 +4,18 @@ import com.ares.discovery.DiscoveryService;
 import com.ares.discovery.transfer.OnWatchServiceChange;
 import com.ares.transport.bean.ServerNodeInfo;
 import com.ares.transport.client.AresTcpClient;
+import io.etcd.jetcd.ByteSequence;
+import io.etcd.jetcd.KV;
+import io.etcd.jetcd.Lease;
+import io.etcd.jetcd.options.PutOption;
 import io.etcd.jetcd.watch.WatchEvent;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +24,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 
 @Component
 @Slf4j
-public class OnDiscoveryWatch implements OnWatchServiceChange {
+public class OnDiscoveryWatch implements OnWatchServiceChange , InitializingBean {
     private static final  String  ONLINE_COUNT ="OC";
     @Autowired
     private DiscoveryService discoveryService;
@@ -70,5 +76,10 @@ public class OnDiscoveryWatch implements OnWatchServiceChange {
             }
             return   o1Count - o2Count;
         });
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        int i = discoveryService.genNextSeqNum("hahah");
     }
 }

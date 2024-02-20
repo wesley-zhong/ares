@@ -4,15 +4,16 @@ import lombok.Getter;
 import lombok.Setter;
 
 public enum ServerType {
+    LOGIN(0,"login"),
     GATEWAY(1, "gateway"),
     GAME(2, "game"),
 
     WORLD(3,"world");
 
     @Getter
-    private int value;
+    private final int value;
     @Getter
-    private String name;
+    private final String name;
 
     private ServerType(int serverType, String serverName) {
         this.value = serverType;
