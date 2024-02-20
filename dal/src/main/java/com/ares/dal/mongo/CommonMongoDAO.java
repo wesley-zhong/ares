@@ -34,7 +34,7 @@ public class CommonMongoDAO<T extends CommDO> implements InitializingBean {
     private MongoClient mongoClient;
     protected MongoCollection<T> collection;
 
-    private final static ReplaceOptions UPINSERT_OPTIONS = new ReplaceOptions().upsert(true);
+    private final static ReplaceOptions UP_INSERT_OPTIONS = new ReplaceOptions().upsert(true);
 
     public CommonMongoDAO(Class<T> doClass) {
         this.doClass = doClass;
@@ -51,20 +51,19 @@ public class CommonMongoDAO<T extends CommDO> implements InitializingBean {
             if (obj instanceof CASDO casObj) {
                 long verEQ = casObj.getVer();
                 casObj.setVer(casObj.getVer() + 1);
-                UpdateResult updateResult = collection.replaceOne(and(eq(_ID, obj.getId()), eq(_VER, verEQ)), obj, UPINSERT_OPTIONS);
+                UpdateResult updateResult = collection.replaceOne(and(eq(_ID, obj.getId()), eq(_VER, verEQ)), obj, UP_INSERT_OPTIONS);
                 if (updateResult.getModifiedCount() != 1) {
                     log.error("####### replace id = {}, ver = {}, modify count = {}  ", obj.getId(), verEQ, updateResult.getModifiedCount());
                 }
                 return updateResult.wasAcknowledged();
             }
 
-            UpdateResult updateResult = collection.replaceOne(eq(_ID, obj.getId()), obj, UPINSERT_OPTIONS);
+            UpdateResult updateResult = collection.replaceOne(eq(_ID, obj.getId()), obj, UP_INSERT_OPTIONS);
             return updateResult.wasAcknowledged();
         } catch (Exception e) {
             log.error("===== mongdb error", e);
         }
         return false;
-
     }
 
     public boolean bathInsert(List<T> objs) {
@@ -81,6 +80,10 @@ public class CommonMongoDAO<T extends CommDO> implements InitializingBean {
     }
 
     public T getSingle(String key) {
+        return collection.find(eq(_ID, key)).first();
+    }
+
+    public T getById(long key) {
         return collection.find(eq(_ID, key)).first();
     }
 
@@ -170,5 +173,4 @@ public class CommonMongoDAO<T extends CommDO> implements InitializingBean {
         tableName = tableName.toLowerCase();
         collection = database.getCollection(tableName, this.doClass);
     }
-
 }

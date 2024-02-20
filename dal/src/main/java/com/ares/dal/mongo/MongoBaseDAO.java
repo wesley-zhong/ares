@@ -46,6 +46,9 @@ public class MongoBaseDAO<T extends BaseDO> implements InitializingBean {
         InsertOneResult insertOneResult = collection.insertOne(obj);
         return insertOneResult.wasAcknowledged();
     }
+    public void asynInsert(T obj){
+        virtualThreadPool.execute(0, obj, this::insert);
+    }
 
 
     public boolean upInsert(T obj) {
@@ -77,7 +80,7 @@ public class MongoBaseDAO<T extends BaseDO> implements InitializingBean {
         return insertManyResult.wasAcknowledged();
     }
 
-    public void aysBathInsert(List<T> objs) {
+    public void asynBathInsert(List<T> objs) {
         virtualThreadPool.execute(0, objs, this::bathInsert);
     }
 
@@ -165,8 +168,8 @@ public class MongoBaseDAO<T extends BaseDO> implements InitializingBean {
         return updateResult.getModifiedCount();
     }
 
-    public void asyfindReplace(String fieldName, String fieldValue, T obj) {
-        virtualThreadPool.execute(0, fieldName, fieldValue, obj, this::asyfindReplace);
+    public void asynFindReplace(String fieldName, String fieldValue, T obj) {
+        virtualThreadPool.execute(0, fieldName, fieldValue, obj, this::findReplace);
 
     }
     /////////////////////////////////////////////////////////////////////////////////////

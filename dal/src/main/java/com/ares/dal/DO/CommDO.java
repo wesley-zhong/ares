@@ -2,6 +2,7 @@ package com.ares.dal.DO;
 
 public class CommDO extends CASDO{
 
+
     public String  id;
 
     public String getId() {
