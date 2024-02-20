@@ -61,4 +61,5 @@ public class LoginController implements AresController {
         myNodeInfo.getMetaData().put("online",online+"");
         discoveryService.getEtcdRegister().updateServerNodeInfo(myNodeInfo );
     }
+
 }

@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 
 @Component
 @Slf4j
-public class OnDiscoveryWatch implements OnWatchServiceChange , InitializingBean {
+public class OnDiscoveryWatch implements OnWatchServiceChange {
     private static final  String  ONLINE_COUNT ="OC";
     @Autowired
     private DiscoveryService discoveryService;
@@ -76,10 +76,5 @@ public class OnDiscoveryWatch implements OnWatchServiceChange , InitializingBean
             }
             return   o1Count - o2Count;
         });
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        int i = discoveryService.genNextSeqNum("hahah");
     }
 }

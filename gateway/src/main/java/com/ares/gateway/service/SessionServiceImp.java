@@ -2,26 +2,33 @@ package com.ares.gateway.service;
 
 import com.ares.core.bean.AresPacket;
 import com.ares.core.tcp.AresTKcpContext;
+import com.ares.discovery.DiscoveryService;
 import com.ares.gateway.bean.PlayerSession;
 import com.ares.gateway.network.PeerConn;
+import com.game.protoGen.ProtoCommon;
 import com.game.protoGen.ProtoInner;
 import com.game.protoGen.ProtoTask;
 import com.google.protobuf.Message;
+import io.etcd.jetcd.ByteSequence;
+import io.etcd.jetcd.KeyValue;
+import io.etcd.jetcd.kv.GetResponse;
 import io.netty.buffer.ByteBuf;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 
 @Component
 @Slf4j
 public class SessionServiceImp implements SessionService {
-    //    @Autowired
-//    private AresTcpClient aresTcpClient;
     @Autowired
     private PeerConn peerConn;
+    @Autowired
+    private DiscoveryService discoveryService;
 
     private final Map<Long, AresTKcpContext> playerChannelContext = new ConcurrentHashMap<>();
 
@@ -31,6 +38,17 @@ public class SessionServiceImp implements SessionService {
         /****
          * do something
          */
+        boolean bValid = checkPlayerToken(loginRequest.getRoleId(),loginRequest.getLoginToken());
+        if(!bValid){
+            ProtoTask.LoginResponse response = ProtoTask.LoginResponse.newBuilder()
+                    .setRoleId(loginRequest.getRoleId())
+                    .setServerTime(System.currentTimeMillis())
+                    .setErrorCode(ProtoCommon.ProtoError.INVALID_LOGIN_TOKEN_VALUE).build();
+            aresTKcpContext.send(AresPacket.create(ProtoCommon.ProtoCode.LOGIN_RESPONSE_VALUE,response));
+            return;
+        }
+
+
         aresTKcpContext.clearPackageData();
         playerChannelContext.put(loginRequest.getRoleId(), aresTKcpContext);
 
@@ -88,5 +106,21 @@ public class SessionServiceImp implements SessionService {
     @Override
     public AresTKcpContext getRoleContext(long roleId) {
         return playerChannelContext.get(roleId);
+    }
+
+    private boolean checkPlayerToken(long roleId, String token){
+        try {
+            GetResponse getResponse = discoveryService.getEtcdClient().getKVClient()
+                    .get(ByteSequence.from(roleId + "", StandardCharsets.UTF_8)).get();
+            if(getResponse.getCount() != 1){
+                return false;
+            }
+            KeyValue keyValue = getResponse.getKvs().get(0);
+            return  keyValue.getValue().toString(StandardCharsets.UTF_8).equals(token);
+        } catch (Exception e) {
+            log.error("-----error", e);
+        }
+        return  true;
+
     }
 }

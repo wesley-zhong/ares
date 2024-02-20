@@ -5,6 +5,7 @@ import com.ares.core.annotation.MsgId;
 import com.ares.core.service.AresController;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.utils.AresContextThreadLocal;
+import com.ares.discovery.DiscoveryService;
 import com.ares.game.network.PeerConn;
 import com.ares.game.network.WorldServerClientTransfer;
 import com.ares.game.player.GamePlayer;
@@ -28,6 +29,9 @@ public class GameController implements AresController {
     private PeerConn peerConn;
     @Autowired
     private WorldServerClientTransfer worldServerClientTransfer;
+    @Autowired
+    private DiscoveryService discoveryService;
+
 
 
     @MsgId(ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_REQ_VALUE)
@@ -35,6 +39,7 @@ public class GameController implements AresController {
         /**
          * do some logic
          */
+
 
         log.info("======== gameInnerLoginRequest  ={}", gameInnerLoginRequest);
         AresTKcpContext aresTKcpContext = AresContextThreadLocal.get();
@@ -90,4 +95,5 @@ public class GameController implements AresController {
         //for test
         playerRoleService.asynUpdateTest(player.getRoleDO());
     }
+
 }

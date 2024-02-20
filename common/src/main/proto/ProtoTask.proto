@@ -1,10 +1,12 @@
 syntax = "proto3";
 option java_package = "com.game.protoGen";
 option go_package = "/protoGen";
+
 message IntIntProto {
   int32 intValue1 = 1;
   int32 intValue2 = 2;
 }
+
 
 
 message Role {
