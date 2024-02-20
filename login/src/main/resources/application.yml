@@ -19,6 +19,9 @@ discovery:
     - http://localhost:2379
   watch-servers:
     - service-name-prefix: gateway.V1
+      areas:
+        - area-id: 100
+
 
 mongo:
   addrs: localhost:27017;localhost:27017

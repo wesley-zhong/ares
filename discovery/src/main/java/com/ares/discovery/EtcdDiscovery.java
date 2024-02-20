@@ -67,7 +67,6 @@ public class EtcdDiscovery {
     private void watcher(String prefixAddress) {
         log.info("watching prefix:" + prefixAddress);
         WatchOption watchOpts = WatchOption.builder().isPrefix(true).build();//withPrefix(ByteSequence.from(prefixAddress, UTF_8)).build();
-
         //实例化一个监听对象，当监听的key发生变化时会被调用
         Watch.Listener listener = Watch.listener(watchResponse -> {
             watchResponse.getEvents().forEach(watchEvent -> {
