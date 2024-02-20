@@ -109,17 +109,17 @@ public class SessionServiceImp implements SessionService {
     }
 
     private boolean checkPlayerToken(long roleId, String token){
-        try {
-            GetResponse getResponse = discoveryService.getEtcdClient().getKVClient()
-                    .get(ByteSequence.from(roleId + "", StandardCharsets.UTF_8)).get();
-            if(getResponse.getCount() != 1){
-                return false;
-            }
-            KeyValue keyValue = getResponse.getKvs().get(0);
-            return  keyValue.getValue().toString(StandardCharsets.UTF_8).equals(token);
-        } catch (Exception e) {
-            log.error("-----error", e);
-        }
+//        try {
+//            GetResponse getResponse = discoveryService.getEtcdClient().getKVClient()
+//                    .get(ByteSequence.from(roleId + "", StandardCharsets.UTF_8)).get();
+//            if(getResponse.getCount() != 1){
+//                return false;
+//            }
+//            KeyValue keyValue = getResponse.getKvs().get(0);
+//            return  keyValue.getValue().toString(StandardCharsets.UTF_8).equals(token);
+//        } catch (Exception e) {
+//            log.error("-----error", e);
+//        }
         return  true;
 
     }
