@@ -5,6 +5,7 @@ import com.ares.core.tcp.AresTKcpContext;
 import com.ares.discovery.DiscoveryService;
 import com.ares.gateway.bean.PlayerSession;
 import com.ares.gateway.network.PeerConn;
+import com.ares.transport.bean.ServerNodeInfo;
 import com.game.protoGen.ProtoCommon;
 import com.game.protoGen.ProtoInner;
 import com.game.protoGen.ProtoTask;
@@ -38,13 +39,13 @@ public class SessionServiceImp implements SessionService {
         /****
          * do something
          */
-        boolean bValid = checkPlayerToken(loginRequest.getRoleId(),loginRequest.getLoginToken());
-        if(!bValid){
+        boolean bValid = checkPlayerToken(loginRequest.getRoleId(), loginRequest.getLoginToken());
+        if (!bValid) {
             ProtoTask.LoginResponse response = ProtoTask.LoginResponse.newBuilder()
                     .setRoleId(loginRequest.getRoleId())
                     .setServerTime(System.currentTimeMillis())
                     .setErrorCode(ProtoCommon.ProtoError.INVALID_LOGIN_TOKEN_VALUE).build();
-            aresTKcpContext.send(AresPacket.create(ProtoCommon.ProtoCode.LOGIN_RESPONSE_VALUE,response));
+            aresTKcpContext.send(AresPacket.create(ProtoCommon.ProtoCode.LOGIN_RESPONSE_VALUE, response));
             return;
         }
 
@@ -68,7 +69,17 @@ public class SessionServiceImp implements SessionService {
             return;
         }
         channelHandlerContext.cacheObj(playerSession);
+        //update online count to etcd
+        updateMyNodeInfo();
+    }
 
+    @Override
+    public void playerDisconnect(PlayerSession playerSession) {
+        log.info("-------------  player disconnect ={}", playerSession);
+        playerChannelContext.remove(playerSession.getRoleId());
+
+        //update online count to etcd
+        updateMyNodeInfo();
     }
 
     @Override
@@ -103,12 +114,13 @@ public class SessionServiceImp implements SessionService {
         channelHandlerContext.send(body);
     }
 
+
     @Override
     public AresTKcpContext getRoleContext(long roleId) {
         return playerChannelContext.get(roleId);
     }
 
-    private boolean checkPlayerToken(long roleId, String token){
+    private boolean checkPlayerToken(long roleId, String token) {
 //        try {
 //            GetResponse getResponse = discoveryService.getEtcdClient().getKVClient()
 //                    .get(ByteSequence.from(roleId + "", StandardCharsets.UTF_8)).get();
@@ -120,7 +132,14 @@ public class SessionServiceImp implements SessionService {
 //        } catch (Exception e) {
 //            log.error("-----error", e);
 //        }
-        return  true;
+        return true;
 
+    }
+
+    private void updateMyNodeInfo(){
+        ServerNodeInfo myNodeInfo = discoveryService.getEtcdRegister().getMyNodeInfo();
+        int online =  playerChannelContext.size();
+        myNodeInfo.getMetaData().put("online",online+"");
+        discoveryService.getEtcdRegister().updateServerNodeInfo(myNodeInfo );
     }
 }

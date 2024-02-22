@@ -38,7 +38,6 @@ public class LoginController implements AresController {
     @MsgId(ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_RES_VALUE)
     public void onGameLoginRes(long roleId, ProtoInner.InnerGameLoginResponse loginResponse) {
         log.info(" INNER_TO_GAME_LOGIN_RES_VALUE :{} ",loginResponse);
-
         sessionService.loginSuccess(loginResponse);
         ProtoTask.LoginResponse response = ProtoTask.LoginResponse.newBuilder()
                 .setErrorCode(0)
@@ -46,20 +45,5 @@ public class LoginController implements AresController {
                 .setServerTime(System.currentTimeMillis()).build();
         sessionService.sendPlayerMsg(loginResponse.getRoleId(),ProtoCommon.ProtoCode.LOGIN_RESPONSE_VALUE, response );
 
-        //update online count to etcd
-        updateMyNodeInfo();
     }
-
-    private void updateMyNodeInfo(){
-        ServerNodeInfo myNodeInfo = discoveryService.getEtcdRegister().getMyNodeInfo();
-        int online = 0;
-        String strOnline = myNodeInfo.getMetaData().get("online");
-        if(strOnline != null){
-            online = Integer.parseInt(strOnline);
-        }
-        online ++;
-        myNodeInfo.getMetaData().put("online",online+"");
-        discoveryService.getEtcdRegister().updateServerNodeInfo(myNodeInfo );
-    }
-
 }

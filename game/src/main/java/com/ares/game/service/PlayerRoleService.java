@@ -53,5 +53,4 @@ public class PlayerRoleService {
             roleDAO.asynUpInsert(roleDO);
         }
     }
-
 }

@@ -29,8 +29,6 @@ public class GameController implements AresController {
     private PeerConn peerConn;
     @Autowired
     private WorldServerClientTransfer worldServerClientTransfer;
-    @Autowired
-    private DiscoveryService discoveryService;
 
 
 
