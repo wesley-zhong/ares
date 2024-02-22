@@ -14,8 +14,7 @@ import org.springframework.stereotype.Component;
 public class OnDiscoveryWatch implements OnWatchServiceChange, Ordered {
     @Autowired
     private AresTcpClient aresTcpClient;
-    @Autowired
-    private DiscoveryService discoveryService;
+
 
     @Override
     public Void onWatchServiceChange(WatchEvent.EventType eventType, ServerNodeInfo serverNodeInfo) {
