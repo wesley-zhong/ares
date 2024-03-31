@@ -59,6 +59,7 @@ public class GameMsgHandler implements AresTcpHandler {
                 pid = header.getRoleId();
             }
 
+            // no msg method call should proxy to others
             if (calledMethod == null) {
                 if (fromServerType(aresTKcpContext) == ServerType.GATEWAY) {
                     peerConn.directSendToWorld(aresPacket);

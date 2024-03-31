@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class PeerConnHandler implements AresController {
     @Autowired
-    private PeerConn  peerConn;
+    private PeerConn peerConn;
 
     @Value("${area.id:100}")
     private int areaId;
@@ -39,13 +39,13 @@ public class PeerConnHandler implements AresController {
         ProtoInner.InnerServerHandShakeRes response = ProtoInner.InnerServerHandShakeRes.newBuilder().setAreaId(areaId)
                 .setServiceName(appName).build();
         ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.newBuilder().setRoleId(id).build();
-        AresPacket aresPacket = AresPacket.create(ProtoInner.InnerProtoCode.INNER_SERVER_HAND_SHAKE_RES_VALUE,header,response);
+        AresPacket aresPacket = AresPacket.create(ProtoInner.InnerProtoCode.INNER_SERVER_HAND_SHAKE_RES_VALUE, header, response);
         aresTKcpContext.send(aresPacket);
         ServerNodeInfo serverNodeInfo = new ServerNodeInfo();
         serverNodeInfo.setAreaId(innerLoginRequest.getAreaId());
         serverNodeInfo.setServiceName(innerLoginRequest.getServiceName());
         serverNodeInfo.setServiceId(innerLoginRequest.getServiceId());
-        TcpConnServerInfo tcpConnServerInfo= new TcpConnServerInfo(aresTKcpContext.getCtx().channel(),serverNodeInfo);
+        TcpConnServerInfo tcpConnServerInfo = new TcpConnServerInfo(aresTKcpContext.getCtx().channel(), serverNodeInfo);
         aresTKcpContext.cacheObj(tcpConnServerInfo);
     }
 
@@ -56,8 +56,8 @@ public class PeerConnHandler implements AresController {
         peerConn.addContext(innerLoginRequest.getAreaId(), innerLoginRequest.getServiceName(), aresTKcpContext);
         log.info("####  innerHandShake from: {}  Response :{}  finish", aresTKcpContext, innerLoginRequest);
         TcpConnServerInfo tcpConnServerInfo = aresTcpClient.getTcpConnServerInfo(innerLoginRequest.getAreaId(), innerLoginRequest.getServiceName());
-        if(tcpConnServerInfo == null){
-            log.error("server connect error  service name ={} areaId ={}",innerLoginRequest.getServiceName(), innerLoginRequest.getAreaId());
+        if (tcpConnServerInfo == null) {
+            log.error("server connect error  service name ={} areaId ={}", innerLoginRequest.getServiceName(), innerLoginRequest.getAreaId());
             return;
         }
         aresTKcpContext.cacheObj(tcpConnServerInfo);

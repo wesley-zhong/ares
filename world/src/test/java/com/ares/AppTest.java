@@ -1,5 +1,6 @@
 package com.ares;
 
+import com.ares.world.bean.BeanTest;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -28,11 +29,21 @@ public class AppTest
         return new TestSuite( AppTest.class );
     }
 
+    public static int  addTest(int a){
+        return  a+5;
+    }
+
     /**
      * Rigourous Test :-)
      */
     public void testApp()
     {
-        assertTrue( true );
+        long begin = System.currentTimeMillis();
+        for(int i = 0 ; i < 100000000; ++i){
+            addTest(80);
+        }
+        long end = System.currentTimeMillis();
+        long dis = end - begin;
+        System.out.println("dis = " + dis);
     }
 }

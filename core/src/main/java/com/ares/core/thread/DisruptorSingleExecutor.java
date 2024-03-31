@@ -130,6 +130,5 @@ public class DisruptorSingleExecutor implements IMessageExecutor {
             // and has no stack trace.  Don't worry about performance.
             log.error("Logic thread disruptor buff is error", e);
         }
-
     }
 }
