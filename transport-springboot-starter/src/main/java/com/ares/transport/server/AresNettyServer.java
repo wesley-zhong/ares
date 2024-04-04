@@ -3,7 +3,6 @@ package com.ares.transport.server;
 import com.ares.core.tcp.AresTcpHandler;
 import com.ares.transport.decoder.AresBasedFrameDecoder;
 import com.ares.transport.encode.AresPacketMsgEncoder;
-import com.ares.core.thread.LogicProcessThreadPoolGroup;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
@@ -96,7 +95,7 @@ public class AresNettyServer implements InitializingBean {
                 .option(ChannelOption.SO_BACKLOG, 1024)
                 .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                 .childOption(ChannelOption.SO_SNDBUF, 512 * 1024)
-                .childOption(ChannelOption.WRITE_BUFFER_WATER_MARK, new WriteBufferWaterMark(512 * 1024, 1024 * 1024))
+                .childOption(ChannelOption.WRITE_BUFFER_WATER_MARK, new WriteBufferWaterMark(512* 1024, 1024 * 1024))
                 .childOption(ChannelOption.SO_RCVBUF, 512 * 1024)
                 .childOption(ChannelOption.TCP_NODELAY, true);
 

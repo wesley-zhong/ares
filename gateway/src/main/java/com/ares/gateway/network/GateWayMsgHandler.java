@@ -53,20 +53,22 @@ public class GateWayMsgHandler implements AresTcpHandler {
                     roleId = header.getRoleId();
                 }
 
+                // if not processed by myself
                 if (calledMethod == null) {
                     directSendToClient(roleId, aresPacket, headerLen);
                     return;
                 }
             } else if (aresTKcpContext.getCacheObj() instanceof PlayerSession playerSession) {
                 //come from client
+                // if not processed by myself
                 if (calledMethod == null) {
                     directSendGame(playerSession, aresPacket);
                     return;
                 }
             }
+            //process by myself
             length = aresPacket.getRecvByteBuf().readableBytes();
             Object paraObj = calledMethod.getParser().parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), length));
-            // calledMethod.getAresServiceProxy().callMethod(calledMethod, roleId, paraObj);
             LogicProcessThreadPool.INSTANCE.execute(aresTKcpContext, calledMethod, roleId, paraObj);
 
         } catch (AresBaseException e) {

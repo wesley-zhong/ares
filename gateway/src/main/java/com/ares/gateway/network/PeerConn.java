@@ -4,6 +4,7 @@ package com.ares.gateway.network;
 import com.ares.common.bean.ServerType;
 import com.ares.core.bean.AresPacket;
 import com.ares.core.tcp.AresTKcpContext;
+import com.ares.transport.bean.NetWorkConstants;
 import com.game.protoGen.ProtoInner;
 import com.google.protobuf.Message;
 import io.netty.buffer.ByteBuf;
@@ -74,20 +75,17 @@ public class PeerConn {
 
     public void redirectToGameMsg(int areaId, long roleId, AresPacket aresPacket) {
         ProtoInner.InnerMsgHeader build = ProtoInner.InnerMsgHeader.newBuilder().setRoleId(roleId).build();
+        //|body|
         int readableBytes = aresPacket.getRecvByteBuf().readableBytes();
         byte[] header = build.toByteArray();
-        int totalLen = readableBytes + 2 + 2 + header.length;
-//
-//        CompositeByteBuf byteBufs = ByteBufAllocator.DEFAULT.compositeDirectBuffer()
-//                .writeInt(totalLen)
-//                .writeShort(aresPacket.getMsgId())
-//                .writeShort(header.length).writeBytes(header)
-//                .writeBytes(aresPacket.getRecvByteBuf());
+        //send body |msgLen->4|msgId->2|headerLen->2|headerBody|body
+        //totalLen  do not include 4byte msgLen
+        int totalLen = readableBytes + NetWorkConstants.MSG_ID_BYTES + NetWorkConstants.INNER_MSG_LEN_BYTES + header.length;
 
 
         CompositeByteBuf byteBufs = ByteBufAllocator.DEFAULT.compositeDirectBuffer();
 
-        ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer(4 + 2 + 2 + header.length);
+        ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer(NetWorkConstants.MSG_LEN_BYTES + NetWorkConstants.MSG_ID_BYTES + NetWorkConstants.INNER_MSG_LEN_BYTES + header.length);
         buffer.writeInt(totalLen);
         buffer.writeShort(aresPacket.getMsgId())
                 .writeShort(header.length).writeBytes(header);

@@ -95,13 +95,12 @@ public class SessionServiceImp implements SessionService {
 
     @Override
     public void sendPlayerMsg(long roleId, AresPacket aresPacket) {
-        AresTKcpContext channelHandlerContext = playerChannelContext.get(roleId);
-        if (channelHandlerContext == null) {
+        AresTKcpContext aresTKcpContext = playerChannelContext.get(roleId);
+        if (aresTKcpContext == null) {
             log.error("roleId = {}   msgId ={} not login in gateway", roleId, aresPacket.getMsgId());
             return;
         }
-        channelHandlerContext.send(aresPacket);
-        //channelHandlerContext.writeAndFlush(aresPacket);
+        aresTKcpContext.send(aresPacket);
     }
 
     @Override
