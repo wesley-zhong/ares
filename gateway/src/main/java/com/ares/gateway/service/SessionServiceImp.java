@@ -51,7 +51,11 @@ public class SessionServiceImp implements SessionService {
 
 
         aresTKcpContext.clearPackageData();
-        playerChannelContext.put(loginRequest.getRoleId(), aresTKcpContext);
+        AresTKcpContext existContext = playerChannelContext.put(loginRequest.getRoleId(), aresTKcpContext);
+        //close old connection
+        if(existContext != null){
+            existContext.close();;
+        }
 
         ProtoInner.InnerGameLoginRequest innerLoginRequest = ProtoInner.InnerGameLoginRequest.newBuilder()
                 .setRoleId(loginRequest.getRoleId())

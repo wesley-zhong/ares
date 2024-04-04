@@ -79,7 +79,7 @@ public class PeerConn {
         int readableBytes = aresPacket.getRecvByteBuf().readableBytes();
         byte[] header = build.toByteArray();
         //send body |msgLen->4|msgId->2|headerLen->2|headerBody|body
-        //totalLen  do not include 4byte msgLen
+        //totalLen  do not include 4bytes msgLen
         int totalLen = readableBytes + NetWorkConstants.MSG_ID_BYTES + NetWorkConstants.INNER_MSG_LEN_BYTES + header.length;
 
 
