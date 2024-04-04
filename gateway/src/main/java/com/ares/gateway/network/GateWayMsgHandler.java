@@ -128,8 +128,6 @@ public class GateWayMsgHandler implements AresTcpHandler {
             ProtoInner.InnerPlayerDisconnectRequest disconnectRequest = ProtoInner.InnerPlayerDisconnectRequest.newBuilder()
                     .setRoleId(playerSession.getRoleId()).build();
             peerConn.sendToGameMsg(playerSession.getAreaId(), playerSession.getRoleId(), ProtoInner.InnerProtoCode.INNER_PLAYER_DISCONNECT_REQ_VALUE, disconnectRequest);
-
-            //
             LogicProcessThreadPool.INSTANCE.execute(0, playerSession, sessionService::playerDisconnect);
         }
     }
