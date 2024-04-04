@@ -7,8 +7,9 @@ public enum ServerType {
     LOGIN(0,"login"),
     GATEWAY(1, "gateway"),
     GAME(2, "game"),
+    ROUTER(3, "router"),
 
-    WORLD(3,"world");
+    TEAM(4,"team");
 
     @Getter
     private final int value;
