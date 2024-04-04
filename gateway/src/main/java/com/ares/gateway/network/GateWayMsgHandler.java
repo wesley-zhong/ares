@@ -9,6 +9,7 @@ import com.ares.core.tcp.AresTcpHandler;
 import com.ares.core.thread.LogicProcessThreadPool;
 import com.ares.gateway.bean.PlayerSession;
 import com.ares.gateway.service.SessionService;
+import com.ares.transport.bean.NetWorkConstants;
 import com.ares.transport.bean.TcpConnServerInfo;
 import com.ares.transport.client.AresTcpClient;
 import com.game.protoGen.ProtoInner;
@@ -53,20 +54,22 @@ public class GateWayMsgHandler implements AresTcpHandler {
                     roleId = header.getRoleId();
                 }
 
+                // if not processed by myself
                 if (calledMethod == null) {
                     directSendToClient(roleId, aresPacket, headerLen);
                     return;
                 }
             } else if (aresTKcpContext.getCacheObj() instanceof PlayerSession playerSession) {
                 //come from client
+                // if not processed by myself
                 if (calledMethod == null) {
                     directSendGame(playerSession, aresPacket);
                     return;
                 }
             }
+            //process by myself
             length = aresPacket.getRecvByteBuf().readableBytes();
             Object paraObj = calledMethod.getParser().parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), length));
-            // calledMethod.getAresServiceProxy().callMethod(calledMethod, roleId, paraObj);
             LogicProcessThreadPool.INSTANCE.execute(aresTKcpContext, calledMethod, roleId, paraObj);
 
         } catch (AresBaseException e) {
@@ -81,12 +84,17 @@ public class GateWayMsgHandler implements AresTcpHandler {
         ByteBuf body = aresPacket.getRecvByteBuf();
         body.readerIndex(0);
         int totalLen = body.getInt(0);
+        /**
+         *  body =|totalLen->4|msgId->2|headerLen->2|headerBody|body|
+         *  sendMsgLen = totalLen - NetWorkConstants.INNER_MSG_LEN_BYTES - headerLen;
+         *  sendBody =|sendMsgLen->4|msgId->2|body|
+         */
 
-        int sendMsgLen = totalLen - 2 - headerLen;
-        body.skipBytes(headerLen + 2);
+        int sendMsgLen = totalLen - NetWorkConstants.INNER_MSG_LEN_BYTES - headerLen;
+        body.skipBytes(headerLen + NetWorkConstants.INNER_MSG_LEN_BYTES );
 
-        body.setInt(headerLen + 2, sendMsgLen);
-        body.setShort(headerLen + 2 + 4, aresPacket.getMsgId());
+        body.setInt(headerLen + NetWorkConstants.INNER_MSG_LEN_BYTES, sendMsgLen);
+        body.setShort(headerLen +  NetWorkConstants.INNER_MSG_LEN_BYTES + NetWorkConstants.MSG_LEN_BYTES, aresPacket.getMsgId());
         body.retain();
         sessionService.sendPlayerMsg(roleId, body);
         //  log.info("------- direct send to client msg roleId ={} msgId={}", roleId, aresPacket.getMsgId());
@@ -120,8 +128,6 @@ public class GateWayMsgHandler implements AresTcpHandler {
             ProtoInner.InnerPlayerDisconnectRequest disconnectRequest = ProtoInner.InnerPlayerDisconnectRequest.newBuilder()
                     .setRoleId(playerSession.getRoleId()).build();
             peerConn.sendToGameMsg(playerSession.getAreaId(), playerSession.getRoleId(), ProtoInner.InnerProtoCode.INNER_PLAYER_DISCONNECT_REQ_VALUE, disconnectRequest);
-
-            //
             LogicProcessThreadPool.INSTANCE.execute(0, playerSession, sessionService::playerDisconnect);
         }
     }
