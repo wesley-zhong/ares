@@ -30,7 +30,7 @@
         </dependency>
         <dependency>
             <groupId>com.ares</groupId>
-            <artifactId>discovery</artifactId>
+            <artifactId>discovery-springboot-starter</artifactId>
         </dependency>
     </dependencies>
 

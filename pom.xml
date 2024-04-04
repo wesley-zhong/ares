@@ -19,12 +19,13 @@
         <module>transport-springboot-starter</module>
         <module>gateway</module>
         <module>game</module>
-        <module>world</module>
+        <module>team</module>
         <module>dal</module>
         <module>client</module>
         <module>common</module>
-        <module>discovery</module>
+        <module>discovery-springboot-starter</module>
         <module>login</module>
+        <module>router</module>
     </modules>
     <properties>
         <java.version>21</java.version>
@@ -68,7 +69,7 @@
 
             <dependency>
                 <groupId>com.ares</groupId>
-                <artifactId>discovery</artifactId>
+                <artifactId>discovery-springboot-starter</artifactId>
                 <version>${ares.version}</version>
             </dependency>
             <dependency>

@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.ares</groupId>
@@ -7,35 +7,44 @@
         <version>2024.1.1</version>
     </parent>
 
-    <artifactId>gateway</artifactId>
+    <artifactId>discovery-springboot-starter</artifactId>
     <packaging>jar</packaging>
-    <name>gateway</name>
+
+    <name>discovery-springboot-starter</name>
     <url>http://maven.apache.org</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.etcd</groupId>
+            <artifactId>jetcd-core</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.ares</groupId>
             <artifactId>transport-springboot-starter</artifactId>
         </dependency>
+
         <dependency>
-            <groupId>com.ares</groupId>
-            <artifactId>discovery-springboot-starter</artifactId>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure-processor</artifactId>
         </dependency>
 
     </dependencies>
-
-
     <build>
-        <finalName>gateway</finalName>
+        <finalName>discovery-springboot-starter</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -44,13 +53,6 @@
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                     <encoding>utf8</encoding>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>com.ares.gateway.GatewayApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>

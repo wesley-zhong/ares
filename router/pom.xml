@@ -6,10 +6,9 @@
         <artifactId>ares-parent</artifactId>
         <version>2024.1.1</version>
     </parent>
+    <packaging>jar</packaging>
+    <artifactId>router</artifactId>
 
-    <artifactId>login</artifactId>
-    <name>login</name>
-    <url>http://maven.apache.org</url>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -30,11 +29,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
-
     </dependencies>
 
     <build>
-        <finalName>login</finalName>
+        <finalName>router</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class GameController implements AresController {
-    @Value("${area.id}")
+    @Value("${area.id:0}")
     private int areaId;
     @Autowired
     private PlayerRoleService playerRoleService;
@@ -46,7 +46,7 @@ public class GameController implements AresController {
             player = playerRoleService.createGamePlayer(gameInnerLoginRequest.getRoleId(), "hello");
         }
         player.setGateWayContext(aresTKcpContext);
-        AresTKcpContext worldContext = peerConn.getAresTcpContext(areaId, ServerType.WORLD);
+        AresTKcpContext worldContext = peerConn.getAresTcpContext(areaId, ServerType.ROUTER);
         player.setWorldContext(worldContext);
 
         ProtoInner.InnerLoginWorldRequest innerRequest = ProtoInner.InnerLoginWorldRequest.newBuilder()
