@@ -5,11 +5,13 @@ import com.ares.discovery.transfer.OnWatchServiceChange;
 import com.ares.transport.bean.ServerNodeInfo;
 import com.ares.transport.client.AresTcpClient;
 import io.etcd.jetcd.watch.WatchEvent;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class OnDiscoveryWatch implements OnWatchServiceChange {
     @Autowired
     private AresTcpClient aresTcpClient;
@@ -20,13 +22,7 @@ public class OnDiscoveryWatch implements OnWatchServiceChange {
 
     @Override
     public Void onWatchServiceChange(WatchEvent.EventType eventType, ServerNodeInfo serverNodeInfo) {
-        if(eventType == WatchEvent.EventType.PUT) {
-            aresTcpClient.connect(serverNodeInfo);
-            return  null;
-        }
-        if(eventType == WatchEvent.EventType.DELETE){
-            aresTcpClient.close(serverNodeInfo);
-        }
+        log.info("------- eventType ={} serverInfo ={}", eventType, serverNodeInfo);
         return null;
     }
 }

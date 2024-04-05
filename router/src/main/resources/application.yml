@@ -16,3 +16,6 @@ discovery:
   endpoints:
    - http://localhost:2379
    - http://localhost:2379
+  watch-servers:
+    - service-name-prefix: game.V1
+    - service-name-prefix: router.V1

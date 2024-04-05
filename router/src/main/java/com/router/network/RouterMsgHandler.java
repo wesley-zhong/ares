@@ -38,9 +38,6 @@ public class RouterMsgHandler implements AresTcpHandler {
     @Autowired
     private PeerConn peerConn;
 
-
-
-
     protected static final String UTF8 = "UTF-8";
 
     @Override
