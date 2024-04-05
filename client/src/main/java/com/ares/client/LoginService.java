@@ -14,7 +14,6 @@ public class LoginService{
         ProtoTask.LoginRequest.Builder loginRequest = ProtoTask.LoginRequest.newBuilder()
                 .setAccountId(1000L)
                 .setLoginToken("abc")
-                .setAreaId(100)
                 .setRoleId(39115402336272384L);
 
         AresPacket  aresPacket = AresPacket.create(ProtoCommon.ProtoCode.LOGIN_REQUEST_VALUE,loginRequest.build());

@@ -49,16 +49,22 @@ public class GameController implements AresController {
         AresTKcpContext worldContext = peerConn.getAresTcpContext(areaId, ServerType.ROUTER);
         player.setWorldContext(worldContext);
 
-        ProtoInner.InnerLoginWorldRequest innerRequest = ProtoInner.InnerLoginWorldRequest.newBuilder()
-                .setRoleId(gameInnerLoginRequest.getRoleId()).build();
+        sendPlayerLoginResponse(gameInnerLoginRequest.getRoleId());
+
+//        ProtoInner.InnerLoginWorldRequest innerRequest = ProtoInner.InnerLoginWorldRequest.newBuilder()
+//                .setRoleId(gameInnerLoginRequest.getRoleId()).build();
 
         //  peerConn.sendWorldMsg(pid, ProtoInner.InnerProtoCode.INNER_TO_WORLD_LOGIN_REQ_VALUE, innerRequest);
-        player.sendToWorld(ProtoInner.InnerProtoCode.INNER_TO_WORLD_LOGIN_REQ_VALUE, innerRequest);
+      //  player.sendToWorld(ProtoInner.InnerProtoCode.INNER_TO_WORLD_LOGIN_REQ_VALUE, innerRequest);
     }
 
     @MsgId(ProtoInner.InnerProtoCode.INNER_TO_WORLD_LOGIN_RES_VALUE)
     public void worldLoginResponse(long pid, ProtoInner.InnerWorldLoginResponse worldLoginResponse) {
         log.info("==== pid ={} ==== worldLoginResponse  ={}", pid, worldLoginResponse);
+        sendPlayerLoginResponse(pid);
+    }
+
+    private void sendPlayerLoginResponse(long pid){
         GamePlayer player = playerRoleService.getPlayer(pid);
         if (player == null) {
             log.error(" pid={} not found", pid);
@@ -66,9 +72,9 @@ public class GameController implements AresController {
         }
         ProtoInner.InnerGameLoginResponse innerGameLoginRes = ProtoInner.InnerGameLoginResponse.newBuilder()
                 .setAreaId(areaId)
-                .setRoleId(worldLoginResponse.getRoleId()).build();
+                .setRoleId(pid).build();
 
-        // peerConn.sendGateWayMsg(player, ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_RES_VALUE, innerGameLoginRes);
+        //peerConn.sendGateWayMsg(player, ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_RES_VALUE, innerGameLoginRes);
         player.sendToGateway(ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_RES_VALUE, innerGameLoginRes);
     }
 
