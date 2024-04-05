@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 7080
 spring:
   application:
     name: game.V1
@@ -11,22 +11,13 @@ spring:
     allow-bean-definition-overriding: true
     allow-circular-references: true
 
-
-#world-server:
-#  servers:
-#    - id: 100
-#      ip: 127.0.0.1
-#      port: 9081
 #-------------------discovery ----------
 discovery:
   endpoints:
     - http://localhost:2379
     - http://localhost:2379
   watch-servers:
-    - service-name-prefix: world.V1
-      areas:
-        - area-id: 100
-          connect: true
+    - service-name-prefix: router.V1
 
 mongo:
   addrs: localhost:27017;localhost:27017

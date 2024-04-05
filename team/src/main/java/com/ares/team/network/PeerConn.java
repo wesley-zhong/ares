@@ -19,7 +19,7 @@ import java.util.Map;
 @Component
 @Slf4j
 public class PeerConn {
-    @Value("${area.id:100}")
+    @Value("${area.id:0}")
     private int areaId;
     private final Map<Integer, Map<Integer, ChannelHandlerContext>> peerConns = new HashMap<>();
 

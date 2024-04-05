@@ -11,18 +11,8 @@ spring:
     allow-bean-definition-overriding: true
     allow-circular-references: true
 
-game-server:
-  servers:
-    - id: 100
-      ip: 127.0.0.1
-      port: 8081
 
 discovery:
   endpoints:
    - http://localhost:2379
    - http://localhost:2379
-  watch-servers:
-   - service-name-prefix: game.V1
-     areas:
-      - area-id: 100
-        connect: true

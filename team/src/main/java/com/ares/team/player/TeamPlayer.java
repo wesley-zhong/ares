@@ -3,8 +3,8 @@ package com.ares.team.player;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.team.network.PeerTransfer;
 
-public class WorldPlayer   extends PeerTransfer {
-    public WorldPlayer(AresTKcpContext context, long pid) {
+public class TeamPlayer extends PeerTransfer {
+    public TeamPlayer(AresTKcpContext context, long pid) {
         super(context, pid);
     }
 }

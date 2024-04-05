@@ -32,7 +32,6 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 @Configuration
 @ComponentScan("com.ares")
 public class GameConfiguration implements InitializingBean {
-    @Value("${area.id:100}")
     private int areaId;
 
     @Bean

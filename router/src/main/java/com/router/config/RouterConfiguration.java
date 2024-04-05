@@ -1,11 +1,11 @@
-package com.ares.gateway.configuration;
+package com.router.config;
 
 import com.ares.core.tcp.AresTcpHandler;
-import com.ares.gateway.network.GateWayMsgHandler;
+
 import com.ares.transport.client.AresTcpClient;
 import com.ares.transport.client.AresTcpClientConn;
 import com.ares.transport.client.AresTcpClientImpl;
-import org.springframework.beans.factory.InitializingBean;
+import com.router.network.RouterMsgHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Lazy;
 
 @Configuration
 @ComponentScan("com.ares")
-public class GatewayConfiguration {
+public class RouterConfiguration {
     @Value("${spring.application.name}")
     private String appName;
 
@@ -32,6 +32,7 @@ public class GatewayConfiguration {
         return aresTcpClientConn;
     }
 
+
     @Bean
     @Lazy
     public AresTcpClient aresTcpClient(@Autowired @Lazy AresTcpClientConn conn) {
@@ -42,6 +43,6 @@ public class GatewayConfiguration {
 
     @Bean
     public AresTcpHandler aresTcpHandler() {
-        return new GateWayMsgHandler();
+        return new RouterMsgHandler();
     }
 }

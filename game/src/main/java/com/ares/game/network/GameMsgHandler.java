@@ -33,7 +33,7 @@ public class GameMsgHandler implements AresTcpHandler {
     private String appName;
 
 
-    @Value("${area.id:100}")
+    @Value("${area.id:0}")
     private int areaId;
 
     @Autowired

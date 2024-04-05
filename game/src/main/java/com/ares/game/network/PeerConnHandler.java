@@ -21,7 +21,7 @@ public class PeerConnHandler implements AresController {
     @Autowired
     private PeerConn peerConn;
 
-    @Value("${area.id:100}")
+    @Value("${area.id:0}")
     private int areaId;
     @Value("${spring.application.name}")
     private String appName;

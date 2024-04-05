@@ -12,12 +12,15 @@ import io.netty.buffer.ByteBufInputStream;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 
 @Slf4j
-public class WorldMsgHandler implements AresTcpHandler {
+public class TeamMsgHandler implements AresTcpHandler {
     @Autowired
     private ServiceMgr serviceMgr;
+    @Value("${spring.application.name}")
+    private String appName;
     @Override
     public void handleMsgRcv(AresTKcpContext aresTKcpContext) {
         int length = 0;
@@ -48,11 +51,17 @@ public class WorldMsgHandler implements AresTcpHandler {
         }
     }
 
-
     @Override
     public void onServerConnected(Channel aresTKcpContext) {
+        ProtoInner.InnerServerHandShakeReq handleShake = ProtoInner.InnerServerHandShakeReq.newBuilder()
+                .setServiceName(appName).build();
 
+        ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.newBuilder().build();
+        AresPacket aresPacket = AresPacket.create(ProtoInner.InnerProtoCode.INNER_SERVER_HAND_SHAKE_REQ_VALUE, header, handleShake);
+        aresTKcpContext.writeAndFlush(aresPacket);
+        log.info("######  handshake send to {}  msg: {}", aresTKcpContext, handleShake);
     }
+
 
     @Override
     public void onClientConnected(AresTKcpContext aresTKcpContext) {

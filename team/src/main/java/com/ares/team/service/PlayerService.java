@@ -5,7 +5,7 @@ import com.ares.core.timer.ScheduleService;
 import com.ares.core.utils.AresContextThreadLocal;
 import com.ares.team.bean.BeanTest;
 import com.ares.team.network.PeerConn;
-import com.ares.team.player.WorldPlayer;
+import com.ares.team.player.TeamPlayer;
 import com.game.protoGen.ProtoInner;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class PlayerService {
     @Autowired
-    private WorldPlayerMgr worldPlayerMgr;
+    private TeamPlayerMgr teamPlayerMgr;
     @Autowired
     private PeerConn peerConn;
 
@@ -24,9 +24,9 @@ public class PlayerService {
         ProtoInner.InnerWorldLoginResponse.Builder builder = ProtoInner.InnerWorldLoginResponse.newBuilder();
         builder.setRoleId(longinReq.getRoleId());
         ProtoInner.InnerWorldLoginResponse response = builder.build();
-        WorldPlayer player = worldPlayerMgr.getPlayer(roleId);
+        TeamPlayer player = teamPlayerMgr.getPlayer(roleId);
         if(player == null){
-            player=  worldPlayerMgr.crateWorldPlayer(aresTKcpContext, roleId);
+            player=  teamPlayerMgr.crateWorldPlayer(aresTKcpContext, roleId);
         }
         player.setContext(aresTKcpContext);
       //  peerConn.sendToGame(roleId,ProtoInner.InnerProtoCode.INNER_TO_WORLD_LOGIN_RES_VALUE, response);

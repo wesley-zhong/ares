@@ -4,7 +4,7 @@ import com.ares.core.annotation.MsgId;
 import com.ares.core.service.AresController;
 import com.ares.team.network.PeerConn;
 import com.ares.team.service.PlayerService;
-import com.ares.team.service.WorldPlayerMgr;
+import com.ares.team.service.TeamPlayerMgr;
 import com.game.protoGen.ProtoCommon;
 import com.game.protoGen.ProtoInner;
 import com.game.protoGen.ProtoTask;
@@ -14,12 +14,12 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class WorldController implements AresController {
+public class TeamController implements AresController {
     @Autowired
     private PlayerService playerService;
 
     @Autowired
-    private WorldPlayerMgr worldPlayerMgr;
+    private TeamPlayerMgr teamPlayerMgr;
     @Autowired
     private PeerConn peerConn;
 
