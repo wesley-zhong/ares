@@ -1,7 +1,6 @@
 package com.ares.team.network;
 
 import com.ares.core.annotation.MsgId;
-import com.ares.core.bean.AresPacket;
 import com.ares.core.service.AresController;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.utils.AresContextThreadLocal;
@@ -16,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class PeerConnHandler implements AresController {
+public class InnerHandShake implements AresController {
     @Autowired
     private PeerConn  peerConn;
 

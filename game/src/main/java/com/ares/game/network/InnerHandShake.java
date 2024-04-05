@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class PeerConnHandler implements AresController {
+public class InnerHandShake implements AresController {
     @Autowired
     private PeerConn peerConn;
 
