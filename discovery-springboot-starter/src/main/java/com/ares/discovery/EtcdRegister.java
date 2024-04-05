@@ -20,15 +20,16 @@ public class EtcdRegister {
     private final String appName;
     private final  int port;
     private final  int areaId;
+    private final  int serveType;
     private ServerNodeInfo serverNodeInfo;
-    public EtcdRegister(Client client, String appName, int port, int areaId) {
+    public EtcdRegister(Client client, int serverType,String appName, int port, int areaId) {
        this.client = client;
        this.appName = appName;
        this.port = port;
        this.areaId = areaId;
+       this.serveType = serverType;
     }
     public  void startRegister(){
-
         serverNodeInfo  = new ServerNodeInfo();
         String addr = NetUtils.getIpAddress().get(0);
         String serviceId = NetUtils.createServiceId(appName,addr, port, areaId);
@@ -38,6 +39,7 @@ public class EtcdRegister {
         serverNodeInfo.setServiceId(serviceId);
         serverNodeInfo.setAreaId(areaId);
         serverNodeInfo.setServiceName(appName);
+        serverNodeInfo.setServerType(serveType);
         log.info("#### start register me:{}", serverNodeInfo);
 
         putWithLease(serviceId, JsonUtil.toJsonString(serverNodeInfo));

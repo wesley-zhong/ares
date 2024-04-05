@@ -30,9 +30,9 @@ public class DiscoveryServiceImpl implements DiscoveryService, ApplicationRunner
     private List<String> watchServicePrefix;
     private static final long LOCK_TIMEOUT_SECONDS = 10;
 
-    public void init(String[] endpoints, String appName, int port, int areaId, List<String> watchServicePrefix, BiFunction<WatchEvent.EventType, ServerNodeInfo, Void> onNodeChangeFun) {
+    public void init(String[] endpoints, int serverType, String appName, int port, int areaId, List<String> watchServicePrefix, BiFunction<WatchEvent.EventType, ServerNodeInfo, Void> onNodeChangeFun) {
         etcdClient = Client.builder().endpoints(endpoints).build();
-        etcdRegister = new EtcdRegister(etcdClient, appName, port, areaId);
+        etcdRegister = new EtcdRegister(etcdClient, serverType, appName, port, areaId);
         etcdDiscovery = new EtcdDiscovery(etcdClient, onNodeChangeFun);
         this.watchServicePrefix = watchServicePrefix;
     }
@@ -76,7 +76,7 @@ public class DiscoveryServiceImpl implements DiscoveryService, ApplicationRunner
                 ByteSequence key1 = lockResponse.getKey();
                 GetResponse getResponse = etcdClient.getKVClient().get(bsKey).get();
                 List<KeyValue> kvs = getResponse.getKvs();
-                if(getResponse.getCount() == 0){
+                if (getResponse.getCount() == 0) {
 
                 }
 

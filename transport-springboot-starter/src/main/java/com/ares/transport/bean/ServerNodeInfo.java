@@ -7,6 +7,7 @@ import java.util.Map;
 
 @Data
 public class ServerNodeInfo {
+    private int serverType;
     private String serviceId;
     private String serviceName;
     private String ip;

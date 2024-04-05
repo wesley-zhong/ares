@@ -22,7 +22,7 @@ import java.util.List;
 
 @Configuration
 @Slf4j
-public class AresDiscoveryConfigure  {
+public class AresDiscoveryConfigure {
     @Value("${spring.application.name}")
     private String appName;
 
@@ -31,6 +31,8 @@ public class AresDiscoveryConfigure  {
 
     @Value("${area.id:0}")
     private int areaId;
+    @Value("${server.type:0}")
+    private int serverType;
 
 
     @Bean
@@ -46,7 +48,7 @@ public class AresDiscoveryConfigure  {
                 watchPreFixes.addAll(watchList);
             }
         }
-        etcdService.init(discoveryEndPoints.getEndpoints(), appName, serverPort, areaId, watchPreFixes, onWatchServiceChange::onWatchServiceChange);
+        etcdService.init(discoveryEndPoints.getEndpoints(), serverType, appName, serverPort, areaId, watchPreFixes, onWatchServiceChange::onWatchServiceChange);
         return etcdService;
     }
 }
