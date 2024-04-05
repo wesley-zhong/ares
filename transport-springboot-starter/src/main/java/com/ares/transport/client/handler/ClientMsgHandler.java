@@ -42,7 +42,7 @@ public class ClientMsgHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        log.info("ip ={} connected  success！!！", ctx.channel().remoteAddress());
+        log.info("ip ={} connected  success!!!", ctx.channel().remoteAddress());
         aresTcpHandler.onServerConnected(ctx.channel());
     }
 
