@@ -30,10 +30,10 @@ public class EtcdRegister {
        this.serveType = serverType;
     }
     public  void startRegister(){
-        serverNodeInfo  = new ServerNodeInfo();
         String addr = NetUtils.getIpAddress().get(0);
         String serviceId = NetUtils.createServiceId(appName,addr, port, areaId);
 
+        serverNodeInfo  = new ServerNodeInfo();
         serverNodeInfo.setIp(addr);
         serverNodeInfo.setPort(port);
         serverNodeInfo.setServiceId(serviceId);
