@@ -79,15 +79,6 @@ public class GameMsgHandler implements AresTcpHandler {
 
     private void directToGateway(long pid, AresPacket aresPacket) {
         peerConn.directToGateway(pid, aresPacket);
-//        GamePlayer player = playerRoleService.getPlayer(pid);
-//        if (player == null) {
-//            log.error("pid = {} not found", pid);
-//            return;
-//        }
-//        ByteBuf sendBody = aresPacket.getRecvByteBuf().retain();
-//        sendBody.readerIndex(0);
-//        player.sendToGateway(sendBody);
-       // log.info("-------------------- direct to gateway pid ={} msgId={} ", pid, aresPacket.getMsgId());
     }
 
     private ServerType fromServerType(AresTKcpContext aresTKcpContext) {

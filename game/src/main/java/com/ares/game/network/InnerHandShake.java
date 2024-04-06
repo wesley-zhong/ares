@@ -55,11 +55,12 @@ public class InnerHandShake implements AresController {
         aresTKcpContext.send(aresPacket);
 
 
-        //for send
+        //record current context's serverInfo
         ServerNodeInfo serverNodeInfo = new ServerNodeInfo();
         serverNodeInfo.setAreaId(innerLoginRequest.getAreaId());
         serverNodeInfo.setServiceName(innerLoginRequest.getServiceName());
         serverNodeInfo.setServiceId(innerLoginRequest.getServiceId());
+        serverNodeInfo.setServerType(ServerType.from(innerLoginRequest.getServiceName()).getValue());
         TcpConnServerInfo tcpConnServerInfo = new TcpConnServerInfo(aresTKcpContext.getCtx().channel(), serverNodeInfo);
         aresTKcpContext.cacheObj(tcpConnServerInfo);
     }

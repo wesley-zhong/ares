@@ -22,7 +22,9 @@ enum  InnerProtoCode{
 }
 
 message InnerMsgHeader{
-  int64 roleId = 1;
+  int64 roleId = 1;  //  the sender player id
+  int64  toRoleId = 2; // to sender player id
+  int32  toServerType = 3;
 }
 
 

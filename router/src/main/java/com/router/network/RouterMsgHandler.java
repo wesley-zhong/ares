@@ -48,11 +48,12 @@ public class RouterMsgHandler implements AresTcpHandler {
             AresMsgIdMethod calledMethod = serviceMgr.getCalledMethod(aresPacket.getMsgId());
             aresPacket.getRecvByteBuf().skipBytes(6);
             int headerLen = aresPacket.getRecvByteBuf().readShort();
-            long pid = 0;
-            if (headerLen > 0) {
-                ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), headerLen));
-                pid = header.getRoleId();
-            }
+            ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), headerLen));
+            long pid = header.getRoleId();
+            int toServerType = header.getToServerType();
+            ServerType serverType = fromServerType(aresTKcpContext);
+
+          //  peerConn.routerToGame(aresTKcpContext.getCtx(),);
 
             length = aresPacket.getRecvByteBuf().readableBytes();
             Object paraObj = calledMethod.getParser().parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), length));

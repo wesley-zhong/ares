@@ -24,6 +24,10 @@ public class OnDiscoveryWatchService implements com.ares.discovery.transfer.OnDi
         return discoveryService.getEtcdDiscovery().getServerList().get(serviceId);
     }
 
+    public ServerNodeInfo  getLowerLoadServerNodeInfo(int serverType){
+        return  serverNodeSortedMap.getLeastCountServerNode(serverType);
+    }
+
     @Override
     public Void onWatchServiceChange(WatchEvent.EventType eventType, ServerNodeInfo serverNodeInfo) {
         if (eventType == WatchEvent.EventType.PUT) {

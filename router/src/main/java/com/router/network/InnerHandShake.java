@@ -1,5 +1,6 @@
 package com.router.network;
 
+import com.ares.common.bean.ServerType;
 import com.ares.core.annotation.MsgId;
 import com.ares.core.bean.AresPacket;
 import com.ares.core.service.AresController;
@@ -34,7 +35,8 @@ public class InnerHandShake implements AresController {
     public void innerHandShake(long id, ProtoInner.InnerServerHandShakeReq innerLoginRequest) {
         ServerNodeInfo mySelfNode = discoveryService.getEtcdRegister().getMyselfNodeInfo();
         AresTKcpContext aresTKcpContext = AresContextThreadLocal.get();
-        peerConn.addContext(innerLoginRequest.getAreaId(), innerLoginRequest.getServiceName(), aresTKcpContext);
+        ServerType from = ServerType.from(innerLoginRequest.getServiceName());
+        peerConn.addPeerConn(from.getValue(),  innerLoginRequest.getServiceId(), aresTKcpContext.getCtx());
         log.info("####  from: {} innerHandShake :{}  finish", aresTKcpContext, innerLoginRequest);
         ProtoInner.InnerServerHandShakeRes response = ProtoInner.InnerServerHandShakeRes.newBuilder()
                 .setServiceId(mySelfNode.getServiceId())
