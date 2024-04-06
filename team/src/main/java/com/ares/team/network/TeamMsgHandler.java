@@ -7,6 +7,8 @@ import com.ares.core.service.ServiceMgr;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.tcp.AresTcpHandler;
 import com.ares.core.thread.LogicProcessThreadPool;
+import com.ares.discovery.DiscoveryService;
+import com.ares.transport.bean.ServerNodeInfo;
 import com.game.protoGen.ProtoInner;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.channel.Channel;
@@ -19,8 +21,8 @@ import org.springframework.beans.factory.annotation.Value;
 public class TeamMsgHandler implements AresTcpHandler {
     @Autowired
     private ServiceMgr serviceMgr;
-    @Value("${spring.application.name}")
-    private String appName;
+    @Autowired
+    private DiscoveryService discoveryService;
     @Override
     public void handleMsgRcv(AresTKcpContext aresTKcpContext) {
         int length = 0;
@@ -53,8 +55,10 @@ public class TeamMsgHandler implements AresTcpHandler {
 
     @Override
     public void onServerConnected(Channel aresTKcpContext) {
+        ServerNodeInfo myselfNodeInfo = discoveryService.getEtcdRegister().getMyselfNodeInfo();
         ProtoInner.InnerServerHandShakeReq handleShake = ProtoInner.InnerServerHandShakeReq.newBuilder()
-                .setServiceName(appName).build();
+                .setServiceId(myselfNodeInfo.getServiceId())
+                .setServiceName(myselfNodeInfo.getServiceName()).build();
 
         ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.newBuilder().build();
         AresPacket aresPacket = AresPacket.create(ProtoInner.InnerProtoCode.INNER_SERVER_HAND_SHAKE_REQ_VALUE, header, handleShake);

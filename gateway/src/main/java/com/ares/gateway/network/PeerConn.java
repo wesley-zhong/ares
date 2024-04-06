@@ -4,7 +4,10 @@ package com.ares.gateway.network;
 import com.ares.common.bean.ServerType;
 import com.ares.core.bean.AresPacket;
 import com.ares.core.tcp.AresTKcpContext;
+import com.ares.gateway.discovery.OnDiscoveryWatchService;
 import com.ares.transport.bean.NetWorkConstants;
+import com.ares.transport.bean.ServerNodeInfo;
+import com.ares.transport.peer.PeerConnBase;
 import com.game.protoGen.ProtoInner;
 import com.google.protobuf.Message;
 import io.netty.buffer.ByteBuf;
@@ -13,67 +16,45 @@ import io.netty.buffer.CompositeByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 @Component
 @Slf4j
-public class PeerConn {
-    @Value("${area.id:0}")
-    private int areaId;
-    private final Map<Integer, Map<Integer, ChannelHandlerContext>> peerConns = new HashMap<>();
+public class PeerConn  extends PeerConnBase {
+    @Autowired
+    private OnDiscoveryWatchService onDiscoveryWatchService;
+    private final Map<Long, ChannelHandlerContext> playerIdContext = new ConcurrentHashMap<>();
 
-    public synchronized void addContext(int areaId, String serviceName, AresTKcpContext aresTKcpContext) {
-        ServerType serverType = ServerType.from(serviceName);
-        if (serverType == null) {
-            log.error("service name == {} not be defined in ServerType enum", serviceName);
-            return;
+    public void sendToGameMsg(long roleId, int msgId, Message body) {
+        send(ServerType.GAME, roleId, msgId, body);
+    }
+
+    public void redirectToGameMsg(long roleId, AresPacket aresPacket) {
+        innerRedirectTo(ServerType.GAME, roleId, aresPacket);
+    }
+
+    @Override
+    public ChannelHandlerContext loadBalance(int serverType, long roleId, Map<String, ChannelHandlerContext> channelConMap) {
+        ChannelHandlerContext channelHandlerContext = playerIdContext.get(roleId);
+        if(channelHandlerContext != null){
+            return channelHandlerContext;
         }
-        Map<Integer, ChannelHandlerContext> stringAresTcpContextMap = peerConns.get(areaId);
-        if (stringAresTcpContextMap == null) {
-            stringAresTcpContextMap = new HashMap<>();
-            stringAresTcpContextMap.put(serverType.getValue(), aresTKcpContext.getCtx());
-            peerConns.put(areaId, stringAresTcpContextMap);
-            return;
-        }
-        stringAresTcpContextMap.put(serverType.getValue(), aresTKcpContext.getCtx());
+        ServerNodeInfo lowerLoadServerNodeInfo = onDiscoveryWatchService.getLowerLoadServerNodeInfo(serverType);
+        ChannelHandlerContext context = getServerConnByServerInfo(lowerLoadServerNodeInfo);
+        playerIdContext.put(roleId, context);
+        return context;
     }
 
-
-    public synchronized ChannelHandlerContext getAresTcpContext(ServerType serverType) {
-        return getAresTcpContext(areaId, serverType);
-    }
-
-    public synchronized ChannelHandlerContext getAresTcpContext(int areaId, ServerType serverType) {
-        Map<Integer, ChannelHandlerContext> stringAresTcpContextMap = peerConns.get(areaId);
-        if (CollectionUtils.isEmpty(stringAresTcpContextMap)) {
-            return null;
-        }
-        return stringAresTcpContextMap.get(serverType.getValue());
-    }
-
-    public void send(int areaId, ServerType serverType, long roleId, int msgId, Message body) {
-        ChannelHandlerContext channelHandlerContext = getAresTcpContext(areaId, serverType);
-        if (channelHandlerContext == null) {
-            log.error("areaId ={} sererType ={}  not found to send msgId ={}", areaId, serverType, msgId);
-            return;
-        }
-        ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.newBuilder().setRoleId(roleId).build();
-        AresPacket aresPacket = AresPacket.create(msgId, header, body);
-        channelHandlerContext.writeAndFlush(aresPacket);
-    }
-
-
-    public void sendToGameMsg(int areaId, long roleId, int msgId, Message body) {
-        send(areaId, ServerType.GAME, roleId, msgId, body);
-    }
-
-    public void redirectToGameMsg(int areaId, long roleId, AresPacket aresPacket) {
+    @Override
+    protected void doInnerRedirectTo(ChannelHandlerContext channelHandlerContext, long roleId, AresPacket aresPacket) {
         ProtoInner.InnerMsgHeader build = ProtoInner.InnerMsgHeader.newBuilder().setRoleId(roleId).build();
         //|body|
         int readableBytes = aresPacket.getRecvByteBuf().readableBytes();
@@ -90,19 +71,8 @@ public class PeerConn {
         buffer.writeShort(aresPacket.getMsgId())
                 .writeShort(header.length).writeBytes(header);
 
-        byteBufs.addComponents(true,buffer, aresPacket.getRecvByteBuf().retain());
-
-
-        ChannelHandlerContext channelHandlerContext = getAresTcpContext(areaId, ServerType.GAME);
-        if (channelHandlerContext == null) {
-            log.error("areaId ={} sererType ={}  not found to send msgId ={}", areaId, ServerType.GAME, aresPacket.getMsgId());
-            return;
-        }
+        byteBufs.addComponents(true, buffer, aresPacket.getRecvByteBuf().retain());
         channelHandlerContext.writeAndFlush(byteBufs);
-        //   log.info("-----direct msg to game game server roleId ={} msgId ={} areaId={}", roleId, aresPacket.getMsgId(), areaId);
     }
 
-    public void send(ServerType serverType, long roleId, int msgId, Message body) {
-        send(areaId, serverType, roleId, msgId, body);
-    }
 }

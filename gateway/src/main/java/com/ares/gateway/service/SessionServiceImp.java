@@ -10,18 +10,13 @@ import com.game.protoGen.ProtoCommon;
 import com.game.protoGen.ProtoInner;
 import com.game.protoGen.ProtoTask;
 import com.google.protobuf.Message;
-import io.etcd.jetcd.ByteSequence;
-import io.etcd.jetcd.KeyValue;
-import io.etcd.jetcd.kv.GetResponse;
 import io.netty.buffer.ByteBuf;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 
 @Component
 @Slf4j
@@ -61,7 +56,7 @@ public class SessionServiceImp implements SessionService {
                 .setRoleId(loginRequest.getRoleId())
                 .setSid(1000).build();
 
-        peerConn.sendToGameMsg(loginRequest.getAreaId(), loginRequest.getRoleId(), ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_REQ_VALUE, innerLoginRequest);
+        peerConn.sendToGameMsg(loginRequest.getRoleId(), ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_REQ_VALUE, innerLoginRequest);
     }
 
     @Override
@@ -140,9 +135,10 @@ public class SessionServiceImp implements SessionService {
     }
 
     private void updateMyNodeInfo(){
-        ServerNodeInfo myNodeInfo = discoveryService.getEtcdRegister().getMyNodeInfo();
+        ServerNodeInfo myNodeInfo = discoveryService.getEtcdRegister().getMyselfNodeInfo();
         int online =  playerChannelContext.size();
-        myNodeInfo.getMetaData().put("online",online+"");
+        myNodeInfo.setOnlineCount(online);
+       // myNodeInfo.getMetaData().put("online",online+"");
         discoveryService.getEtcdRegister().updateServerNodeInfo(myNodeInfo );
     }
 }

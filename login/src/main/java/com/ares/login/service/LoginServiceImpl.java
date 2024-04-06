@@ -1,5 +1,6 @@
 package com.ares.login.service;
 
+import com.ares.common.bean.ServerType;
 import com.ares.core.exception.AresBaseException;
 import com.ares.core.utils.IdUtils;
 import com.ares.core.utils.SnowFlake;
@@ -10,7 +11,7 @@ import com.ares.login.bean.SdkLoginRequest;
 import com.ares.login.bean.SdkLoginResponse;
 import com.ares.login.dal.AccountDAO;
 import com.ares.login.dal.DO.AccountDO;
-import com.ares.login.discovery.OnDiscoveryWatch;
+import com.ares.login.discovery.OnDiscoveryWatchService;
 import com.ares.transport.bean.ServerNodeInfo;
 import io.etcd.jetcd.ByteSequence;
 import io.etcd.jetcd.KV;
@@ -25,7 +26,7 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     private DiscoveryService discoveryService;
     @Autowired
-    private OnDiscoveryWatch onDiscoveryWatch;
+    private OnDiscoveryWatchService onDiscoveryWatch;
     @Autowired
     private AccountDAO accountDAO;
 
@@ -53,7 +54,7 @@ public class LoginServiceImpl implements LoginService {
         LoginResponse.setAccountId(loginRequest.getAccountId());
         savePlayerSecret(accountDO.getRoleId(), LoginResponse.getSecret());
 
-        ServerNodeInfo lowerLoadServer = onDiscoveryWatch.getLowerLoadServer(loginRequest.getAreaId());
+        ServerNodeInfo lowerLoadServer = onDiscoveryWatch.getLowerLoadGameServer(ServerType.GATEWAY);
         if (lowerLoadServer == null) {
             throw new AresBaseException(-1, "XXXXXXXXX login request = " + loginRequest + " not found gateway");
         }

@@ -12,8 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
-import static com.google.common.base.Charsets.UTF_8;
-
 @Slf4j
 public class EtcdRegister {
     private final Client client;
@@ -44,7 +42,7 @@ public class EtcdRegister {
 
         putWithLease(serviceId, JsonUtil.toJsonString(serverNodeInfo));
     }
-    public ServerNodeInfo getMyNodeInfo(){
+    public ServerNodeInfo getMyselfNodeInfo(){
         return serverNodeInfo;
     }
 

@@ -41,6 +41,6 @@ public class TeamController implements AresController {
                 .setResBody("from world")
                 .setSomeId(881)
                 .setSomeIdAdd(9955599L).build();
-        peerConn.sendToGame(pid, ProtoCommon.ProtoCode.DIRECT_TO_WORLD_RES_VALUE, fromWorld);
+      //  peerConn.sendToGame(pid, ProtoCommon.ProtoCode.DIRECT_TO_WORLD_RES_VALUE, fromWorld);
     }
 }

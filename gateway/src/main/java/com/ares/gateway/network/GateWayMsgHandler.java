@@ -1,5 +1,6 @@
 package com.ares.gateway.network;
 
+import com.ares.common.bean.ServerType;
 import com.ares.core.bean.AresMsgIdMethod;
 import com.ares.core.bean.AresPacket;
 import com.ares.core.exception.AresBaseException;
@@ -7,9 +8,11 @@ import com.ares.core.service.ServiceMgr;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.tcp.AresTcpHandler;
 import com.ares.core.thread.LogicProcessThreadPool;
+import com.ares.discovery.DiscoveryService;
 import com.ares.gateway.bean.PlayerSession;
 import com.ares.gateway.service.SessionService;
 import com.ares.transport.bean.NetWorkConstants;
+import com.ares.transport.bean.ServerNodeInfo;
 import com.ares.transport.bean.TcpConnServerInfo;
 import com.ares.transport.client.AresTcpClient;
 import com.game.protoGen.ProtoInner;
@@ -29,11 +32,11 @@ public class GateWayMsgHandler implements AresTcpHandler {
     private AresTcpClient aresTcpClient;
     @Autowired
     private PeerConn peerConn;
-    @Value("${spring.application.name}")
-    private String appName;
 
     @Autowired
     private SessionService sessionService;
+    @Autowired
+    private DiscoveryService discoveryService;
 
 
     @Override
@@ -101,13 +104,16 @@ public class GateWayMsgHandler implements AresTcpHandler {
     }
 
     private void directSendGame(PlayerSession playerSession, AresPacket aresPacket) {
-        peerConn.redirectToGameMsg(playerSession.getAreaId(), playerSession.getRoleId(), aresPacket);
+     //   peerConn.redirectToGameMsg(playerSession.getAreaId(), playerSession.getRoleId(), aresPacket);
+        peerConn.innerRedirectTo(ServerType.GAME, playerSession.getRoleId(), aresPacket);
     }
 
+    //connect to the server call back
     @Override
     public void onServerConnected(Channel aresTKcpContext) {
+        ServerNodeInfo myNodeInfo = discoveryService.getEtcdRegister().getMyselfNodeInfo();
         ProtoInner.InnerServerHandShakeReq handleShake = ProtoInner.InnerServerHandShakeReq.newBuilder()
-                .setServiceName(appName).build();
+                .setServiceName(myNodeInfo.getServiceId()).build();
 
         ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.newBuilder().build();
         AresPacket aresPacket = AresPacket.create(ProtoInner.InnerProtoCode.INNER_SERVER_HAND_SHAKE_REQ_VALUE, header, handleShake);
@@ -127,7 +133,7 @@ public class GateWayMsgHandler implements AresTcpHandler {
         if (cacheObj instanceof PlayerSession playerSession) {
             ProtoInner.InnerPlayerDisconnectRequest disconnectRequest = ProtoInner.InnerPlayerDisconnectRequest.newBuilder()
                     .setRoleId(playerSession.getRoleId()).build();
-            peerConn.sendToGameMsg(playerSession.getAreaId(), playerSession.getRoleId(), ProtoInner.InnerProtoCode.INNER_PLAYER_DISCONNECT_REQ_VALUE, disconnectRequest);
+            peerConn.sendToGameMsg( playerSession.getRoleId(), ProtoInner.InnerProtoCode.INNER_PLAYER_DISCONNECT_REQ_VALUE, disconnectRequest);
             LogicProcessThreadPool.INSTANCE.execute(0, playerSession, sessionService::playerDisconnect);
         }
     }

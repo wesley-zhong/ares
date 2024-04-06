@@ -4,12 +4,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 public enum ServerType {
-    LOGIN(0,"login"),
-    GATEWAY(1, "gateway"),
-    GAME(2, "game"),
-    ROUTER(3, "router"),
-
-    TEAM(4,"team");
+    LOGIN(1,"login"),
+    GATEWAY(2, "gateway"),
+    GAME(3, "game"),
+    ROUTER(4, "router"),
+    TEAM(5,"team");
 
     @Getter
     private final int value;

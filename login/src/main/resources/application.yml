@@ -1,5 +1,6 @@
 server:
   port: 5080
+  type: 1
 
 spring:
   application:
@@ -19,6 +20,8 @@ discovery:
     - http://localhost:2379
   watch-servers:
     - service-name-prefix: gateway.V1
+    - service-name-prefix: router.V1
+
 
 mongo:
   addrs: localhost:27017;localhost:27017

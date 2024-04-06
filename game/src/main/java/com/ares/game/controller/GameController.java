@@ -5,7 +5,6 @@ import com.ares.core.annotation.MsgId;
 import com.ares.core.service.AresController;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.utils.AresContextThreadLocal;
-import com.ares.discovery.DiscoveryService;
 import com.ares.game.network.PeerConn;
 import com.ares.game.network.WorldServerClientTransfer;
 import com.ares.game.player.GamePlayer;
@@ -31,7 +30,6 @@ public class GameController implements AresController {
     private WorldServerClientTransfer worldServerClientTransfer;
 
 
-
     @MsgId(ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_REQ_VALUE)
     public void gameInnerLoginRequest(long pid, ProtoInner.InnerGameLoginRequest gameInnerLoginRequest) {
         /**
@@ -46,16 +44,8 @@ public class GameController implements AresController {
             player = playerRoleService.createGamePlayer(gameInnerLoginRequest.getRoleId(), "hello");
         }
         player.setGateWayContext(aresTKcpContext);
-        AresTKcpContext worldContext = peerConn.getAresTcpContext(areaId, ServerType.ROUTER);
-        player.setWorldContext(worldContext);
-
+        peerConn.recordPlayerFromContext(ServerType.GATEWAY, gameInnerLoginRequest.getRoleId(), aresTKcpContext.getCtx());
         sendPlayerLoginResponse(gameInnerLoginRequest.getRoleId());
-
-//        ProtoInner.InnerLoginWorldRequest innerRequest = ProtoInner.InnerLoginWorldRequest.newBuilder()
-//                .setRoleId(gameInnerLoginRequest.getRoleId()).build();
-
-        //  peerConn.sendWorldMsg(pid, ProtoInner.InnerProtoCode.INNER_TO_WORLD_LOGIN_REQ_VALUE, innerRequest);
-      //  player.sendToWorld(ProtoInner.InnerProtoCode.INNER_TO_WORLD_LOGIN_REQ_VALUE, innerRequest);
     }
 
     @MsgId(ProtoInner.InnerProtoCode.INNER_TO_WORLD_LOGIN_RES_VALUE)
@@ -64,7 +54,7 @@ public class GameController implements AresController {
         sendPlayerLoginResponse(pid);
     }
 
-    private void sendPlayerLoginResponse(long pid){
+    private void sendPlayerLoginResponse(long pid) {
         GamePlayer player = playerRoleService.getPlayer(pid);
         if (player == null) {
             log.error(" pid={} not found", pid);
@@ -75,7 +65,8 @@ public class GameController implements AresController {
                 .setRoleId(pid).build();
 
         //peerConn.sendGateWayMsg(player, ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_RES_VALUE, innerGameLoginRes);
-        player.sendToGateway(ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_RES_VALUE, innerGameLoginRes);
+      //  player.sendToGateway(ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_RES_VALUE, innerGameLoginRes);
+        peerConn.sendGateWayMsg(pid, ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_RES_VALUE, innerGameLoginRes);
     }
 
 
@@ -93,11 +84,9 @@ public class GameController implements AresController {
         }
         log.info("-----performanceTest  pid ={} body={} ", pid, req);
         ProtoTask.PerformanceTestRes performanceBOyd = ProtoTask.PerformanceTestRes.newBuilder().setResBody("performanceBody").setSomeId(44444).build();
-        peerConn.sendGateWayMsg(player, ProtoCommon.ProtoCode.PERFORMANCE_TEST_RES_VALUE, performanceBOyd);
-
+        peerConn.sendGateWayMsg(pid, ProtoCommon.ProtoCode.PERFORMANCE_TEST_RES_VALUE, performanceBOyd);
 
         //for test
         playerRoleService.asynUpdateTest(player.getRoleDO());
     }
-
 }

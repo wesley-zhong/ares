@@ -92,8 +92,8 @@ message InnerLoginInitNotify {
 
 message InnerServerHandShakeReq{
   string  serviceName = 1;
-  string serviceId = 2;
-  int32  areaId = 3;
+  string  serviceId = 2;
+  int32   serviceType = 3;
 }
 
 message InnerServerHandShakeRes{

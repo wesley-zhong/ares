@@ -31,7 +31,6 @@ public class NetUtils {
             return list;
         } catch (Exception e) {
             log.error("======error", e);
-
         }
         return null;
     }

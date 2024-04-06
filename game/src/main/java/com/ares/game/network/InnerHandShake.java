@@ -1,10 +1,13 @@
 package com.ares.game.network;
 
+import com.ares.common.bean.ServerType;
 import com.ares.core.annotation.MsgId;
 import com.ares.core.bean.AresPacket;
 import com.ares.core.service.AresController;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.utils.AresContextThreadLocal;
+import com.ares.discovery.DiscoveryService;
+import com.ares.game.discovery.OnDiscoveryWatchService;
 import com.ares.transport.bean.ServerNodeInfo;
 import com.ares.transport.bean.TcpConnServerInfo;
 import com.ares.transport.client.AresTcpClient;
@@ -28,19 +31,31 @@ public class InnerHandShake implements AresController {
 
     @Autowired
     private AresTcpClient aresTcpClient;
+    @Autowired
+    private DiscoveryService discoveryService;
+    @Autowired
+    private OnDiscoveryWatchService onDiscoveryWatch;
 
 
     //as sever receive client handshake
     @MsgId(ProtoInner.InnerProtoCode.INNER_SERVER_HAND_SHAKE_REQ_VALUE)
     public void innerHandShake(long id, ProtoInner.InnerServerHandShakeReq innerLoginRequest) {
         AresTKcpContext aresTKcpContext = AresContextThreadLocal.get();
-        peerConn.addContext(innerLoginRequest.getAreaId(), innerLoginRequest.getServiceName(), aresTKcpContext);
-        log.info("####  from: {} innerHandShake :{}  finish", aresTKcpContext, innerLoginRequest);
+        //peerConn.addContext(innerLo, innerLoginRequest.getServiceName(), aresTKcpContext);
+        int serverType = ServerType.from(innerLoginRequest.getServiceName()).getValue();
+        peerConn.addPeerConn(serverType, innerLoginRequest.getServiceId(), aresTKcpContext.getCtx());
+        log.info("#### receive innerHandShake :{} from: {}  finish",innerLoginRequest, aresTKcpContext);
+
+        ServerNodeInfo myselfNodeInfo = discoveryService.getEtcdRegister().getMyselfNodeInfo();
         ProtoInner.InnerServerHandShakeRes response = ProtoInner.InnerServerHandShakeRes.newBuilder().setAreaId(areaId)
-                .setServiceName(appName).build();
+                .setServiceName(myselfNodeInfo.getServiceName())
+                .setServiceId(myselfNodeInfo.getServiceId()).build();
         ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.newBuilder().setRoleId(id).build();
         AresPacket aresPacket = AresPacket.create(ProtoInner.InnerProtoCode.INNER_SERVER_HAND_SHAKE_RES_VALUE, header, response);
         aresTKcpContext.send(aresPacket);
+
+
+        //for send
         ServerNodeInfo serverNodeInfo = new ServerNodeInfo();
         serverNodeInfo.setAreaId(innerLoginRequest.getAreaId());
         serverNodeInfo.setServiceName(innerLoginRequest.getServiceName());
@@ -51,13 +66,16 @@ public class InnerHandShake implements AresController {
 
     // as client receive from my handshake msg
     @MsgId(ProtoInner.InnerProtoCode.INNER_SERVER_HAND_SHAKE_RES_VALUE)
-    public void innerHandShakeRes(long id, ProtoInner.InnerServerHandShakeRes innerLoginRequest) {
+    public void innerHandShakeRes(long id, ProtoInner.InnerServerHandShakeRes innerServerHandShakeRes) {
         AresTKcpContext aresTKcpContext = AresContextThreadLocal.get();
-        peerConn.addContext(innerLoginRequest.getAreaId(), innerLoginRequest.getServiceName(), aresTKcpContext);
-        log.info("####  innerHandShake from: {}  Response :{}  finish", aresTKcpContext, innerLoginRequest);
-        TcpConnServerInfo tcpConnServerInfo = aresTcpClient.getTcpConnServerInfo(innerLoginRequest.getAreaId(), innerLoginRequest.getServiceName());
+        ServerNodeInfo serverNodeInfo = onDiscoveryWatch.getServerNodeInfo(innerServerHandShakeRes.getServiceId());
+        peerConn.addPeerConn(serverNodeInfo,aresTKcpContext.getCtx());
+        log.info("####  innerHandShakeRes from: {}  Response :{}  finish", aresTKcpContext, innerServerHandShakeRes);
+
+        //can be remove
+        TcpConnServerInfo tcpConnServerInfo = aresTcpClient.getTcpConnServerInfo(innerServerHandShakeRes.getAreaId(), innerServerHandShakeRes.getServiceName());
         if (tcpConnServerInfo == null) {
-            log.error("server connect error  service name ={} areaId ={}", innerLoginRequest.getServiceName(), innerLoginRequest.getAreaId());
+            log.error("server connect error  service name ={} areaId ={}", innerServerHandShakeRes.getServiceName(), innerServerHandShakeRes.getAreaId());
             return;
         }
         aresTKcpContext.cacheObj(tcpConnServerInfo);

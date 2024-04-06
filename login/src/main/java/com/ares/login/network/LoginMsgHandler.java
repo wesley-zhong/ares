@@ -1,4 +1,4 @@
-package com.ares.game.network;
+package com.ares.login.network;
 
 import com.ares.common.bean.ServerType;
 import com.ares.core.bean.AresMsgIdMethod;
@@ -8,14 +8,10 @@ import com.ares.core.service.ServiceMgr;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.tcp.AresTcpHandler;
 import com.ares.core.thread.LogicProcessThreadPool;
-import com.ares.discovery.DiscoveryService;
-import com.ares.game.player.GamePlayer;
-import com.ares.game.service.PlayerRoleService;
 import com.ares.transport.bean.ServerNodeInfo;
 import com.ares.transport.bean.TcpConnServerInfo;
 import com.ares.transport.client.AresTcpClient;
 import com.game.protoGen.ProtoInner;
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
@@ -24,22 +20,21 @@ import org.springframework.beans.factory.annotation.Value;
 
 
 @Slf4j
-public class GameMsgHandler implements AresTcpHandler {
+public class LoginMsgHandler implements AresTcpHandler {
     @Autowired
     protected ServiceMgr serviceMgr;
 
     @Autowired
     private AresTcpClient aresTcpClient;
+    @Value("${spring.application.name}")
+    private String appName;
 
-    @Autowired
-    private DiscoveryService discoveryService;
+
+    @Value("${area.id:0}")
+    private int areaId;
 
     @Autowired
     private PeerConn peerConn;
-
-    @Autowired
-    private PlayerRoleService playerRoleService;
-
 
     protected static final String UTF8 = "UTF-8";
 
@@ -57,16 +52,6 @@ public class GameMsgHandler implements AresTcpHandler {
                 pid = header.getRoleId();
             }
 
-            // no msg method call should proxy to others
-            if (calledMethod == null) {
-                if (fromServerType(aresTKcpContext) == ServerType.GATEWAY) {
-                    peerConn.routerToTeam(pid, aresPacket);
-                } else {
-                    directToGateway(pid, aresPacket);
-                }
-                return;
-            }
-
             length = aresPacket.getRecvByteBuf().readableBytes();
             Object paraObj = calledMethod.getParser().parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), length));
             LogicProcessThreadPool.INSTANCE.execute(aresTKcpContext, calledMethod, pid, paraObj);
@@ -77,18 +62,6 @@ public class GameMsgHandler implements AresTcpHandler {
         }
     }
 
-    private void directToGateway(long pid, AresPacket aresPacket) {
-        peerConn.directToGateway(pid, aresPacket);
-//        GamePlayer player = playerRoleService.getPlayer(pid);
-//        if (player == null) {
-//            log.error("pid = {} not found", pid);
-//            return;
-//        }
-//        ByteBuf sendBody = aresPacket.getRecvByteBuf().retain();
-//        sendBody.readerIndex(0);
-//        player.sendToGateway(sendBody);
-       // log.info("-------------------- direct to gateway pid ={} msgId={} ", pid, aresPacket.getMsgId());
-    }
 
     private ServerType fromServerType(AresTKcpContext aresTKcpContext) {
         Object cacheObj = aresTKcpContext.getCacheObj();
@@ -101,18 +74,16 @@ public class GameMsgHandler implements AresTcpHandler {
 
     @Override
     public void onServerConnected(Channel aresTKcpContext) {
-        ServerNodeInfo myselfNodeInfo =discoveryService.getEtcdRegister().getMyselfNodeInfo();
         ProtoInner.InnerServerHandShakeReq handleShake = ProtoInner.InnerServerHandShakeReq.newBuilder()
-                .setServiceId(myselfNodeInfo.getServiceId())
-                .setServiceName(myselfNodeInfo.getServiceName()).build();
+                .setAreaId(areaId)
+                .setServiceName(appName).build();
 
         ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.newBuilder().build();
         AresPacket aresPacket = AresPacket.create(ProtoInner.InnerProtoCode.INNER_SERVER_HAND_SHAKE_REQ_VALUE, header, handleShake);
         aresTKcpContext.writeAndFlush(aresPacket);
-        log.info("###### send handshake send to {}  msg: {}", aresTKcpContext, handleShake);
+        log.info("###### handshake send to {}  msg: {}", aresTKcpContext, handleShake);
     }
 
-    //work as server when client connected  me (this server)
     @Override
     public void onClientConnected(AresTKcpContext aresTKcpContext) {
         log.info("---onClientConnected ={} ", aresTKcpContext);

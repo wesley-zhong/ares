@@ -15,7 +15,7 @@ public class PeerTransfer {
     @Setter
     private AresTKcpContext gateWayContext;
     @Setter
-    private AresTKcpContext worldContext;
+    private AresTKcpContext routerContext;
     private ProtoInner.InnerMsgHeader msgHeader;
 
     public PeerTransfer(long pid) {
@@ -65,15 +65,15 @@ public class PeerTransfer {
 
     public void sendToWorld(int msgId, Message body) {
         AresPacket aresPacket = AresPacket.create(msgId, msgHeader, body);
-        worldContext.send(aresPacket);
+        routerContext.send(aresPacket);
     }
 
     public void sendToWorld(AresPacket aresPacket) {
-        worldContext.send(aresPacket);
+        routerContext.send(aresPacket);
     }
 
     public void sendToWorld(ByteBuf body) {
-        worldContext.send(body);
+        routerContext.send(body);
     }
 
     public void sendToWorld(Map<Integer, Message> msgs) {
@@ -83,6 +83,6 @@ public class PeerTransfer {
         for (Map.Entry<Integer, Message> entry : entries) {
             packets[index++] = AresPacket.create(entry.getKey(), msgHeader, entry.getValue());
         }
-        worldContext.send(packets);
+        routerContext.send(packets);
     }
 }

@@ -3,69 +3,66 @@ package com.ares.team.network;
 
 import com.ares.common.bean.ServerType;
 import com.ares.core.bean.AresPacket;
-import com.ares.core.tcp.AresTKcpContext;
-import com.game.protoGen.ProtoInner;
+import com.ares.transport.peer.PeerConnBase;
 import com.google.protobuf.Message;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 @Component
 @Slf4j
-public class PeerConn {
-    @Value("${area.id:0}")
-    private int areaId;
-    private final Map<Integer, Map<Integer, ChannelHandlerContext>> peerConns = new HashMap<>();
+public class PeerConn extends PeerConnBase {
+    private final Map<Long, ChannelHandlerContext> playerIdContext = new ConcurrentHashMap<>();
 
-    public synchronized void addContext(int areaId, String serviceName, AresTKcpContext aresTKcpContext) {
-        ServerType serverType = ServerType.from(serviceName);
-        if (serverType == null) {
-            log.error("service name == {} not be defined in ServerType enum", serviceName);
-            return;
+    public void sendToGameMsg(long roleId, int msgId, Message body) {
+        send(ServerType.GAME, roleId, msgId, body);
+    }
+
+    public void redirectToGameMsg(long roleId, AresPacket aresPacket) {
+        innerRedirectTo(ServerType.GAME, roleId, aresPacket);
+    }
+
+    @Override
+    public ChannelHandlerContext loadBalance(int serverType, long roleId, Map<String, ChannelHandlerContext> channelConMap) {
+        ChannelHandlerContext channelHandlerContext = playerIdContext.get(roleId);
+        if(channelHandlerContext != null){
+            return channelHandlerContext;
         }
-        Map<Integer, ChannelHandlerContext> stringAresTcpContextMap = peerConns.get(areaId);
-        if (stringAresTcpContextMap == null) {
-            stringAresTcpContextMap = new HashMap<>();
-            stringAresTcpContextMap.put(serverType.getValue(), aresTKcpContext.getCtx());
-            peerConns.put(areaId, stringAresTcpContextMap);
-            return;
-        }
-        stringAresTcpContextMap.put(serverType.getValue(), aresTKcpContext.getCtx());
+        return null;
     }
 
-    public ChannelHandlerContext getAresTcpContext(ServerType serverType) {
-        return getAresTcpContext(areaId, serverType);
+    public void routerToTeam(long roleId, AresPacket aresPacket) {
+//        AresTKcpContext aresTcpContext = getAresTcpContext(areaId, ServerType.ROUTER);
+//        if (aresTcpContext == null) {
+//            log.error("areaId ={} serverType ={}  not found connection", aresPacket, ServerType.ROUTER);
+//            return;
+//        }
+//
+//        aresPacket.getRecvByteBuf().readerIndex(0);
+//        aresTcpContext.send(aresPacket.getRecvByteBuf().retain());
+
+        innerRedirectTo(ServerType.ROUTER,roleId, aresPacket);
     }
 
-    public ChannelHandlerContext getAresTcpContext(int areaId, ServerType serverType) {
-        Map<Integer, ChannelHandlerContext> stringAresTcpContextMap = peerConns.get(areaId);
-        if (CollectionUtils.isEmpty(stringAresTcpContextMap)) {
-            return null;
-        }
-        return stringAresTcpContextMap.get(serverType.getValue());
+
+    public void routerToOtherGame(long roleId, AresPacket aresPacket) {
+//        AresTKcpContext aresTcpContext = getAresTcpContext(areaId, ServerType.ROUTER);
+//        if (aresTcpContext == null) {
+//            log.error("areaId ={} serverType ={}  not found connection", aresPacket, ServerType.ROUTER);
+//            return;
+//        }
+//
+//        aresPacket.getRecvByteBuf().readerIndex(0);
+//        aresTcpContext.send(aresPacket.getRecvByteBuf().retain());
+
+        innerRedirectTo(ServerType.GAME,roleId, aresPacket);
     }
 
-    public void send(int areaId, ServerType serverType, long roleId, int msgId, Message body) {
-        ChannelHandlerContext aresTcpContext = getAresTcpContext(areaId, serverType);
-        if (aresTcpContext == null) {
-            log.error("========= areaId = {} servetType={} not connected", areaId, serverType);
-            return;
-        }
-        ProtoInner.InnerMsgHeader innerMsgHeader = ProtoInner.InnerMsgHeader.newBuilder().setRoleId(roleId).build();
-        AresPacket aresPacket = AresPacket.create(msgId, innerMsgHeader, body);
-        aresTcpContext.writeAndFlush(aresPacket);
-    }
-
-    public void sendToGame(int areaId, long roleId, int msgId, Message body) {
-        send(areaId, ServerType.GAME, roleId,msgId, body);
-    }
-    public void sendToGame(long roleId, int msgId, Message body){
-        send(this.areaId, ServerType.GAME, roleId, msgId,body);
+    public void sendGateWayMsg( long roleId, int msgId, Message body) {
+        send(ServerType.GAME,roleId, msgId, body);
     }
 }

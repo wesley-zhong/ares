@@ -1,5 +1,6 @@
 server:
   port: 6080
+  type: 2
 spring:
   application:
     name: gateway.V1

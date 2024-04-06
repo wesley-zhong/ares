@@ -14,6 +14,7 @@ public class ServerNodeInfo {
     private boolean available;
     private int port;
     private int areaId;
+    private int onlineCount;
     private Map<String, String> metaData = new HashMap<>();
 
     @Override
