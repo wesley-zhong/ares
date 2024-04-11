@@ -1,6 +1,5 @@
 package com.ares.team.service;
 
-import com.ares.core.tcp.AresTKcpContext;
 import com.ares.team.player.TeamPlayer;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +14,7 @@ public class TeamPlayerMgr {
         return playerMap.get(pid);
     }
 
-    public TeamPlayer crateWorldPlayer(AresTKcpContext context, long pid) {
-        return new TeamPlayer(context, pid);
+    public TeamPlayer crateWorldPlayer(long pid) {
+        return new TeamPlayer(pid);
     }
 }

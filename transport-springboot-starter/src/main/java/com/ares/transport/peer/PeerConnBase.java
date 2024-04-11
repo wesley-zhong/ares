@@ -5,6 +5,7 @@ import com.ares.core.bean.AresPacket;
 import com.ares.transport.bean.ServerNodeInfo;
 import com.game.protoGen.ProtoInner;
 import com.google.protobuf.Message;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,6 +33,9 @@ public abstract class PeerConnBase {
         innerRedirectTo(serverType.getValue(), roleId, aresPacket);
     }
 
+    public void innerRedirectTo(ServerType serverType, long roleId, ByteBuf byteBuf) {
+        innerRedirectTo(serverType.getValue(), roleId, byteBuf);
+    }
 
     public void addPeerConn(ServerNodeInfo serverNodeInfo, ChannelHandlerContext context) {
         addPeerConn(serverNodeInfo.getServerType(), serverNodeInfo.getServiceId(), context);
@@ -85,6 +89,26 @@ public abstract class PeerConnBase {
         channelHandlerContext.writeAndFlush(aresPacket);
     }
 
+    /**  send the msg to the router server to router to the serverType
+     * @param serverType to the target server
+     * @param roleId     roleId
+     * @param msgId      msgId
+     * @param body       body
+     */
+    protected void routerTo(ServerType serverType, long roleId, int msgId, Message body) {
+        Map<String, ChannelHandlerContext> channelHandlerContextMap = serverTypeConnMap.get(ServerType.ROUTER.getValue());
+        ChannelHandlerContext channelHandlerContext = loadBalance(ServerType.ROUTER.getValue(), roleId, channelHandlerContextMap);
+        if (channelHandlerContext == null) {
+            log.error("=====error  serverType ={} no connection  sendMsgId ={} roleId ={}", ServerType.ROUTER, msgId, roleId);
+            return;
+        }
+        ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.newBuilder()
+                .setRoleId(roleId)
+                .setRouterTo(serverType.getValue()).build();
+        AresPacket aresPacket = AresPacket.create(msgId, header, body);
+        channelHandlerContext.writeAndFlush(aresPacket);
+    }
+
     private void innerRedirectTo(int serverType, long roleId, AresPacket aresPacket) {
         Map<String, ChannelHandlerContext> channelHandlerContextMap = serverTypeConnMap.get(serverType);
         ChannelHandlerContext channelHandlerContext = loadBalance(serverType, roleId, channelHandlerContextMap);
@@ -92,11 +116,21 @@ public abstract class PeerConnBase {
             log.error("=====error  serverType ={} no connection  sendMsgId ={} roleId ={}", serverType, aresPacket.getMsgId(), roleId);
             return;
         }
-        doInnerRedirectTo(channelHandlerContext, roleId, aresPacket);
+        doInnerRedirectTo(serverType, channelHandlerContext, roleId, aresPacket);
+    }
+
+    private void innerRedirectTo(int serverType, long roleId, ByteBuf body) {
+        Map<String, ChannelHandlerContext> channelHandlerContextMap = serverTypeConnMap.get(serverType);
+        ChannelHandlerContext channelHandlerContext = loadBalance(serverType, roleId, channelHandlerContextMap);
+        if (channelHandlerContext == null) {
+            log.error("=====error  serverType ={} no connection  roleId ={}", serverType, roleId);
+            return;
+        }
+        channelHandlerContext.writeAndFlush(body);
     }
 
     //This may be overwritten by gateway  only called in io thread
-    protected void doInnerRedirectTo(ChannelHandlerContext channelHandlerContext, long roleId, AresPacket aresPacket) {
+    protected void doInnerRedirectTo(int serverType, ChannelHandlerContext channelHandlerContext, long roleId, AresPacket aresPacket) {
         aresPacket.getRecvByteBuf().readerIndex(0);
         channelHandlerContext.writeAndFlush(aresPacket.getRecvByteBuf().retain());
     }

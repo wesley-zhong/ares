@@ -3,7 +3,6 @@ package com.ares.login.network;
 import com.ares.common.bean.ServerType;
 import com.ares.core.bean.AresMsgIdMethod;
 import com.ares.core.bean.AresPacket;
-import com.ares.core.exception.AresBaseException;
 import com.ares.core.service.ServiceMgr;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.tcp.AresTcpHandler;
@@ -18,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.io.IOException;
+
 
 @Slf4j
 public class LoginMsgHandler implements AresTcpHandler {
@@ -29,37 +30,26 @@ public class LoginMsgHandler implements AresTcpHandler {
     @Value("${spring.application.name}")
     private String appName;
 
-
-    @Value("${area.id:0}")
-    private int areaId;
-
     @Autowired
     private PeerConn peerConn;
 
     protected static final String UTF8 = "UTF-8";
 
     @Override
-    public void handleMsgRcv(AresTKcpContext aresTKcpContext) {
-        int length = 0;
+    public void handleMsgRcv(AresTKcpContext aresTKcpContext) throws IOException {
         AresPacket aresPacket = aresTKcpContext.getRcvPackage();
-        try {
-            AresMsgIdMethod calledMethod = serviceMgr.getCalledMethod(aresPacket.getMsgId());
-            aresPacket.getRecvByteBuf().skipBytes(6);
-            int headerLen = aresPacket.getRecvByteBuf().readShort();
-            long pid = 0;
-            if (headerLen > 0) {
-                ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), headerLen));
-                pid = header.getRoleId();
-            }
-
-            length = aresPacket.getRecvByteBuf().readableBytes();
-            Object paraObj = calledMethod.getParser().parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), length));
-            LogicProcessThreadPool.INSTANCE.execute(aresTKcpContext, calledMethod, pid, paraObj);
-        } catch (AresBaseException e) {
-            log.error("===error  length ={} msgId={} ", length, aresPacket.getMsgId(), e);
-        } catch (Throwable e) {
-            log.error("==error length ={} msgId ={}  ", length, aresPacket.getMsgId(), e);
+        AresMsgIdMethod calledMethod = serviceMgr.getCalledMethod(aresPacket.getMsgId());
+        aresPacket.getRecvByteBuf().skipBytes(6);
+        int headerLen = aresPacket.getRecvByteBuf().readShort();
+        long pid = 0;
+        if (headerLen > 0) {
+            ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), headerLen));
+            pid = header.getRoleId();
         }
+
+        int length = aresPacket.getRecvByteBuf().readableBytes();
+        Object paraObj = calledMethod.getParser().parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), length));
+        LogicProcessThreadPool.INSTANCE.execute(aresTKcpContext, calledMethod, pid, paraObj);
     }
 
 
@@ -74,9 +64,7 @@ public class LoginMsgHandler implements AresTcpHandler {
 
     @Override
     public void onServerConnected(Channel aresTKcpContext) {
-        ProtoInner.InnerServerHandShakeReq handleShake = ProtoInner.InnerServerHandShakeReq.newBuilder()
-                .setAreaId(areaId)
-                .setServiceName(appName).build();
+        ProtoInner.InnerServerHandShakeReq handleShake = ProtoInner.InnerServerHandShakeReq.newBuilder().setServiceName(appName).build();
 
         ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.newBuilder().build();
         AresPacket aresPacket = AresPacket.create(ProtoInner.InnerProtoCode.INNER_SERVER_HAND_SHAKE_REQ_VALUE, header, handleShake);

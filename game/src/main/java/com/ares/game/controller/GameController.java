@@ -4,9 +4,10 @@ import com.ares.common.bean.ServerType;
 import com.ares.core.annotation.MsgId;
 import com.ares.core.service.AresController;
 import com.ares.core.tcp.AresTKcpContext;
+import com.ares.core.timer.ScheduleService;
 import com.ares.core.utils.AresContextThreadLocal;
+import com.ares.game.bean.TimerBeanTest;
 import com.ares.game.network.PeerConn;
-import com.ares.game.network.WorldServerClientTransfer;
 import com.ares.game.player.GamePlayer;
 import com.ares.game.service.PlayerRoleService;
 import com.game.protoGen.ProtoCommon;
@@ -14,45 +15,31 @@ import com.game.protoGen.ProtoInner;
 import com.game.protoGen.ProtoTask;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
 public class GameController implements AresController {
-    @Value("${area.id:0}")
-    private int areaId;
     @Autowired
     private PlayerRoleService playerRoleService;
     @Autowired
     private PeerConn peerConn;
-    @Autowired
-    private WorldServerClientTransfer worldServerClientTransfer;
-
 
     @MsgId(ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_REQ_VALUE)
     public void gameInnerLoginRequest(long pid, ProtoInner.InnerGameLoginRequest gameInnerLoginRequest) {
         /**
          * do some logic
          */
-
-
         log.info("======== gameInnerLoginRequest  ={}", gameInnerLoginRequest);
         AresTKcpContext aresTKcpContext = AresContextThreadLocal.get();
         GamePlayer player = playerRoleService.getPlayer(gameInnerLoginRequest.getRoleId());
         if (player == null) {
             player = playerRoleService.createGamePlayer(gameInnerLoginRequest.getRoleId(), "hello");
         }
-        player.setGateWayContext(aresTKcpContext);
         peerConn.recordPlayerFromContext(ServerType.GATEWAY, gameInnerLoginRequest.getRoleId(), aresTKcpContext.getCtx());
         sendPlayerLoginResponse(gameInnerLoginRequest.getRoleId());
     }
 
-    @MsgId(ProtoInner.InnerProtoCode.INNER_TO_WORLD_LOGIN_RES_VALUE)
-    public void worldLoginResponse(long pid, ProtoInner.InnerWorldLoginResponse worldLoginResponse) {
-        log.info("==== pid ={} ==== worldLoginResponse  ={}", pid, worldLoginResponse);
-        sendPlayerLoginResponse(pid);
-    }
 
     private void sendPlayerLoginResponse(long pid) {
         GamePlayer player = playerRoleService.getPlayer(pid);
@@ -61,11 +48,7 @@ public class GameController implements AresController {
             return;
         }
         ProtoInner.InnerGameLoginResponse innerGameLoginRes = ProtoInner.InnerGameLoginResponse.newBuilder()
-                .setAreaId(areaId)
                 .setRoleId(pid).build();
-
-        //peerConn.sendGateWayMsg(player, ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_RES_VALUE, innerGameLoginRes);
-      //  player.sendToGateway(ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_RES_VALUE, innerGameLoginRes);
         peerConn.sendGateWayMsg(pid, ProtoInner.InnerProtoCode.INNER_TO_GAME_LOGIN_RES_VALUE, innerGameLoginRes);
     }
 
@@ -79,7 +62,7 @@ public class GameController implements AresController {
     public void performanceTest(long pid, ProtoTask.PerformanceTestReq req) {
         GamePlayer player = playerRoleService.getPlayer(pid);
         if (player == null) {
-            log.error(" pid={} not found", pid);
+            log.error(" pid ={} not found", pid);
             return;
         }
         log.info("-----performanceTest  pid ={} body={} ", pid, req);
@@ -88,5 +71,11 @@ public class GameController implements AresController {
 
         //for test
         playerRoleService.asynUpdateTest(player.getRoleDO());
+
+        //for timer test
+        log.info("==================================== start timer call begin");
+        TimerBeanTest  timerBeanTest = new TimerBeanTest();
+        timerBeanTest.msg ="timerTest";
+        ScheduleService.INSTANCE.executeTimerTaskWithMS(playerRoleService::onTimerTest,timerBeanTest,3000L);
     }
 }

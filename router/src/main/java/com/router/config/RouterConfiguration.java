@@ -16,15 +16,6 @@ import org.springframework.context.annotation.Lazy;
 @Configuration
 @ComponentScan("com.ares")
 public class RouterConfiguration {
-    @Value("${spring.application.name}")
-    private String appName;
-
-    @Value("${server.port}")
-    private int serverPort;
-
-    @Value("${area.id:0}")
-    private int areaId;
-
     @Bean
     public AresTcpClientConn aresTcpClientConn(@Autowired AresTcpHandler aresTcpHandler) {
         AresTcpClientConn aresTcpClientConn = new AresTcpClientConn();

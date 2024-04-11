@@ -2,9 +2,9 @@ package com.ares.game.configuration;
 
 import com.ares.common.bean.ServerType;
 import com.ares.core.tcp.AresTcpHandler;
+import com.ares.dal.redis.RedisFactory;
 import com.ares.game.network.GameMsgHandler;
 import com.ares.core.utils.SnowFlake;
-import com.ares.dal.mongo.AresMongoClient;
 import com.ares.transport.client.AresTcpClient;
 import com.ares.transport.client.AresTcpClientConn;
 import com.ares.transport.client.AresTcpClientImpl;
@@ -32,6 +32,8 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 @Configuration
 @ComponentScan("com.ares")
 public class GameConfiguration implements InitializingBean {
+    @Value("${redis.url}")
+    private String redisUrl;
     private int areaId;
 
     @Bean
@@ -74,6 +76,15 @@ public class GameConfiguration implements InitializingBean {
     public AresTcpHandler aresTcpHandler() {
         return new GameMsgHandler();
     }
+//
+//    @Bean
+//    public RedisFactory redisFactory(){
+//        RedisFactory redisFactory = new RedisFactory();
+//        redisFactory.initPool(redisUrl);
+//        return  redisFactory;
+//    }
+
+
 
     @Override
     public void afterPropertiesSet() throws Exception {

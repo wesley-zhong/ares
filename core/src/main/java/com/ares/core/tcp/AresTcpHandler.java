@@ -2,9 +2,11 @@ package com.ares.core.tcp;
 
 import io.netty.channel.Channel;
 
+import java.io.IOException;
+
 public interface AresTcpHandler {
 
-    void handleMsgRcv(AresTKcpContext aresPacket);
+    void handleMsgRcv(AresTKcpContext aresPacket) throws IOException;
 
     void onClientConnected(AresTKcpContext aresTKcpContext);
 

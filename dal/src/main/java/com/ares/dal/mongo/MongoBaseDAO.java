@@ -58,7 +58,7 @@ public class MongoBaseDAO<T extends BaseDO> implements InitializingBean {
                 casObj.setVer(casObj.getVer() + 1);
                 UpdateResult updateResult = collection.replaceOne(and(eq(_ID, obj.getId()), eq(_VER, verEQ)), obj, UP_INSERT_OPTIONS);
                 if (updateResult.getModifiedCount() != 1) {
-                    log.error("####### replace id = {}, ver = {}, modify count = {}  ", obj.getId(), verEQ, updateResult.getModifiedCount());
+                    log.error("####### upInsert id = {}, ver = {}, modify count = {}  ", obj.getId(), verEQ, updateResult.getModifiedCount());
                 }
                 return updateResult.wasAcknowledged();
             }
@@ -124,7 +124,7 @@ public class MongoBaseDAO<T extends BaseDO> implements InitializingBean {
             casObj.setVer(casObj.getVer() + 1);
             UpdateResult updateResult = collection.replaceOne(and(eq(_ID, id), eq(_VER, verEQ)), obj);
             if (updateResult.getMatchedCount() != 1) {
-                log.error("####### replace id = {}, ver = {}, modify count = {}  ", id, verEQ, updateResult.getModifiedCount());
+                log.error("####### replaceOne id = {}, ver = {}, modify count = {}  ", id, verEQ, updateResult.getModifiedCount());
             }
             return updateResult.getMatchedCount();
         }

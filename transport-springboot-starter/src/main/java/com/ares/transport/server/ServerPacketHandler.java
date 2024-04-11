@@ -4,7 +4,6 @@ package com.ares.transport.server;
 import com.ares.core.bean.AresPacket;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.tcp.AresTcpHandler;
-import com.ares.core.utils.AresContextThreadLocal;
 import com.ares.transport.consts.FMsgId;
 import com.ares.transport.context.AresTKcpContextImpl;
 import com.ares.transport.context.AresTKcpContextImplEx;
@@ -26,8 +25,8 @@ public class ServerPacketHandler extends ChannelInboundHandlerAdapter {
     private final static int MSG_ID_OFFSET = 4;
 
 
-    public ServerPacketHandler(AresTcpHandler aresRpc,  int totalIgnoreReadIdleCount) {
-        if (aresRpcHandler == null ) {
+    public ServerPacketHandler(AresTcpHandler aresRpc, int totalIgnoreReadIdleCount) {
+        if (aresRpcHandler == null) {
             aresRpcHandler = aresRpc;
         }
         hearBeatCount = 0;
@@ -56,9 +55,12 @@ public class ServerPacketHandler extends ChannelInboundHandlerAdapter {
             sendPing(aresMsgEx.getCtx());
             return;
         }
+        int length = aresPacket.getRecvByteBuf().readableBytes();
         try {
             aresRpcHandler.handleMsgRcv(aresMsgEx);
-        }finally {
+        } catch (Throwable e) {
+            log.error("==error length ={} msgId ={}  ", length, aresPacket.getMsgId(), e);
+        } finally {
             aresPacket.release();
             aresMsgEx.clearPackageData();
         }

@@ -24,3 +24,6 @@ mongo:
   addrs: localhost:27017;localhost:27017
   userName: admin
   password: admin
+  #redis://password@localhost:6379/0
+redis:
+  url: "redis://localhost:6379/0"

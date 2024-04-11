@@ -2,7 +2,6 @@ package com.ares.transport.client.handler;
 
 import com.ares.core.bean.AresPacket;
 import com.ares.core.tcp.AresTcpHandler;
-import com.ares.core.utils.AresContextThreadLocal;
 import com.ares.transport.consts.FMsgId;
 import com.ares.transport.context.AresTKcpContextImplEx;
 import com.ares.transport.utils.AresPacketUtils;
@@ -30,15 +29,25 @@ public class ClientMsgHandler extends ChannelInboundHandlerAdapter {
     }
 
     private void processAresPacket(AresTKcpContextImplEx aresPacketEx) {
-        AresPacket arePacket = aresPacketEx.getRcvPackage();
-        if (arePacket != null) {
-            if (arePacket.getMsgId() == FMsgId.PING) {
-                arePacket.release();
-                return;
-            }
+        AresPacket aresPacket = aresPacketEx.getRcvPackage();
+        if (aresPacket == null) {
+            return;
+        }
+        if (aresPacket.getMsgId() == FMsgId.PING) {
+            aresPacket.release();
+            return;
+        }
+        int length = aresPacket.getRecvByteBuf().readableBytes();
+        try {
             aresTcpHandler.handleMsgRcv(aresPacketEx);
+        } catch (Throwable e) {
+            log.error("==error length ={} msgId ={}  ", length, aresPacket.getMsgId(), e);
+        } finally {
+            aresPacket.release();
+            aresPacketEx.clearPackageData();
         }
     }
+
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -50,7 +59,7 @@ public class ClientMsgHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         log.error(" {} connect lost ", ctx.channel().remoteAddress());
-         aresTcpHandler.onServerClosed(ctx.channel());
+        aresTcpHandler.onServerClosed(ctx.channel());
     }
 
     @Override

@@ -1,8 +1,11 @@
 package com.ares.game.service;
 
 import com.ares.game.DO.RoleDO;
+import com.ares.game.bean.TimerBeanTest;
 import com.ares.game.dao.RoleDAO;
 import com.ares.game.player.GamePlayer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +14,7 @@ import java.util.Map;
 
 @Component
 public class PlayerRoleService {
+    private static final Logger log = LoggerFactory.getLogger(PlayerRoleService.class);
     @Autowired
     private RoleDAO roleDAO;
 
@@ -52,5 +56,9 @@ public class PlayerRoleService {
             roleDO.setCountTest(roleDO.getCountTest()  + 1);
             roleDAO.asynUpInsert(roleDO);
         }
+    }
+
+    public void onTimerTest(TimerBeanTest timerBeanTest){
+        log.info("============ onTimerTest msg ={}", timerBeanTest.msg);
     }
 }

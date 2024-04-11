@@ -2,25 +2,19 @@ package com.ares.game.player;
 
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.game.DO.RoleDO;
-import com.ares.game.network.PeerTransfer;
-import io.netty.channel.ChannelHandlerContext;
 import lombok.Getter;
 import lombok.Setter;
 
 
 @Getter
 @Setter
-public class GamePlayer extends PeerTransfer {
+public class GamePlayer {
+    private long pid;
 
     private RoleDO roleDO;
-
-    public GamePlayer(long pid){
-        super(pid);
+    public GamePlayer(long id){
+        this.pid = id;
     }
-    public GamePlayer(AresTKcpContext context,long pid) {
-        super(context, pid);
-    }
-
     public long getPid(){
         return roleDO.getPid();
     }

@@ -3,22 +3,17 @@ package com.router.network;
 import com.ares.common.bean.ServerType;
 import com.ares.core.bean.AresMsgIdMethod;
 import com.ares.core.bean.AresPacket;
-import com.ares.core.exception.AresBaseException;
 import com.ares.core.service.ServiceMgr;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.tcp.AresTcpHandler;
 import com.ares.core.thread.LogicProcessThreadPool;
-
-import com.ares.transport.bean.ServerNodeInfo;
-import com.ares.transport.bean.TcpConnServerInfo;
-import com.ares.transport.client.AresTcpClient;
 import com.game.protoGen.ProtoInner;
-
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+
+import java.io.IOException;
 
 
 @Slf4j
@@ -27,64 +22,39 @@ public class RouterMsgHandler implements AresTcpHandler {
     protected ServiceMgr serviceMgr;
 
     @Autowired
-    private AresTcpClient aresTcpClient;
-    @Value("${spring.application.name}")
-    private String appName;
-
-
-    @Value("${area.id:0}")
-    private int areaId;
-
-    @Autowired
     private PeerConn peerConn;
 
     protected static final String UTF8 = "UTF-8";
 
     @Override
-    public void handleMsgRcv(AresTKcpContext aresTKcpContext) {
-        int length = 0;
+    public void handleMsgRcv(AresTKcpContext aresTKcpContext) throws IOException {
         AresPacket aresPacket = aresTKcpContext.getRcvPackage();
-        try {
-            AresMsgIdMethod calledMethod = serviceMgr.getCalledMethod(aresPacket.getMsgId());
-            aresPacket.getRecvByteBuf().skipBytes(6);
-            int headerLen = aresPacket.getRecvByteBuf().readShort();
-            ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), headerLen));
-            long pid = header.getRoleId();
-            int toServerType = header.getToServerType();
-            ServerType serverType = fromServerType(aresTKcpContext);
+        AresMsgIdMethod calledMethod = serviceMgr.getCalledMethod(aresPacket.getMsgId());
 
-          //  peerConn.routerToGame(aresTKcpContext.getCtx(),);
-
-            length = aresPacket.getRecvByteBuf().readableBytes();
-            Object paraObj = calledMethod.getParser().parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), length));
-            LogicProcessThreadPool.INSTANCE.execute(aresTKcpContext, calledMethod, pid, paraObj);
-        } catch (AresBaseException e) {
-            log.error("===error  length ={} msgId={} ", length, aresPacket.getMsgId(), e);
-        } catch (Throwable e) {
-            log.error("==error length ={} msgId ={}  ", length, aresPacket.getMsgId(), e);
+        aresPacket.getRecvByteBuf().skipBytes(6);
+        int headerLen = aresPacket.getRecvByteBuf().readShort();
+        ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), headerLen));
+        long pid = header.getRoleId();
+        if (calledMethod == null) {
+            int toServerType = header.getRouterTo();
+            if (toServerType == ServerType.TEAM.getValue()) {
+                peerConn.sendToTeam(pid, aresPacket);
+                return;
+            }
+            if (toServerType == ServerType.GAME.getValue()) {
+                peerConn.sendToGame(pid, aresPacket);
+                return;
+            }
+            log.error("XXXXXXXXXXXXXXX msgId ={} to server type ={} error", aresPacket.getMsgId(), toServerType);
+            return;
         }
-    }
-
-
-    private ServerType fromServerType(AresTKcpContext aresTKcpContext) {
-        Object cacheObj = aresTKcpContext.getCacheObj();
-        if (cacheObj instanceof TcpConnServerInfo tcpConnServerInfo) {
-            ServerNodeInfo serverNodeInfo = tcpConnServerInfo.getServerNodeInfo();
-            return ServerType.from(serverNodeInfo.getServiceName());
-        }
-        return null;
+        int length = aresPacket.getRecvByteBuf().readableBytes();
+        Object paraObj = calledMethod.getParser().parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), length));
+        LogicProcessThreadPool.INSTANCE.execute(aresTKcpContext, calledMethod, pid, paraObj);
     }
 
     @Override
     public void onServerConnected(Channel aresTKcpContext) {
-        ProtoInner.InnerServerHandShakeReq handleShake = ProtoInner.InnerServerHandShakeReq.newBuilder()
-                .setAreaId(areaId)
-                .setServiceName(appName).build();
-
-        ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.newBuilder().build();
-        AresPacket aresPacket = AresPacket.create(ProtoInner.InnerProtoCode.INNER_SERVER_HAND_SHAKE_REQ_VALUE, header, handleShake);
-        aresTKcpContext.writeAndFlush(aresPacket);
-        log.info("###### handshake send to {}  msg: {}", aresTKcpContext, handleShake);
     }
 
     @Override

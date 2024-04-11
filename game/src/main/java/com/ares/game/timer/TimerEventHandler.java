@@ -10,9 +10,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class TimerEventHandler implements InitializingBean {
     private ScheduleService scheduleService;
-    public void  onTimerTask(AresTimerTask aresTimerTask){
-        LogicProcessThreadPool.INSTANCE.execute(aresTimerTask.getExecuteHashCode(),aresTimerTask,(timerTask)->{
-            if(timerTask.isValid()){
+
+    public void onTimerTask(AresTimerTask aresTimerTask) {
+        LogicProcessThreadPool.INSTANCE.execute(aresTimerTask.getExecuteHashCode(), aresTimerTask, (timerTask) -> {
+            if (timerTask.isValid()) {
                 timerTask.getCall().apply(aresTimerTask.getExtData());
             }
         });
@@ -20,6 +21,6 @@ public class TimerEventHandler implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        scheduleService =new ScheduleService(this::onTimerTask);
+        scheduleService = new ScheduleService(this::onTimerTask);
     }
 }

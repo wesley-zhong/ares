@@ -3,7 +3,6 @@ package com.ares.gateway.network;
 import com.ares.common.bean.ServerType;
 import com.ares.core.bean.AresMsgIdMethod;
 import com.ares.core.bean.AresPacket;
-import com.ares.core.exception.AresBaseException;
 import com.ares.core.service.ServiceMgr;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.tcp.AresTcpHandler;
@@ -21,7 +20,8 @@ import io.netty.buffer.ByteBufInputStream;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+
+import java.io.IOException;
 
 
 @Slf4j
@@ -40,46 +40,38 @@ public class GateWayMsgHandler implements AresTcpHandler {
 
 
     @Override
-    public void handleMsgRcv(AresTKcpContext aresTKcpContext) {
-        int length = 0;
+    public void handleMsgRcv(AresTKcpContext aresTKcpContext) throws IOException {
         AresPacket aresPacket = aresTKcpContext.getRcvPackage();
-        try {
-            AresMsgIdMethod calledMethod = serviceMgr.getCalledMethod(aresPacket.getMsgId());
-            aresPacket.getRecvByteBuf().skipBytes(6);
+        AresMsgIdMethod calledMethod = serviceMgr.getCalledMethod(aresPacket.getMsgId());
+        aresPacket.getRecvByteBuf().skipBytes(6);
 
-            long roleId = 0;
-            if (aresTKcpContext.getCacheObj() instanceof TcpConnServerInfo
-                    || aresPacket.getMsgId() == ProtoInner.InnerProtoCode.INNER_SERVER_HAND_SHAKE_RES_VALUE) {
-                //come from peer server node
-                int headerLen = aresPacket.getRecvByteBuf().readShort();
-                if (headerLen > 0) {
-                    ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), headerLen));
-                    roleId = header.getRoleId();
-                }
-
-                // if not processed by myself
-                if (calledMethod == null) {
-                    directSendToClient(roleId, aresPacket, headerLen);
-                    return;
-                }
-            } else if (aresTKcpContext.getCacheObj() instanceof PlayerSession playerSession) {
-                //come from client
-                // if not processed by myself
-                if (calledMethod == null) {
-                    directSendGame(playerSession, aresPacket);
-                    return;
-                }
+        long roleId = 0;
+        if (aresTKcpContext.getCacheObj() instanceof TcpConnServerInfo
+                || aresPacket.getMsgId() == ProtoInner.InnerProtoCode.INNER_SERVER_HAND_SHAKE_RES_VALUE) {
+            //come from peer server node
+            int headerLen = aresPacket.getRecvByteBuf().readShort();
+            if (headerLen > 0) {
+                ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), headerLen));
+                roleId = header.getRoleId();
             }
-            //process by myself
-            length = aresPacket.getRecvByteBuf().readableBytes();
-            Object paraObj = calledMethod.getParser().parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), length));
-            LogicProcessThreadPool.INSTANCE.execute(aresTKcpContext, calledMethod, roleId, paraObj);
 
-        } catch (AresBaseException e) {
-            log.error("===error  length ={} msgId={} ", length, aresPacket.getMsgId(), e);
-        } catch (Throwable e) {
-            log.error("==error length ={} msgId ={}  ", length, aresPacket.getMsgId(), e);
+            // if not processed by myself
+            if (calledMethod == null) {
+                directSendToClient(roleId, aresPacket, headerLen);
+                return;
+            }
+        } else if (aresTKcpContext.getCacheObj() instanceof PlayerSession playerSession) {
+            //come from client
+            // if not processed by myself
+            if (calledMethod == null) {
+                directSendGame(playerSession, aresPacket);
+                return;
+            }
         }
+        //process by myself
+        int length = aresPacket.getRecvByteBuf().readableBytes();
+        Object paraObj = calledMethod.getParser().parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), length));
+        LogicProcessThreadPool.INSTANCE.execute(aresTKcpContext, calledMethod, roleId, paraObj);
     }
 
 
@@ -94,17 +86,16 @@ public class GateWayMsgHandler implements AresTcpHandler {
          */
 
         int sendMsgLen = totalLen - NetWorkConstants.INNER_MSG_LEN_BYTES - headerLen;
-        body.skipBytes(headerLen + NetWorkConstants.INNER_MSG_LEN_BYTES );
+        body.skipBytes(headerLen + NetWorkConstants.INNER_MSG_LEN_BYTES);
 
         body.setInt(headerLen + NetWorkConstants.INNER_MSG_LEN_BYTES, sendMsgLen);
-        body.setShort(headerLen +  NetWorkConstants.INNER_MSG_LEN_BYTES + NetWorkConstants.MSG_LEN_BYTES, aresPacket.getMsgId());
+        body.setShort(headerLen + NetWorkConstants.INNER_MSG_LEN_BYTES + NetWorkConstants.MSG_LEN_BYTES, aresPacket.getMsgId());
         body.retain();
         sessionService.sendPlayerMsg(roleId, body);
         //  log.info("------- direct send to client msg roleId ={} msgId={}", roleId, aresPacket.getMsgId());
     }
 
     private void directSendGame(PlayerSession playerSession, AresPacket aresPacket) {
-     //   peerConn.redirectToGameMsg(playerSession.getAreaId(), playerSession.getRoleId(), aresPacket);
         peerConn.innerRedirectTo(ServerType.GAME, playerSession.getRoleId(), aresPacket);
     }
 
@@ -133,7 +124,7 @@ public class GateWayMsgHandler implements AresTcpHandler {
         if (cacheObj instanceof PlayerSession playerSession) {
             ProtoInner.InnerPlayerDisconnectRequest disconnectRequest = ProtoInner.InnerPlayerDisconnectRequest.newBuilder()
                     .setRoleId(playerSession.getRoleId()).build();
-            peerConn.sendToGameMsg( playerSession.getRoleId(), ProtoInner.InnerProtoCode.INNER_PLAYER_DISCONNECT_REQ_VALUE, disconnectRequest);
+            peerConn.sendToGameMsg(playerSession.getRoleId(), ProtoInner.InnerProtoCode.INNER_PLAYER_DISCONNECT_REQ_VALUE, disconnectRequest);
             LogicProcessThreadPool.INSTANCE.execute(0, playerSession, sessionService::playerDisconnect);
         }
     }

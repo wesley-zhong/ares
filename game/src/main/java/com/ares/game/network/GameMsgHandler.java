@@ -3,24 +3,22 @@ package com.ares.game.network;
 import com.ares.common.bean.ServerType;
 import com.ares.core.bean.AresMsgIdMethod;
 import com.ares.core.bean.AresPacket;
-import com.ares.core.exception.AresBaseException;
 import com.ares.core.service.ServiceMgr;
 import com.ares.core.tcp.AresTKcpContext;
 import com.ares.core.tcp.AresTcpHandler;
 import com.ares.core.thread.LogicProcessThreadPool;
 import com.ares.discovery.DiscoveryService;
-import com.ares.game.player.GamePlayer;
 import com.ares.game.service.PlayerRoleService;
 import com.ares.transport.bean.ServerNodeInfo;
 import com.ares.transport.bean.TcpConnServerInfo;
 import com.ares.transport.client.AresTcpClient;
 import com.game.protoGen.ProtoInner;
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+
+import java.io.IOException;
 
 
 @Slf4j
@@ -44,41 +42,34 @@ public class GameMsgHandler implements AresTcpHandler {
     protected static final String UTF8 = "UTF-8";
 
     @Override
-    public void handleMsgRcv(AresTKcpContext aresTKcpContext) {
-        int length = 0;
+    public void handleMsgRcv(AresTKcpContext aresTKcpContext) throws IOException {
         AresPacket aresPacket = aresTKcpContext.getRcvPackage();
-        try {
-            AresMsgIdMethod calledMethod = serviceMgr.getCalledMethod(aresPacket.getMsgId());
-            aresPacket.getRecvByteBuf().skipBytes(6);
-            int headerLen = aresPacket.getRecvByteBuf().readShort();
-            long pid = 0;
-            if (headerLen > 0) {
-                ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), headerLen));
-                pid = header.getRoleId();
-            }
-
-            // no msg method call should proxy to others
-            if (calledMethod == null) {
-                if (fromServerType(aresTKcpContext) == ServerType.GATEWAY) {
-                    peerConn.routerToTeam(pid, aresPacket);
-                } else {
-                    directToGateway(pid, aresPacket);
-                }
-                return;
-            }
-
-            length = aresPacket.getRecvByteBuf().readableBytes();
-            Object paraObj = calledMethod.getParser().parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), length));
-            LogicProcessThreadPool.INSTANCE.execute(aresTKcpContext, calledMethod, pid, paraObj);
-        } catch (AresBaseException e) {
-            log.error("===error  length ={} msgId={} ", length, aresPacket.getMsgId(), e);
-        } catch (Throwable e) {
-            log.error("==error length ={} msgId ={}  ", length, aresPacket.getMsgId(), e);
+        AresMsgIdMethod calledMethod = serviceMgr.getCalledMethod(aresPacket.getMsgId());
+        aresPacket.getRecvByteBuf().skipBytes(6);
+        int headerLen = aresPacket.getRecvByteBuf().readShort();
+        long pid = 0;
+        if (headerLen > 0) {
+            ProtoInner.InnerMsgHeader header = ProtoInner.InnerMsgHeader.parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), headerLen));
+            pid = header.getRoleId();
         }
+
+        // no msg method call should proxy to others
+        if (calledMethod == null) {
+            if (fromServerType(aresTKcpContext) == ServerType.GATEWAY) {
+                peerConn.redirectRouterToTeam(pid, aresPacket);
+            } else {//this should be from router server
+                directToGateway(pid, aresPacket);
+            }
+            return;
+        }
+
+        int length = aresPacket.getRecvByteBuf().readableBytes();
+        Object paraObj = calledMethod.getParser().parseFrom(new ByteBufInputStream(aresPacket.getRecvByteBuf(), length));
+        LogicProcessThreadPool.INSTANCE.execute(aresTKcpContext, calledMethod, pid, paraObj);
     }
 
     private void directToGateway(long pid, AresPacket aresPacket) {
-        peerConn.directToGateway(pid, aresPacket);
+        peerConn.redirectToGateway(pid, aresPacket);
     }
 
     private ServerType fromServerType(AresTKcpContext aresTKcpContext) {
@@ -92,7 +83,7 @@ public class GameMsgHandler implements AresTcpHandler {
 
     @Override
     public void onServerConnected(Channel aresTKcpContext) {
-        ServerNodeInfo myselfNodeInfo =discoveryService.getEtcdRegister().getMyselfNodeInfo();
+        ServerNodeInfo myselfNodeInfo = discoveryService.getEtcdRegister().getMyselfNodeInfo();
         ProtoInner.InnerServerHandShakeReq handleShake = ProtoInner.InnerServerHandShakeReq.newBuilder()
                 .setServiceId(myselfNodeInfo.getServiceId())
                 .setServiceName(myselfNodeInfo.getServiceName()).build();
